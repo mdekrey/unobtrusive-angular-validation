@@ -12,7 +12,7 @@ describe('Directive "valError"', function () {
         // assign
         var elem;
         var dotNetName = 'SomeDotNetProperty';
-        var template = '<form data-val-bind-messages="validationMessages"><div data-val-error="' + dotNetName + '"></div></form>'
+        var template = '<form data-val-bind-messages="validationMessages"><div data-val-error="' + dotNetName + '"></div></form>';
         inject(function ($compile, validation) {
             var form = $compile(template)(scope);
             elem = form.find('div');
@@ -38,7 +38,7 @@ describe('Directive "valError"', function () {
         // assign
         var elem;
         var dotNetName = 'SomeDotNetProperty';
-        var template = '<form data-val-bind-messages="validationMessages"><div class="error" data-val-error="' + dotNetName + 'Other"></div></form>'
+        var template = '<form data-val-bind-messages="validationMessages"><div class="error" data-val-error="' + dotNetName + 'Other"></div></form>';
         inject(function ($compile, validation) {
             var form = $compile(template)(scope);
             elem = form.find('div');

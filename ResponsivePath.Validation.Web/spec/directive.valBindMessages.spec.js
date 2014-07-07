@@ -11,7 +11,7 @@ describe('Directive "valBindMessages"', function () {
     it('updates messages on the scope.', function () {
         // assign
         var dotNetName = 'SomeDotNetProperty';
-        var template = '<form data-val-bind-messages="validationMessages"></form>'
+        var template = '<form data-val-bind-messages="validationMessages"></form>';
         inject(function ($compile, validation) {
             $compile(template)(scope);
         });
@@ -37,7 +37,7 @@ describe('Directive "valBindMessages"', function () {
         // assign
         var element;
         var dotNetName = 'SomeElement';
-        var template = '<form data-val-bind-messages="validationMessages"></form>'
+        var template = '<form data-val-bind-messages="validationMessages"></form>';
         inject(function ($compile, validation) {
             element = ($compile(template)(scope));
         });

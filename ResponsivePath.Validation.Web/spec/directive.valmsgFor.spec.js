@@ -12,7 +12,7 @@ describe('Directive "valmsgFor"', function () {
         // assign
         var elem;
         var dotNetName = 'SomeDotNetProperty';
-        var template = '<form data-val-bind-messages="validationMessages"><span data-valmsg-for="' + dotNetName + '"></span></form>'
+        var template = '<form data-val-bind-messages="validationMessages"><span data-valmsg-for="' + dotNetName + '"></span></form>';
         inject(function ($compile, validation) {
             var form = $compile(template)(scope);
             elem = form.find('span');
@@ -40,7 +40,7 @@ describe('Directive "valmsgFor"', function () {
         // assign
         var elem;
         var dotNetName = 'SomeDotNetProperty';
-        var template = '<form data-val-bind-messages="validationMessages"><span class="error" data-valmsg-for="' + dotNetName + 'Other"></span></form>'
+        var template = '<form data-val-bind-messages="validationMessages"><span class="error" data-valmsg-for="' + dotNetName + 'Other"></span></form>';
         inject(function ($compile, validation) {
             var form = $compile(template)(scope);
             elem = form.find('span');
