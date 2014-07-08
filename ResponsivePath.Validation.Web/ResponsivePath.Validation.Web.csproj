@@ -57,12 +57,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libraries\jasmine-2.0.0\boot.js" />
-    <Content Include="Libraries\jasmine-2.0.0\console.js" />
-    <Content Include="Libraries\jasmine-2.0.0\jasmine-html.js" />
-    <Content Include="Libraries\jasmine-2.0.0\jasmine.css" />
-    <Content Include="Libraries\jasmine-2.0.0\jasmine.js" />
-    <Content Include="Libraries\jasmine-2.0.0\jasmine_favicon.png" />
     <None Include="Scripts\_references.js" />
     <Content Include="Libraries\_intellisense.js" />
     <Content Include="Scripts\validation.js" />
