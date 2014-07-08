@@ -181,7 +181,6 @@
             // If suppress is true, don't actually display any validation messages.
             var validators = validation.buildValidation(scope, element, attrs, ngModelController);
 
-
             ngModelController.$parsers.unshift(validators.runValidations);
             ngModelController.$formatters.unshift(validators.runValidations);
 
@@ -537,7 +536,7 @@
             if (!val)
                 return true;
             var param = typeof options.parameters.extension == "string" ? options.parameters.extension.replace(/,/g, '|') : "png|jpe?g|gif";
-            return val.match(new RegExp(".(" + param + ")$", "i"));
+            return val.match(new RegExp("\\.(" + param + ")$", "i"));
         });
         validationProvider.addValidator("remote", function (val, options) {
             if (options.ngModel.remoteTimeout)
@@ -547,7 +546,8 @@
 
             var prefix = getModelPrefix(options.attributes.name);
             var data = {};
-            angular.forEach((options.parameters.additionalfields || options.attributes.name).split(','), function (fieldName) {
+            data[options.attributes.name] = val;
+            angular.forEach((options.parameters.additionalfields || '').split(','), function (fieldName) {
                 var dataName = appendModelPrefix(fieldName, prefix);
                 data[dataName] = options.injected.validation.dataValue(options.scope, dataName);
             });
