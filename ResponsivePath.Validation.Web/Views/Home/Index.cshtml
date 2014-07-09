@@ -1,0 +1,79 @@
+﻿@model ResponsivePath.Validation.Web.Models.Home.IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html ng-app="unobtrusive.validation.demo">
+<head>
+
+    <title>angular-unobtrusive-validation Demo</title>
+    <link href="~/Content/StyleSheet.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script type="text/javascript" src="/Scripts/validation.js"></script>
+    <script type="text/javascript">
+        angular.module('unobtrusive.validation.demo', ['unobtrusive.validation'])
+        .run(function ($rootScope) {
+            $rootScope.alert = function (arg) { window.alert(arg); };
+        });
+    </script>
+
+</head>
+<body>
+    <fieldset>
+        <legend>MVC Validation</legend>
+        <form method="post" action="" ng-submit="alert('Submitted successfully!')">
+            <div class="row">
+                @Html.Raw(ViewBag.Result)
+                @Html.ValidationSummary()
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Personal.FirstName)">First Name:</label>
+                <span>@Html.TextBoxFor(m => m.Personal.FirstName, new { ng_model = "firstname" })</span>
+                @Html.ValidationMessageFor(m => m.Personal.FirstName)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Personal.LastName)">Last Name:</label>
+                <span>@Html.TextBoxFor(m => m.Personal.LastName, new { ng_model = "lastname" })</span>
+                @Html.ValidationMessageFor(m => m.Personal.LastName)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Personal.BirthDate)">Birth Date:</label>
+                <span>@Html.TextBoxFor(m => m.Personal.BirthDate, new { ng_model = "birthdate" })</span>
+                @Html.ValidationMessageFor(m => m.Personal.BirthDate)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.WebAddress)">Web Address:</label>
+                <span>@Html.TextBoxFor(m => m.WebAddress, new { ng_model = "webaddress" })</span>
+                @Html.ValidationMessageFor(m => m.WebAddress)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Email)">Email:</label>
+                <span>@Html.TextBoxFor(m => m.Email, new { ng_model = "email" })</span>
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Number)">Number Required:</label>
+                <span>@Html.TextBoxFor(m => m.Number, new { ng_model = "number" })</span>
+                @Html.ValidationMessageFor(m => m.Number)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Password)">Password:</label>
+                <span>@Html.PasswordFor(m => m.Password, new { ng_model = "password" })</span>
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+            <div class="row">
+                <label class="label" for="@Html.IdFor(m => m.Password2)">Password Again:</label>
+                <span>@Html.PasswordFor(m => m.Password2, new { ng_model = "password2" })</span>
+                @Html.ValidationMessageFor(m => m.Password2)
+            </div>
+            <div>
+                <span class="label">&nbsp;</span>
+                <span><input type="submit" value="Submit" data-val-submit /></span>
+            </div>
+        </form>
+    </fieldset>
+</body>
+</html>
