@@ -494,24 +494,25 @@
         validationProvider.addValidator("minlength", function (val, options) {
             if (!val)
                 return true;
-            return val.length >= options.parameters.min;
+            return val.length >= parseInt(options.parameters.min);
         });
         validationProvider.addValidator("maxlength", function (val, options) {
             if (!val)
                 return true;
-            return val.length <= options.parameters.max;
+            return val.length <= parseInt(options.parameters.max);
         });
         validationProvider.addValidator("length", function (val, options) {
             if (!val)
                 return true;
-            return val.length >= options.parameters.min && val.length <= options.parameters.max;
+            return (!options.parameters.min || val.length >= parseInt(options.parameters.min))
+                && (!options.parameters.max || val.length <= parseInt(options.parameters.max));
         });
         validationProvider.addValidator("range", function (val, options) {
             if (!val)
                 return true;
 
             var value = parseFloat(val);
-            return value <= options.parameters.max && value >= options.parameters.min;
+            return value <= parseFloat(options.parameters.max) && value >= parseFloat(options.parameters.min);
         });
         validationProvider.addValidator("password", function (val, options) {
             function nonalphamin(value, min) {

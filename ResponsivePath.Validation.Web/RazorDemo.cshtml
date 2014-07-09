@@ -1,0 +1,117 @@
+﻿@{
+    var result = "";
+    Validation.Add("firstname",
+        Validator.Required("You must provide a first name"),
+        Validator.StringLength(10, 0, "No more than 10 letters")
+        );
+    Validation.RequireField("lastname", "Gimme your Last name!");
+    Validation.Add("birthdate",
+        Validator.Required(),
+        Validator.DateTime()
+        );
+    Validation.Add("webaddress",
+        Validator.Required("URL is required"),
+        Validator.Url("Must be a valid web address")
+        );
+    Validation.Add("email",
+        Validator.Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$",
+        "Invalid format for an email address")
+        );
+    Validation.Add("number",
+        Validator.Required("Make sure you say how many you want"),
+        Validator.Range(1, 4, "Must be between 1 and 4")
+        );
+    Validation.RequireField("password", "Password cannot be empty");
+    Validation.Add("password2",
+        Validator.Required("Put your password in here again"),
+        Validator.EqualsTo("password", "Must be the same as your password")
+        );
+    if (IsPost)
+    {
+        if (Validation.IsValid())
+        {
+            result += "<p>You entered:</p>";
+            foreach (string item in Request.Form)
+            {
+                result += item + ": " + Request[item] + "<br />";
+            }
+        }
+        else
+        {
+            ModelState.AddFormError("There are some errors with your submission");
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en" ng-app="unobtrusive.validation.demo">
+<head>
+    <title>angular-unobtrusive-validation Demo</title>
+    <link href="~/Content/StyleSheet.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script type="text/javascript" src="/Scripts/validation.js"></script>
+    <script type="text/javascript">
+        angular.module('unobtrusive.validation.demo', ['unobtrusive.validation'])
+        .run(function ($rootScope) {
+            $rootScope.alert = function (arg) { window.alert(arg); };
+        });
+    </script>
+
+</head>
+<body>
+    <fieldset>
+        <legend>Web Pages 2 Validation</legend>
+        <form method="post" action="" ng-submit="alert('Submitted successfully!')">
+            <div class="row">
+                @Html.Raw(result)
+                @Html.ValidationSummary(true)
+            </div>
+            <div class="row">
+                <label class="label" for="firstname">First Name:</label>
+                <span><input name="firstname" type="text" @Validation.For("firstname") value="@Request["firstname"]" ng-model="firstname" /></span>
+                @Html.ValidationMessage("firstname")
+            </div>
+            <div class="row">
+                <label class="label" for="lastname">Last Name:</label>
+                <span>@Html.TextBox("lastname", Request["lastname"], new { ng_model="lastname" })</span>
+                @Html.ValidationMessage("lastname")
+            </div>
+            <div class="row">
+                <label class="label" for="birthdate">Birth Date:</label>
+                <span>@Html.TextBox("birthdate", Request["birthdate"], new { ng_model = "birthdate" })</span>
+                @Html.ValidationMessage("birthdate")
+            </div>
+            <div class="row">
+                <label class="label" for="webaddress">Web Address:</label>
+                <span>@Html.TextBox("webaddress", Request["webaddress"], new { ng_model = "webaddress" })</span>
+                @Html.ValidationMessage("webaddress")
+            </div>
+            <div class="row">
+                <label class="label" for="email">Email:</label>
+                <span>@Html.TextBox("email", Request["email"], new { ng_model = "email" })</span>
+                @Html.ValidationMessage("email")
+            </div>
+            <div class="row">
+                <label class="label" for="number">Number Required:</label>
+                <span>@Html.TextBox("number", Request["number"], new { ng_model = "number" })</span>
+                @Html.ValidationMessage("number")
+            </div>
+            <div class="row">
+                <label class="label" for="password">Password:</label>
+                <span>@Html.Password("password", "", new { ng_model = "password" })</span>
+                @Html.ValidationMessage("password")
+            </div>
+            <div class="row">
+                <label class="label" for="password2">Password Again:</label>
+                <span>@Html.Password("password2", "", new { ng_model = "password2" })</span>
+                @Html.ValidationMessage("password2")
+            </div>
+            <div>
+                <span class="label">&nbsp;</span>
+                <span><input type="submit" value="Submit" data-val-submit/></span>
+            </div>
+        </form>
+    </fieldset>
+</body>
+</html>
