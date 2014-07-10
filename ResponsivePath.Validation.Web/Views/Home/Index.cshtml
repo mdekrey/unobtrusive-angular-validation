@@ -59,16 +59,23 @@
                 <span>@Html.TextBoxFor(m => m.Number, new { ng_model = "number" })</span>
                 @Html.ValidationMessageFor(m => m.Number)
             </div>
+            <p>
+                It gets obnoxious to type out something like Html....For(m => m.Password) every time, especially when it starts getting longer so we've added a Shortcut method.
+            </p>
+            @using (var field = Html.Shortcut(m => m.Password)) { 
             <div class="row">
-                <label class="label" for="@Html.IdFor(m => m.Password)">Password:</label>
-                <span>@Html.PasswordFor(m => m.Password, new { ng_model = "password" })</span>
-                @Html.ValidationMessageFor(m => m.Password)
+                <label class="label" for="@field.IdFor(m => m)">Password:</label>
+                <span>@field.PasswordFor(m => m, new { ng_model = "password" })</span>
+                @field.ValidationMessageFor(m => m)
             </div>
+            }
+            @using (var field = Html.Shortcut(m => m.Password2)) {
             <div class="row">
-                <label class="label" for="@Html.IdFor(m => m.Password2)">Password Again:</label>
-                <span>@Html.PasswordFor(m => m.Password2, new { ng_model = "password2" })</span>
-                @Html.ValidationMessageFor(m => m.Password2)
+                <label class="label" for="@field.IdFor(m => m)">Password Again:</label>
+                <span>@field.PasswordFor(m => m, new { ng_model = "password2" })</span>
+                @field.ValidationMessageFor(m => m)
             </div>
+            }
             <p ng-init="items=[{},{}]">
                 The problem with the built-in Helpers "...For" with client-side repeaters is that they don't take into account
                 the variable changes for `id` and `name` properties. Try using the "Item" properties below.  (Also, they won't 
@@ -111,6 +118,28 @@
                         <label class="label" for="@clientRepeaterAnchor.Fix(c => c.IdFor(m => m.Description))">Item {{$index}} Description:</label>
                         <span>@clientRepeaterAnchor.Fix(c => c.TextBoxFor(m => m.Description, new { ng_model = "items2[$index].description" }))</span>
                         @clientRepeaterAnchor.ValidationMessageFor(m => m.Description)
+                    </div>
+                }
+            </div>
+            <div ng-repeat="(itemIndex, i) in items2">
+                <h3 ng-init="i.nested = [{},{}]">Item {{itemIndex}}</h3>
+                @using (var item = Html.ClientRepeater(m => m.ItemsFixed, "{{itemIndex}}"))
+                {
+                    <div ng-repeat="(nestedIndex, nested) in i.nested">
+                        @using (var nested = item.ClientRepeater(m => m.Nested, "{{nestedIndex}}"))
+                        {
+                            <h4>Nested {{nestedIndex}}</h4>
+                            <div class="row">
+                                @nested.Fix(c => c.LabelFor(m => m.Name, new { @class="label" }))
+                                <span>@nested.Fix(c => c.TextBoxFor(m => m.Name, new { ng_model = "nested.name" }))</span>
+                                @nested.ValidationMessageFor(m => m.Name)
+                            </div>
+                            <div class="row">
+                                @nested.Fix(c => c.LabelFor(m => m.Description, new { @class = "label" }))
+                                <span>@nested.Fix(c => c.TextBoxFor(m => m.Description, new { ng_model = "nested.description" }))</span>
+                                @nested.ValidationMessageFor(m => m.Description)
+                            </div>
+                        }
                     </div>
                 }
             </div>

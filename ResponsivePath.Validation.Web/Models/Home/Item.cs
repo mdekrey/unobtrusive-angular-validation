@@ -13,5 +13,8 @@ namespace ResponsivePath.Validation.Web.Models.Home
 
         [Required]
         public string Description { get; set; }
+
+        [Required]
+        public IEnumerable<Item> Nested { get; set; }
     }
 }
