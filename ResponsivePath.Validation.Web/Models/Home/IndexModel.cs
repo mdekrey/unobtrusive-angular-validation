@@ -28,5 +28,10 @@ namespace ResponsivePath.Validation.Web.Models.Home
         [Compare("Password", ErrorMessage = "Must be the same as your password")]
         public string Password2 { get; set; }
 
+        [Required]
+        public Item[] Items { get; set; }
+
+        [Required]
+        public IEnumerable<Item> ItemsFixed { get; set; }
     }
 }

@@ -109,6 +109,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Home\IndexModel.cs" />
+    <Compile Include="Models\Home\Item.cs" />
     <Compile Include="Models\Home\PersonalData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DisposableHtmlHelper.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\LinqExpressionExtensions.cs" />
     <Compile Include="Extensions\ValidationHelper.cs" />

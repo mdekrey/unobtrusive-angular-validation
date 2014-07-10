@@ -69,6 +69,51 @@
                 <span>@Html.PasswordFor(m => m.Password2, new { ng_model = "password2" })</span>
                 @Html.ValidationMessageFor(m => m.Password2)
             </div>
+            <p ng-init="items=[{},{}]">
+                The problem with the built-in Helpers "...For" with client-side repeaters is that they don't take into account
+                the variable changes for `id` and `name` properties. Try using the "Item" properties below.  (Also, they won't 
+                let you work with IEnumerables.)
+            </p>
+            <div ng-repeat="i in items">
+
+                <h3>Item {{$index}}</h3>
+                <div class="row">
+                    <label class="label" for="@Html.IdFor(m => m.Items[0].Name)">Item {{$index}} Name:</label>
+                    <span>@Html.TextBoxFor(m => m.Items[0].Name, new { ng_model = "items[$index].name" })</span>
+                    @Html.ValidationMessageFor(m => m.Items[0].Name)
+                </div>
+                <div class="row">
+                    <label class="label" for="@Html.IdFor(m => m.Items[0].Description)">Item {{$index}} Description:</label>
+                    <span>@Html.TextBoxFor(m => m.Items[0].Description, new { ng_model = "items[$index].description" })</span>
+                    @Html.ValidationMessageFor(m => m.Items[0].Description)
+                </div>
+            </div>
+            <p ng-init="items2=[{},{}]">
+                We built our own ClientRepeater tool to assist with that, providing a replacement variable. Unfortuantely, the 
+                "id" attribute gets generated without any hooks - we want to go ahead and allow any special characters you have,
+                for instance, curly brackets and $, so we built the "Fix" method onto the client repeater, too.
+            </p>
+            <p>
+                Just be careful using $index - a nested repeater overrides that variable. Instead, look at using the key-value 
+                syntax for angular.
+            </p>
+            <div ng-repeat="i in items2">
+                <h3>Item {{$index}}</h3>
+                <div class="row">
+                    <label class="label" for="@Html.ClientRepeater(m => m.ItemsFixed, "{{$index}}").Fix(c => c.IdFor(m => m.Name))">Item {{$index}} Name:</label>
+                    <span>@Html.ClientRepeater(m => m.ItemsFixed, "{{$index}}").Fix(c => c.TextBoxFor(m => m.Name, new { ng_model = "items2[$index].name" }))</span>
+                    @Html.ClientRepeater(m => m.ItemsFixed, "{{$index}}").ValidationMessageFor(m => m.Name)
+                </div>
+                @* Alternate syntax using syntactic sugar *@
+                @using (var clientRepeaterAnchor = Html.ClientRepeater(m => m.ItemsFixed, "{{$index}}"))
+                {
+                    <div class="row">
+                        <label class="label" for="@clientRepeaterAnchor.Fix(c => c.IdFor(m => m.Description))">Item {{$index}} Description:</label>
+                        <span>@clientRepeaterAnchor.Fix(c => c.TextBoxFor(m => m.Description, new { ng_model = "items2[$index].description" }))</span>
+                        @clientRepeaterAnchor.ValidationMessageFor(m => m.Description)
+                    </div>
+                }
+            </div>
             <div>
                 <span class="label">&nbsp;</span>
                 <span><input type="submit" value="Submit" data-val-submit /></span>
