@@ -40,6 +40,11 @@ namespace ResponsivePath.Validation.Extensions
             return CreateChildHtmlHandler<T, U>(htmlHelper, elementSelector, additionalIndexStrings.Concat(Enumerable.Repeat(indexString, 1)), prefix);
         }
 
+        public static ValidationHelper<T> Validation<T>(this HtmlHelper<T> htmlHelper)
+        {
+            return new ValidationHelper<T>(htmlHelper);
+        }
+
         private static DisposableHtmlHelper<U> CreateChildHtmlHandler<T, U>(HtmlHelper<T> htmlHelper, Expression<Func<T, U>> modelSelector, IEnumerable<string> additionalIndexStrings, string prefix)
         {
             var viewData = new ViewDataDictionary<U>();

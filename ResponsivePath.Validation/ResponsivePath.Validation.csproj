@@ -71,6 +71,8 @@
     <Compile Include="Extensions\DisposableHtmlHelper.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\LinqExpressionExtensions.cs" />
+    <Compile Include="Extensions\ValidationHelper.cs" />
+    <Compile Include="Extensions\ValidationHelper.T.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
