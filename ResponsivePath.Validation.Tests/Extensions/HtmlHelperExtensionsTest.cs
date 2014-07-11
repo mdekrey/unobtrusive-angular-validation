@@ -61,34 +61,10 @@ namespace ResponsivePath.Validation.Tests.Extensions
         //
         #endregion
 
-        // Thank you to Thomas Ardal for providing the following method.
-        // http://thomasardal.com/unit-testing-htmlhelper-extension-methods/
-        public HtmlHelper<T> CreateHtmlHelper<T>(ViewDataDictionary viewData)
-        {
-            var cc = new Mock<ControllerContext>(
-                new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock }.Object,
-                new RouteData(),
-                new Mock<ControllerBase>().Object) {  DefaultValue = DefaultValue.Mock, CallBase = true };
-
-            var mockViewContext = new Mock<ViewContext>(
-                cc.Object,
-                new Mock<IView>().Object,
-                viewData,
-                new TempDataDictionary(),
-                TextWriter.Null) { CallBase = true };
-
-            var mockViewDataContainer = new Mock<IViewDataContainer>();
-
-            mockViewDataContainer.Setup(v => v.ViewData).Returns(viewData);
-
-            return new HtmlHelper<T>(
-                mockViewContext.Object, mockViewDataContainer.Object);
-        }
-
         [TestMethod]
         public void ShortcutTest1()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             var result = target.Shortcut(t => t.IndividualItem);
 
             Assert.IsTrue(result is HtmlHelper<Item>);
@@ -100,7 +76,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
         [TestMethod]
         public void ShortcutTest2()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             var result = target.Shortcut(t => t.IndividualItem).Shortcut(t => t.Name);
 
             Assert.IsTrue(result is HtmlHelper<string>);
@@ -112,7 +88,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
         [TestMethod]
         public void DisposeTest()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             using (var result = target.Shortcut(t => t.IndividualItem))
             {
 
@@ -122,7 +98,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
         [TestMethod]
         public void ClientRepeaterTest1()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             var result = target.ClientRepeater(t => t.Array, "{{index}}");
 
             Assert.IsTrue(result is HtmlHelper<Item>);
@@ -134,7 +110,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
         [TestMethod]
         public void ClientRepeaterTest2()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             var result = target.ClientRepeater(t => t.List, "{{index}}");
 
             Assert.IsTrue(result is HtmlHelper<Item>);
@@ -146,7 +122,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
         [TestMethod]
         public void ClientRepeaterTest3()
         {
-            var target = CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
             var result = target.ClientRepeater(t => t.List, "{{index}}").ClientRepeater(t => t.InnerSet, "{{index2}}");
 
             Assert.IsTrue(result is HtmlHelper<Guid>);

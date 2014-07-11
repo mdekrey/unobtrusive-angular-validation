@@ -11,14 +11,17 @@ namespace ResponsivePath.Validation.Extensions
 {
     public class ValidationHelper<T> : ValidationHelper
     {
-        private HtmlHelper<T> htmlHelper;
+        protected new readonly HtmlHelper<T> htmlHelper;
 
         public ValidationHelper(HtmlHelper<T> htmlHelper) : base((HtmlHelper)htmlHelper)
         {
             this.htmlHelper = htmlHelper;
         }
 
-
+        public IHtmlString ErrorClass<TResult>(Expression<Func<T, TResult>> model)
+        {
+            return ErrorClass(ExpressionHelper.GetExpressionText(model));
+        }
 
     }
 }

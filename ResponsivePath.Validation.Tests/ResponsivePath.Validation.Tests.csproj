@@ -84,7 +84,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Extensions\HtmlHelperExtensionsTest.cs" />
+    <Compile Include="Extensions\HtmlHelperFactory.cs" />
     <Compile Include="Extensions\LinqExpressionExtensionsTest.cs" />
+    <Compile Include="Extensions\ValidationHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 
 namespace ResponsivePath.Validation.Extensions
@@ -18,7 +19,7 @@ namespace ResponsivePath.Validation.Extensions
             this.indexers = indexers;
         }
 
-        public MvcHtmlString Fix(Func<DisposableHtmlHelper<TModel>, MvcHtmlString> funcToFixId)
+        public IHtmlString Fix(Func<DisposableHtmlHelper<TModel>, IHtmlString> funcToFixId)
         {
             var original = funcToFixId(this);
 
@@ -28,7 +29,7 @@ namespace ResponsivePath.Validation.Extensions
                 var regex1 = "^([^\"]*)(" + idPart + ")([^\"]*)$";
                 var regex2 = "((?:id|for)=\"[^\"]*)(" + idPart + ")([^\"]*\")";
 
-                original = new MvcHtmlString(Regex.Replace(Regex.Replace(original.ToString(), regex1, "$1" + indexer + "$3"), regex2, "$1" + indexer + "$3"));
+                original = new HtmlString(Regex.Replace(Regex.Replace(original.ToString(), regex1, "$1" + indexer + "$3"), regex2, "$1" + indexer + "$3"));
             }
 
             return original;
