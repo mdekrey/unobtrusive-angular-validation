@@ -10,19 +10,9 @@ namespace ResponsivePath.Validation.Extensions
 {
     public static class LinqExpressionExtensions
     {
-        public static PropertyInfo SimpleProperty(this Expression<Func<object>> expression)
-        {
-            return SimpleProperty((Expression)expression);
-        }
-
         public static PropertyInfo SimpleProperty(this Expression expression)
         {
             return expression.SimpleMember() as PropertyInfo;
-        }
-
-        public static MemberInfo SimpleMember(this Expression<Func<object>> expression)
-        {
-            return SimpleMember((Expression)expression);
         }
 
         public static MemberInfo SimpleMember(this Expression expression)
@@ -32,14 +22,9 @@ namespace ResponsivePath.Validation.Extensions
             return memberExpression.Member;
         }
 
-        public static MethodInfo SimpleMethodCall(this Expression<Func<object>> expression)
-        {
-            return SimpleMethodCall((Expression)expression);
-        }
-
         public static MethodInfo SimpleMethodCall(this Expression expression)
         {
-            var methodCallExpression = expression.RemoveLambdaBody() as System.Linq.Expressions.MethodCallExpression;
+            var methodCallExpression = expression.RemoveLambdaBody().RemoveCast() as System.Linq.Expressions.MethodCallExpression;
             System.Diagnostics.Debug.Assert(methodCallExpression != null);
             return methodCallExpression.Method;
         }

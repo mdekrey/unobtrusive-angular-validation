@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponsivePath.Validation.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponsivePath.Validation", "ResponsivePath.Validation\ResponsivePath.Validation.csproj", "{A785F579-73FE-4DC1-9166-EC7346FB3F89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponsivePath.Validation.Tests", "ResponsivePath.Validation.Tests\ResponsivePath.Validation.Tests.csproj", "{9F859CFE-468E-4136-A58B-05B5AD9FFD11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A785F579-73FE-4DC1-9166-EC7346FB3F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A785F579-73FE-4DC1-9166-EC7346FB3F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A785F579-73FE-4DC1-9166-EC7346FB3F89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F859CFE-468E-4136-A58B-05B5AD9FFD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F859CFE-468E-4136-A58B-05B5AD9FFD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F859CFE-468E-4136-A58B-05B5AD9FFD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F859CFE-468E-4136-A58B-05B5AD9FFD11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
