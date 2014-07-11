@@ -13,41 +13,17 @@ namespace ResponsivePath.Validation.Tests.Extensions
     [TestClass]
     public class LinqExpressionExtensionsTest
     {
-        class Target
+        abstract class Target
         {
-            public bool ValueField;
+            public long ValueField;
             public object ObjectField;
-
-            public Target()
-            {
-                ValueField = false;
-                ObjectField = null;
-            }
 
             public bool ValueProperty { get; set; }
             public object ObjectProperty { get; set; }
 
-            public bool SomeMethod(object param1, bool param2) { throw new NotImplementedException(); }
-            public object SomeMethod2(object param1, bool param2) { throw new NotImplementedException(); }
-            public void SomeMethod3(object param1, bool param2) { throw new NotImplementedException(); }
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
+            public abstract bool SomeMethod(object param1, bool param2);
+            public abstract object SomeMethod2(object param1, bool param2);
+            public abstract void SomeMethod3(object param1, bool param2);
         }
 
         #region Additional test attributes
@@ -124,6 +100,16 @@ namespace ResponsivePath.Validation.Tests.Extensions
             var property = target.SimpleMember();
 
             Assert.AreEqual("ObjectProperty", property.Name);
+        }
+
+        [TestMethod]
+        public void SimpleMemberTest5()
+        {
+            var param = Expression.Parameter(typeof(Target), "t");
+            Expression<Func<Target, short>> target = Expression.Lambda<Func<Target, short>>(Expression.ConvertChecked(Expression.Field(param, "ValueField"), typeof(short)), param);
+            var property = target.SimpleMember();
+
+            Assert.AreEqual("ValueField", property.Name);
         }
 
         [TestMethod]

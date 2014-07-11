@@ -37,15 +37,8 @@ namespace ResponsivePath.Validation.Extensions
             var elementSelector = Expression.Lambda<Func<T, U>>(Expression.ArrayIndex(Expression.Convert(modelSelector.Body, typeof(U[])), Expression.Constant(0)), modelSelector.Parameters.ToArray());
             var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(ExpressionHelper.GetExpressionText(modelSelector) + "[" + indexString + "]");
 
-            return CreateChildHtmlHandler<T, U>(htmlHelper, elementSelector, additionalIndexStrings.Concat(new[] { indexString }), prefix);
+            return CreateChildHtmlHandler<T, U>(htmlHelper, elementSelector, additionalIndexStrings.Concat(Enumerable.Repeat(indexString, 1)), prefix);
         }
-
-        public static ValidationHelper<T> Validation<T>(this HtmlHelper<T> htmlHelper)
-        {
-            return new ValidationHelper<T>(htmlHelper);
-        }
-
-
 
         private static DisposableHtmlHelper<U> CreateChildHtmlHandler<T, U>(HtmlHelper<T> htmlHelper, Expression<Func<T, U>> modelSelector, IEnumerable<string> additionalIndexStrings, string prefix)
         {
@@ -60,7 +53,7 @@ namespace ResponsivePath.Validation.Extensions
                 htmlHelper.ViewContext.TempData,
                 htmlHelper.ViewContext.Writer);
 
-            return new DisposableHtmlHelper<U>(context, new ViewDataContainer { ViewData = viewData }, (additionalIndexStrings ?? Enumerable.Empty<string>()));
+            return new DisposableHtmlHelper<U>(context, new ViewDataContainer { ViewData = viewData }, additionalIndexStrings);
         }
 
     }
