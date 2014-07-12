@@ -17,3 +17,5 @@ packages/**/*
 */App_Data
 */*.nupkg
 *.nupkg
+*.snk
+*/*.snk
