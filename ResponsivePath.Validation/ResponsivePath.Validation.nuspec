@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ResponsivePath.Validation</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Matthew DeKrey and other Contributors</authors>
+    <owners>Responsive Path</owners>
+    <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
+    <projectUrl>https://github.com/mdekrey/unobtrusive-angular-validation</projectUrl>
+    <iconUrl>http://responsivepath.wpengine.com/wp-content/uploads/2014/01/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The primary focus of this package is to expose the .NET Framework's data validation syntax to AngularJS without relying on jQuery.</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Validation DataAnnotations</tags>
+  </metadata>
+</package>
