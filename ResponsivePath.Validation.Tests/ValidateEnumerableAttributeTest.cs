@@ -8,7 +8,7 @@ using ResponsivePath.Validation.Extensions;
 namespace ResponsivePath.Validation.Tests
 {
     [TestClass]
-    public class ValidateObjectAttributeTest
+    public class ValidateEnumerableAttributeTest
     {
         class DriversLicense
         {
@@ -23,12 +23,12 @@ namespace ResponsivePath.Validation.Tests
 
         class Outer
         {
-            [ValidateObject(ErrorMessage = "Drivers License", ErrorMessagePrefix = "Drivers License ")]
-            public DriversLicense DriversLicense { get; set; }
+            [ValidateEnumerable(ErrorMessagePrefix="Licenses ")]
+            public IEnumerable<DriversLicense> Licenses { get; set; }
 
 
-            [ValidateObject()]
-            public DriversLicense DriversLicensePrefixless { get; set; }
+            [ValidateEnumerable(ErrorMessagePrefix = "Licenses2 ")]
+            public Dictionary<string, DriversLicense> Licenses2 { get; set; }
         }
 
         [TestMethod]
@@ -46,9 +46,15 @@ namespace ResponsivePath.Validation.Tests
 
             var target = new Outer()
             {
-                DriversLicense = new DriversLicense()
-                {
-                    Number = "TX"
+                Licenses = new [] {
+                    new DriversLicense()
+                    {
+                        Number = "TX"
+                    },
+                    new DriversLicense()
+                    {
+                        State = "TX"
+                    }
                 }
             };
 
@@ -65,22 +71,27 @@ namespace ResponsivePath.Validation.Tests
                                from member in entry.MemberNames
                                select member + ": " + entry.ErrorMessage).SequenceEqual(new[] 
                                    { 
-                                       "DriversLicense.Number: Drivers License Number Invalid", 
-                                       "DriversLicense.State: Drivers License State Required", 
+                                       "Licenses[0].Number: Licenses Number Invalid", 
+                                       "Licenses[0].State: Licenses State Required", 
+                                       "Licenses[1].Number: Licenses Number Required", 
                                    }));
             }
         }
 
         [TestMethod]
-        public void InnerFieldsPrefixless()
+        public void InnerFieldsDictionary()
         {
             var validationService = new ValidationService();
 
             var target = new Outer()
             {
-                DriversLicensePrefixless = new DriversLicense()
-                {
-                    Number = "TX"
+                Licenses2 = new Dictionary<string,DriversLicense> {
+                    { "first", 
+                        new DriversLicense()
+                        {
+                            Number = "TX"
+                        }
+                    }
                 }
             };
 
@@ -97,10 +108,11 @@ namespace ResponsivePath.Validation.Tests
                                from member in entry.MemberNames
                                select member + ": " + entry.ErrorMessage).SequenceEqual(new[] 
                                    { 
-                                       "DriversLicensePrefixless.Number: Number Invalid", 
-                                       "DriversLicensePrefixless.State: State Required", 
+                                       "Licenses2[0].Value.Number: Licenses2 Number Invalid", 
+                                       "Licenses2[0].Value.State: Licenses2 State Required", 
                                    }));
             }
         }
+
     }
 }

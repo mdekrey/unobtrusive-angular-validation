@@ -44,14 +44,5 @@ namespace ResponsivePath.Validation
 
             return ValidationResult.Success;
         }
-
-        private static IValidationService GetValidationService(ValidationContext validationContext)
-        {
-            var service = ((IValidationService)validationContext.GetService(typeof(IValidationService)));
-            if (service == null)
-                service = Factories.BuildValidationService();
-            return service;
-        }
-
     }
 }

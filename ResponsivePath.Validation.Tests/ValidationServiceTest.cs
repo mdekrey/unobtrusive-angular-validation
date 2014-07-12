@@ -15,25 +15,32 @@ namespace ResponsivePath.Validation.Tests
         class Outer
         {
             [Required(ErrorMessage = "Inner Required")]
-            [ValidateObject(PrefixMembers = true, ErrorMessagePrefix = "Inner ")]
+            [ValidateObject(ErrorMessagePrefix = "Inner ")]
             public Inner Inner { get; set; }
 
-            [ValidateEnumerable(PrefixMembers = true, ErrorMessagePrefix = "OptionalList ")]
+            [ValidateEnumerable(ErrorMessagePrefix = "OptionalList ")]
             public IEnumerable<Inner> OptionalList { get; set; }
 
-            [ValidateEnumerable(PrefixMembers = true, ErrorMessagePrefix = "InnerList ")]
+            [ValidateEnumerable(ErrorMessagePrefix = "InnerList ")]
             public IEnumerable<Inner> InnerList { get; set; }
         }
 
         class OuterWithRequiredList
         {
             [Required(ErrorMessage = "Inner Required")]
-            [ValidateObject(PrefixMembers = true, ErrorMessagePrefix = "Inner ")]
+            [ValidateObject(ErrorMessagePrefix = "Inner ")]
             public Inner Inner { get; set; }
 
             [Required(ErrorMessage = "InnerList Required")]
-            [ValidateEnumerable(PrefixMembers = true, ErrorMessagePrefix = "InnerList ")]
+            [ValidateEnumerable(ErrorMessagePrefix = "InnerList ")]
             public IEnumerable<Inner> InnerList { get; set; }
+        }
+
+        class OuterWithDictionary
+        {
+            [Required(ErrorMessage = "InnerDictionary Required")]
+            [ValidateEnumerable(ErrorMessagePrefix = "InnerDictionary ")]
+            public IDictionary<string, Inner> InnerDictionary { get; set; }
         }
 
         class Inner
@@ -236,8 +243,6 @@ namespace ResponsivePath.Validation.Tests
             }
         }
 
-
-
         [TestMethod]
         public void PartialValidateInnerListTest()
         {
@@ -269,6 +274,22 @@ namespace ResponsivePath.Validation.Tests
 
             Assert.IsTrue(AsComparable(results).SequenceEqual(new[] { "InnerList: InnerList Required" }));
 
+        }
+
+        [TestMethod]
+        public void PartialValidateDictionaryTest()
+        {
+            var service = CreateService();
+            var results = service.PartialValidate(new Outer());
+
+            Assert.IsFalse(AsComparable(results).Any());
+
+            results = service.PartialValidate(new OuterWithDictionary()
+            {
+                InnerDictionary = new Dictionary<string, Inner> { { "first", new Inner() }}
+            }, t => t.InnerDictionary.PartialValidate(inner => inner.Value.Value1));
+
+            Assert.IsTrue(AsComparable(results).SequenceEqual(new[] { "InnerDictionary[0].Value.Value1: InnerDictionary Value1 Required" }));
         }
     }
 }

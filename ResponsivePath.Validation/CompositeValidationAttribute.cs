@@ -13,10 +13,8 @@ namespace ResponsivePath.Validation
     {
         public CompositeValidationAttribute()
         {
-            PrefixMembers = true;
         }
 
-        public bool PrefixMembers { get; set; }
         public string ErrorMessagePrefix { get; set; }
 
         protected ValidationResult ResultFromInnerResults(IEnumerable<Tuple<string, ValidationResult>> innerResults, string memberName)
@@ -25,7 +23,7 @@ namespace ResponsivePath.Validation
                           let result = entry.Item2
                           select new ValidationResult(result.ErrorMessage.Prefix(ErrorMessagePrefix),
                                                              (from member in result.MemberNames
-                                                              select PrefixMembers ? member.Prefix(entry.Item1 + ".") : member).ToArray());
+                                                              select member.Prefix(entry.Item1 + ".")).ToArray());
 
             results = results.ToArray();
 
