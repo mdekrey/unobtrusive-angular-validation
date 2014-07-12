@@ -16,3 +16,4 @@ packages/**/*
 *.cachefile
 */App_Data
 */*.nupkg
+*.nupkg
