@@ -90,6 +90,8 @@
     <Compile Include="Extensions\LinqExpressionExtensionsTest.cs" />
     <Compile Include="Extensions\ValidationHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValidationObjectAttributeTest.cs" />
+    <Compile Include="ValidationServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResponsivePath.Validation\ResponsivePath.Validation.csproj">

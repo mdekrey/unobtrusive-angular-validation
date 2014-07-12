@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ResponsivePath.Validation
 {
-    internal class ValidationService : IValidationService
+    public class ValidationService : IValidationService
     {
         public IEnumerable<ValidationResult> CompleteValidate<T>(T target)
         {
