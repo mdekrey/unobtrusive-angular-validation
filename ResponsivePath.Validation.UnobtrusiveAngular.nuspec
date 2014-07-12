@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ResponsivePath.Validation.UnobtrusiveAngular</id>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <authors>Matthew DeKrey and other Contributors</authors>
     <owners>Responsive Path</owners>
     <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
