@@ -39,6 +39,12 @@ namespace ResponsivePath.Validation.Tests.Extensions
             public Guid[] InnerSet { get; set; }
         }
 
+        class SpecializedItem : Item
+        {
+            [Required]
+            public string Description { get; set; }
+        }
+
         #region Additional test attributes
         //
         // You can use the following additional attributes as you write your tests:
@@ -83,6 +89,17 @@ namespace ResponsivePath.Validation.Tests.Extensions
             Assert.AreEqual(target.ViewContext.HttpContext, result.ViewContext.HttpContext);
             Assert.AreEqual(target.ViewContext.RouteData, result.ViewContext.RouteData);
             Assert.AreEqual(target.TextBoxFor(t => t.IndividualItem.Name).ToString(), result.TextBoxFor(t => t).ToString());
+        }
+
+        [TestMethod]
+        public void ShortcutTest3()
+        {
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var result = target.Shortcut(t => t.IndividualItem).Shortcut(t => (SpecializedItem)t);
+
+            Assert.AreEqual(target.ViewContext.HttpContext, result.ViewContext.HttpContext);
+            Assert.AreEqual(target.ViewContext.RouteData, result.ViewContext.RouteData);
+            Assert.AreEqual("IndividualItem_Description", result.IdFor(t => t.Description).ToString());
         }
 
         [TestMethod]

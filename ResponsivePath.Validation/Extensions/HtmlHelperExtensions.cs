@@ -48,7 +48,14 @@ namespace ResponsivePath.Validation.Extensions
         private static DisposableHtmlHelper<U> CreateChildHtmlHandler<T, U>(HtmlHelper<T> htmlHelper, Expression<Func<T, U>> modelSelector, IEnumerable<string> additionalIndexStrings, string prefix)
         {
             var viewData = new ViewDataDictionary<U>();
-            viewData.ModelMetadata = ModelMetadata.FromLambdaExpression(modelSelector, htmlHelper.ViewData);
+            try
+            {
+                viewData.ModelMetadata = ModelMetadata.FromLambdaExpression(modelSelector, htmlHelper.ViewData);
+            }
+            catch
+            {
+                // we want to actually allow doing a few more odd things in here, such as casting
+            }
             viewData.TemplateInfo = new TemplateInfo() { HtmlFieldPrefix = prefix };
 
             var context = new ViewContext(
