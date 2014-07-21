@@ -15,6 +15,26 @@ In this repository, we've provided our validation.js along with a few tests to v
 
 In addition, we are adding a few other utilities for integrating the `HtmlHelper`; we hope you get some use out of them!
 
+####JavaScript Download
+
+If you want to integrate directly with the javascript and aren't using NuGet (or are on a non-C# project), you can download the files from our repository directly:
+
+[Development](https://raw.githubusercontent.com/responsivepath/unobtrusive-angular-validation/master/ResponsivePath.Validation.Web/Scripts/angular.unobtrusive.validation.js) | 
+[Minified](https://raw.githubusercontent.com/responsivepath/unobtrusive-angular-validation/master/ResponsivePath.Validation.Web/Scripts/angular.unobtrusive.validation.min.js)
+
+####NuGet Installation
+
+You can install our NuGet packages here:
+
+#####JavaScript
+```
+PM> Install-Package ResponsivePath.Validation.UnobtrusiveAngular
+```
+
+#####C# extension methods
+```
+PM> Install-Package ResponsivePath.Validation
+```
 
 ####Unobtrusive Validation web.config
 
