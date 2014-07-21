@@ -22,7 +22,7 @@ namespace ResponsivePath.Validation.Extensions
 
         internal static DisposableHtmlHelper<U> Shortcut<T, U>(this HtmlHelper<T> htmlHelper, Expression<Func<T, U>> modelSelector, IEnumerable<string> additionalIndexStrings)
         {
-            var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(ExpressionHelper.GetExpressionText(modelSelector));
+            var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(GetExpressionTextIncludingConverts(modelSelector));
 
             return CreateChildHtmlHandler<T, U>(htmlHelper, modelSelector, additionalIndexStrings, prefix);
         }
@@ -35,7 +35,7 @@ namespace ResponsivePath.Validation.Extensions
         internal static DisposableHtmlHelper<U> ClientRepeater<T, U>(this HtmlHelper<T> htmlHelper, Expression<Func<T, IEnumerable<U>>> modelSelector, string indexString, IEnumerable<string> additionalIndexStrings)
         {
             var elementSelector = Expression.Lambda<Func<T, U>>(Expression.ArrayIndex(Expression.Convert(modelSelector.Body, typeof(U[])), Expression.Constant(0)), modelSelector.Parameters.ToArray());
-            var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(ExpressionHelper.GetExpressionText(modelSelector) + "[" + indexString + "]");
+            var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(GetExpressionTextIncludingConverts(modelSelector) + "[" + indexString + "]");
 
             return CreateChildHtmlHandler<T, U>(htmlHelper, elementSelector, additionalIndexStrings.Concat(Enumerable.Repeat(indexString, 1)), prefix);
         }
@@ -66,6 +66,51 @@ namespace ResponsivePath.Validation.Extensions
                 htmlHelper.ViewContext.Writer);
 
             return new DisposableHtmlHelper<U>(context, new ViewDataContainer { ViewData = viewData }, additionalIndexStrings);
+        }
+
+        private static string GetExpressionTextIncludingConverts(LambdaExpression expression)
+        {
+            // The ExpressionHelper currently stops at Convert expressions, so we split the expression at those points.
+            Expression currentExpression = expression.Body;
+            while (currentExpression != null)
+            {
+                if (currentExpression.NodeType == ExpressionType.Call)
+                {
+                    MethodCallExpression methodCallExpression = (MethodCallExpression)currentExpression;
+                    currentExpression = methodCallExpression.Object;
+                }
+                else if (currentExpression.NodeType == ExpressionType.ArrayIndex)
+                {
+                    BinaryExpression binaryExpression = (BinaryExpression)currentExpression;
+                    currentExpression = binaryExpression.Left;
+                }
+                else if (currentExpression.NodeType == ExpressionType.MemberAccess)
+                {
+                    MemberExpression memberExpression = (MemberExpression)currentExpression;
+                    currentExpression = memberExpression.Expression;
+                }
+                else if (currentExpression.NodeType == ExpressionType.Convert)
+                {
+                    // This is where it gets interesting
+                    UnaryExpression convertExpression = (UnaryExpression)currentExpression;
+                    var firstPart = GetExpressionTextIncludingConverts(Expression.Lambda(convertExpression.Operand, expression.Parameters));
+                    var secondPart = ExpressionHelper.GetExpressionText(expression);
+                    if (!string.IsNullOrEmpty(firstPart) && !string.IsNullOrEmpty(secondPart))
+                    {
+                        return firstPart + "." + secondPart;
+                    }
+                    else
+                    {
+                        return firstPart + secondPart;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return ExpressionHelper.GetExpressionText(expression);
         }
 
     }
