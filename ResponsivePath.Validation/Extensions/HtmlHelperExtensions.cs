@@ -34,7 +34,7 @@ namespace ResponsivePath.Validation.Extensions
 
         internal static DisposableHtmlHelper<U> ClientRepeater<T, U>(this HtmlHelper<T> htmlHelper, Expression<Func<T, IEnumerable<U>>> modelSelector, string indexString, IEnumerable<string> additionalIndexStrings)
         {
-            var elementSelector = Expression.Lambda<Func<T, U>>(Expression.ArrayIndex(Expression.Convert(modelSelector.Body, typeof(U[])), Expression.Constant(0)), modelSelector.Parameters.ToArray());
+            var elementSelector = Expression.Lambda<Func<T, U>>(Expression.ArrayIndex(Expression.Convert(Expression.Convert(modelSelector.Body, typeof(IEnumerable<U>)), typeof(U[])), Expression.Constant(0)), modelSelector.Parameters.ToArray());
             var prefix = htmlHelper.ViewData.TemplateInfo.GetFullHtmlFieldName(GetExpressionTextIncludingConverts(modelSelector) + "[" + indexString + "]");
 
             return CreateChildHtmlHandler<T, U>(htmlHelper, elementSelector, additionalIndexStrings.Concat(Enumerable.Repeat(indexString, 1)), prefix);

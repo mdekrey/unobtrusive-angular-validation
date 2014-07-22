@@ -27,6 +27,7 @@ namespace ResponsivePath.Validation.Tests.Extensions
             public Item IndividualItem { get; set; }
             public IEnumerable<Item> List { get; set; }
             public Item[] Array { get; set; }
+            public Dictionary<string, Item> Dictionary { get; set; }
         }
 
         class Item
@@ -195,6 +196,18 @@ namespace ResponsivePath.Validation.Tests.Extensions
             Assert.AreEqual(target.ViewContext.HttpContext, result.ViewContext.HttpContext);
             Assert.AreEqual(target.ViewContext.RouteData, result.ViewContext.RouteData);
             Assert.AreEqual("<input id=\"List_{{index}}__InnerSet_{{index2}}_\" name=\"List[{{index}}].InnerSet[{{index2}}]\" type=\"text\" value=\"\" />", result.Fix(r => r.TextBoxFor(t => t)).ToString());
+        }
+
+        [TestMethod]
+        public void ClientRepeaterTest4()
+        {
+            var target = HtmlHelperFactory.CreateHtmlHelper<Target>(new ViewDataDictionary<Target>());
+            var result = target.ClientRepeater(t => t.Dictionary, "{{index}}");
+
+            Assert.IsTrue(result is HtmlHelper<KeyValuePair<string, Item>>);
+            Assert.AreEqual(target.ViewContext.HttpContext, result.ViewContext.HttpContext);
+            Assert.AreEqual(target.ViewContext.RouteData, result.ViewContext.RouteData);
+            Assert.AreEqual("<input id=\"Dictionary_{{index}}__Value\" name=\"Dictionary[{{index}}].Value\" type=\"text\" value=\"\" />", result.Fix(r => r.TextBoxFor(t => t.Value)).ToString());
         }
     }
 }
