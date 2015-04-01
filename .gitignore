@@ -19,3 +19,5 @@ packages/**/*
 *.nupkg
 *.snk
 */*.snk
+/ResponsivePath.Validation.Web/Scripts/Typescript/*.js
+/ResponsivePath.Validation.Web/Scripts/Typescript/*.js.map
