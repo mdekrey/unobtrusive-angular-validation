@@ -9,6 +9,12 @@ module.exports = function (grunt) {
 					sourceMapIn: 'wwwroot/Scripts/angular.unobtrusive.validation.js.map'
 				}
 			},
+			templates: {
+				files: { 'wwwroot/Scripts/angular.unobtrusive.validation.tpls.min.js': ['wwwroot/Scripts/angular.unobtrusive.validation.tpls.js'] },
+				options: {
+					sourceMap: false
+				}
+			},
 		},
 
 		clean: {
@@ -27,6 +33,12 @@ module.exports = function (grunt) {
 				files: [
 					{ expand: true, cwd: 'wwwroot/Scripts/', src: ['**/angular.unobtrusive.validation*'], dest: '../artifacts/ts', filter: 'isFile' }
 				]
+			},
+			prepareExports: {
+				files: [
+					{ expand: true, cwd: '../artifacts/ts', src: ['*.js'], dest: '../js', filter: 'isFile' },
+					{ expand: true, cwd: '../artifacts/ts', src: ['*.d.ts'], dest: '../typings', filter: 'isFile' }
+				]
 			}
 		},
 
@@ -38,7 +50,26 @@ module.exports = function (grunt) {
 					fast: 'never',
 					sourceMap: true,
 					target: 'es5',
-					declaration: true
+					declaration: true,
+				}
+			},
+			templates1: {
+				html: ["Assets/Templates/**/Html/*.html"],
+				src: [],
+				options: {
+					htmlModuleTemplate: 'ResponsivePath.Validation.Unobtrusive.Templates.<%= filename %>',
+					fast: 'never',
+					compile: false,
+					sourceMap: false
+				}
+			},
+			templates2: {
+				src: ["Assets/typings/**/*.d.ts", "../artifacts/ts/angular.unobtrusive.validation.d.ts", "Assets/Templates/**/*.ts"],
+				out: 'wwwroot/Scripts/angular.unobtrusive.validation.tpls.js',
+				options: {
+					fast: 'never',
+					compile: true,
+					sourceMap: false
 				}
 			},
 			tests: {
@@ -57,6 +88,10 @@ module.exports = function (grunt) {
 				files: ['Assets/Scripts/**/*.ts'],
 				tasks: ['packageTypescripts:base']
 			},
+			typescriptsTemplates: {
+				files: ['Assets/Templates/**/*.ts', 'Assets/Templates/**/*.html', '!Assets/Templates/**/Html/*.ts'],
+				tasks: ['packageTypescripts:templates']
+			},
 			typescriptsTests: {
 				files: ['Assets/TestScripts/**/*.ts'],
 				tasks: ['packageTypescripts:tests']
@@ -68,7 +103,8 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask("packageTypescripts:base", ['ts:base', 'uglify:scripts', 'copy:dedupe', 'clean:dedupe', 'clean:tsCleanup']);
+	grunt.registerTask("packageTypescripts:base", ['ts:base', 'uglify:scripts', 'copy:dedupe', 'clean:dedupe', 'clean:tsCleanup', 'copy:prepareExports']);
+	grunt.registerTask("packageTypescripts:templates", ['ts:templates1', 'ts:templates2', 'uglify:templates', 'copy:dedupe', 'clean:tsCleanup', 'copy:prepareExports']);
 	grunt.registerTask("packageTypescripts:tests", ['ts:tests']);
 	grunt.registerTask("buildTypescripts", ['packageTypescripts:base', 'packageTypescripts:tests']);
 	grunt.registerTask("default", ['watch']);

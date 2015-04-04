@@ -26,3 +26,4 @@ packages/**/*
 **/node_modules
 **/artifacts
 *.tmp.txt
+**/Templates/**/Html/*.ts
