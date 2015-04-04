@@ -236,38 +236,4 @@
 			return deferResult.promise;
 		}
 	}
-
-	describe('Unit: SourceMap', function () {
-		it('can load',(done: MochaDone) => {
-			// arrange
-			var target = 'tests.js';
-
-			// act
-			loadAvailableMaps([target]).then((sourceMaps) => {
-				expect(sourceMaps).to.have.key(target);
-			}).finally(done);
-		});
-
-		describe('on tests.js',() => {
-			var sourceMap: ISourceMap;
-			var util: SourceMap;
-			before((done: MochaDone) => {
-				// arrange
-				var target = 'tests.js';
-
-				// act
-				loadAvailableMaps([target]).then((sourceMaps) => {
-					sourceMap = sourceMaps['tests.js'];
-					util = new SourceMap(sourceMap);
-					util.prepare().finally(done);
-				});
-			});
-
-			it('references Sourcemapping.ts',() => {
-				expect(sourceMap.sources).to.contain('../../Assets/TestScripts/SourceMap/Sourcemapping.ts');
-			});
-
-
-		});
-	});
 }

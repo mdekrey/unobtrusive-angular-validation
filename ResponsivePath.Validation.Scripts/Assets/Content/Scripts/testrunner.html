@@ -28,6 +28,26 @@
 	<script src="blanketjs/blanket.js" data-cover-adapter="blanketjs/mocha-blanket.js" data-cover-flags="branchTracking"></script>
 	<script src="tests.js"></script>
 	<script>
+		Mocha.Runner.prototype.runTest = function (fn) {
+			var test = this.test
+			  , self = this;
+
+			if (this.asyncOnly) test.asyncOnly = true;
+
+			try {
+				test.on('error', function (err) {
+					self.fail(test, err);
+				});
+				test.run(function () {
+					if (arguments[0])
+						console.log(arguments[0].stack);
+					fn.apply(self, arguments);
+				});
+			} catch (err) {
+				fn(err);
+			}
+		};
+
     mocha.run();
 	</script>
 </body>
