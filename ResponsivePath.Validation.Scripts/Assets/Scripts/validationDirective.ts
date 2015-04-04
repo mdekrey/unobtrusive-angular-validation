@@ -43,7 +43,7 @@
             }
 
             // Make sure we dispose all our 
-            element.on('$destroy', () => {
+            element.on('$destroy',() => {
                 delete this.validation.clearDotNetName(scope, validationFor);
 
                 for (var key in watches)
@@ -51,7 +51,7 @@
             });
 
             // Cancel suppression of error messages for this element on blur
-            element.on('blur', () => {
+            element.on('blur',() => {
                 validators.cancelSuppress();
                 scope.$digest();
             });
