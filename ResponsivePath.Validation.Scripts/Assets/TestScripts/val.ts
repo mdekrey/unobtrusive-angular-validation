@@ -26,6 +26,30 @@
 			expect(sce.getTrustedHtml(valScope.messages['FirstName']['required'])).to.equal('You must provide a first name');
 		}));
 
+		it('don\'t fail for value attribute',() => inject(($rootScope: angular.IRootScopeService) => {
+			var scope: any = $rootScope.$new();
+			var valScope = validation.ensureValidation(scope);
+
+			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="FirstName" ng-model="firstname" value="Matt" />')(scope);
+			valScope.cancelSuppress = true;
+			scope.firstname = null;
+			scope.$digest();
+
+			expect(sce.getTrustedHtml(valScope.messages['FirstName']['required'])).to.equal('You must provide a first name');
+		}));
+
+		it('don\'t fail for unknown attribute',() => inject(($rootScope: angular.IRootScopeService) => {
+			var scope: any = $rootScope.$new();
+			var valScope = validation.ensureValidation(scope);
+
+			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="FirstName" ng-model="firstname" val-unknown />')(scope);
+			valScope.cancelSuppress = true;
+			scope.firstname = null;
+			scope.$digest();
+
+			expect(sce.getTrustedHtml(valScope.messages['FirstName']['required'])).to.equal('You must provide a first name');
+		}));
+
 		it('ignores if @val is not true',() => inject(($rootScope: angular.IRootScopeService) => {
 			var scope: any = $rootScope.$new();
 			var valScope = validation.ensureValidation(scope);
