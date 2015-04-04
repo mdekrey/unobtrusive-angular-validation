@@ -52,5 +52,57 @@
 				expect(validation.hasCancelledSuppress(scope)).to.be(true);
 			}));	
 		});
+
+		describe('Getters/setters',() => {
+			var compile: angular.ICompileService;
+			var rootScope: angular.IRootScopeService;
+			var sce: angular.ISCEService;
+
+			beforeEach(inject(($compile: angular.ICompileService, $rootScope: angular.IRootScopeService, $sce: angular.ISCEService) => {
+				compile = $compile;
+				rootScope = $rootScope;
+				sce = $sce;
+			}));
+
+			var scope: any;
+			var valScope: ScopeValidationState;
+			var fieldName: string = 'Obj.Target';
+			var message: string = 'Invalid';
+			var form: angular.IAugmentedJQuery;
+			var element: angular.IAugmentedJQuery;
+			var matchElement: angular.IAugmentedJQuery;
+
+			beforeEach(() => {
+				form = angular.element('<form name="form"/>');
+				element = angular.element('<input type="text" data-val="true" name="Obj.Target" ng-model="target" data-val-required="Invalid" />');
+				matchElement = angular.element('<input type="text" data-val="true" name="Obj.Other" ng-model="other" />');
+				form.append(element);
+				form.append(matchElement);
+				compile(form)(rootScope);
+				scope = element.scope();
+				valScope = validation.ensureValidation(scope);
+
+				valScope.cancelSuppress = true;
+				scope.form['Obj.Other'].$setViewValue('othervalue');
+				scope.$digest();
+			});
+
+			it('can get and set messages',() => {
+				expect(sce.getTrustedHtml(validation.messageArray(scope)['Obj.Target']['required'])).to.be('Invalid');
+				expect(sce.getTrustedHtml(validation.messageArray(scope, 'Obj.Target')['required'])).to.be('Invalid');
+				expect(sce.getTrustedHtml(validation.messageArray(scope, 'Obj.Target', { anothererror: sce.trustAsHtml('Something Else') })['anothererror'])).to.be('Something Else');
+				expect(sce.getTrustedHtml(validation.messageArray(scope)['Obj.Target']['required'])).to.be(undefined);
+				expect(sce.getTrustedHtml(validation.messageArray(scope)['Obj.Target']['anothererror'])).to.be('Something Else');
+				expect(sce.getTrustedHtml(validation.messageArray(scope, 'Obj.Target')['anothererror'])).to.be('Something Else');
+			});
+
+			it('can get and object values',() => {
+				expect(validation.dataValue(scope)['Obj.Other']).to.be('othervalue');
+				expect(validation.dataValue(scope, 'Obj.Other')).to.be('othervalue');
+				expect(validation.dataValue(scope, 'Obj.Other', 'something else')).to.be('something else');
+				expect(validation.dataValue(scope)['Obj.Other']).to.be('something else');
+				expect(validation.dataValue(scope, 'Obj.Other')).to.be('something else');
+			});
+		});
 	});
 }

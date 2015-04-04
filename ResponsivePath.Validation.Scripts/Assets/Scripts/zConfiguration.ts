@@ -180,18 +180,20 @@
                 && (!options.parameters.regex || !!(new RegExp(options.parameters.regex).exec(val)));
         });
         validationProvider.addValidator("equalto",(val: string, options: OptionsAIP<NamedAttributes, EqualToInjected, EqualToParameters>) => {
+            if (!val)
+                return true;
             var prefix = getModelPrefix(options.attributes.name),
                 other = options.parameters.other,
                 fullOtherName = appendModelPrefix(other, prefix),
                 element = options.injected.validation.dataValue(options.scope, fullOtherName);
-
+			
             return element == val;
         }, ['validation']);
         validationProvider.addValidator("extension",(val: string, options: OptionsP<ExtensionParameters>) => {
             if (!val)
                 return true;
             var param = typeof options.parameters.extension == "string" ? options.parameters.extension.replace(/,/g, '|') : "png|jpe?g|gif";
-            return !!val.match(new RegExp("\\.(" + param + ")$", "i"));
+            return !!new RegExp("\\.(" + param + ")$", "i").exec(val);
         });
         validationProvider.addValidator("remote",(val: string, options: RemoteValidator) => {
             if (options.ngModel.remoteTimeout)
