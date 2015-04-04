@@ -33,12 +33,12 @@
 
 	function loadSourceMap(sourceFile: string): angular.IPromise<ISourceMap> {
 		var deferred: angular.IDeferred<ISourceMap> = $q.defer();
-		$http.get(sourceFile).success(function (contents: string) {
+		$http.get(sourceFile, { cache: true }).success(function (contents: string) {
 			var fileContents = contents.split('\n');
 			var lastLine = fileContents[fileContents.length - 1];
 			if (lastLine.substring(0, sourceMapComment.length) == sourceMapComment) {
 				var filePath = lastLine.substring(sourceMapComment.length);
-				$http.get(filePath).success(function (sourceMap: ISourceMap) {
+				$http.get(filePath, { cache: true }).success(function (sourceMap: ISourceMap) {
 					deferred.resolve(sourceMap);
 				}).error(() => deferred.reject());
 			}
@@ -203,7 +203,7 @@
 	}
 
 	function loadSourceFile(sourceFile: string, sources) {
-		return $http.get(sourceFile).success((content: string) => {
+		return $http.get(sourceFile, { cache: true }).success((content: string) => {
 			sources[sourceFile] = content.trim().split('\n');
 		});
 	}
