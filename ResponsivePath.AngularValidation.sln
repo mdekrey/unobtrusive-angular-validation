@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{23C85B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D99F8B08-5CA8-4768-9B51-23D49FCF805D}"
 	ProjectSection(SolutionItems) = preProject
+		bower.json = bower.json
 		package.bat = package.bat
 		README.md = README.md
 		ResponsivePath.Validation.UnobtrusiveAngular.nuspec = ResponsivePath.Validation.UnobtrusiveAngular.nuspec

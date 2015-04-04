@@ -1,0 +1,12 @@
+{
+  "name": "angular-validation-unobtrusive",
+  "version": "1.0.1",
+  "main": ["js/angular.unobtrusive.validation.js", "js/angular.unobtrusive.validation.tpls.js"],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "ResponsivePath.*",
+    "*.bat"
+  ]
+}
