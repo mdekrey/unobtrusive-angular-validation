@@ -18,6 +18,11 @@ packages/**/*
 */*.nupkg
 *.nupkg
 *.snk
+.vs
 */*.snk
-/ResponsivePath.Validation.Web/Scripts/Typescript/*.js
-/ResponsivePath.Validation.Web/Scripts/Typescript/*.js.map
+**/wwwroot
+**/intermediate
+**/bower_components
+**/node_modules
+**/artifacts
+*.tmp.txt

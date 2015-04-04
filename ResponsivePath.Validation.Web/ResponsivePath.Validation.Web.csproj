@@ -139,31 +139,6 @@
       <Name>ResponsivePath.Validation</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\Typescript\zConfiguration.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\interfaces.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValBindMessagesDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValErrorDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValidatedFormDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\validationDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\validationProvider.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\validationService.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValidationTools.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\validator.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValmsgForDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValmsgSummaryDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\ValSubmitDirective.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\zTemplateCache.ts" />
-    <TypeScriptCompile Include="Scripts\Typescript\_module.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-mocks.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-resource.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-route.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-sanitize.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

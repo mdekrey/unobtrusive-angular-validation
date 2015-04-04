@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Tests</title>
+
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.1/mocha.min.css">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
+
+	<script src="angular.unobtrusive.validation.js" data-cover></script>
+
+	<style>
+		#blanket-main .bl-source {
+			font-size: 12px;
+		}
+	</style>
+</head>
+<body>
+	<div id="mocha"></div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/expect.js/0.2.0/expect.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.7.3/sinon.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.1/mocha.js"></script>
+	<script>mocha.setup('bdd')</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.27/angular-mocks.js"></script>
+	<script src="blanketjs/blanket.js" data-cover-adapter="blanketjs/mocha-blanket.js" data-cover-flags="branchTracking"></script>
+	<script src="tests.js"></script>
+	<script>
+    mocha.run();
+	</script>
+</body>
+</html>

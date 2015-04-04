@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+<html ng-app="unobtrusive.validation">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
+	<script type="text/javascript" src="/scripts/angular.unobtrusive.validation.js"></script>
+	
+</head>
+<body>
+	<div class="row">
+		<label class="label" for="Personal_FirstName">First Name:</label>
+		<span><input data-val="true" data-val-length="No more than 10 letters" data-val-length-max="10" data-val-required="You must provide a first name" id="Personal_FirstName" name="Personal.FirstName" ng-model="firstname" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="Personal.FirstName" data-valmsg-replace="true"></span>
+	</div>
+	<div class="row">
+		<label class="label" for="Personal_LastName">Last Name:</label>
+		<span><input data-val="true" data-val-required="Gimme your Last name!" id="Personal_LastName" name="Personal.LastName" ng-model="lastname" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="Personal.LastName" data-valmsg-replace="true"></span>
+	</div>
+	<div class="row">
+		<label class="label" for="Personal_BirthDate">Birth Date:</label>
+		<span><input data-val="true" data-val-date="The field BirthDate must be a date." data-val-required="The BirthDate field is required." id="Personal_BirthDate" name="Personal.BirthDate" ng-model="birthdate" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="Personal.BirthDate" data-valmsg-replace="true"></span>
+	</div>
+	<div class="row">
+		<label class="label" for="WebAddress">Web Address:</label>
+		<span><input data-val="true" data-val-required="URL is required" data-val-url="Must be a valid web address" id="WebAddress" name="WebAddress" ng-model="webaddress" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="WebAddress" data-valmsg-replace="true"></span>
+	</div>
+	<div class="row">
+		<label class="label" for="Email">Email:</label>
+		<span><input data-val="true" data-val-regex="Invalid format for an email address" data-val-regex-pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" id="Email" name="Email" ng-model="email" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+	</div>
+	<div class="row">
+		<label class="label" for="Number">Number Required:</label>
+		<span><input data-val="true" data-val-number="The field Number must be a number." data-val-range="Must be between 1 and 4" data-val-range-max="4" data-val-range-min="1" data-val-required="Make sure you say how many you want" id="Number" name="Number" ng-model="number" type="text" value="" /></span>
+		<span class="field-validation-valid" data-valmsg-for="Number" data-valmsg-replace="true"></span>
+	</div>
+
+</body>
+</html>
