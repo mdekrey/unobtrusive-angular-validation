@@ -3,13 +3,19 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		uglify: {
 			scripts: {
-				files: { '../js/angular.unobtrusive.validation.min.js': ['../js/angular.unobtrusive.validation.js'] },
+				files: {
+					'../js/angular.unobtrusive.validation.min.js': ['../js/angular.unobtrusive.validation.js'],
+					'wwwroot/Scripts/angular.unobtrusive.validation.min.js': ['wwwroot/Scripts/angular.unobtrusive.validation.js'],
+				},
 				options: {
 					sourceMap: true,
 				}
 			},
 			templates: {
-				files: { '../js/angular.unobtrusive.validation.tpls.min.js': ['../js/angular.unobtrusive.validation.tpls.js'] },
+				files: {
+					'../js/angular.unobtrusive.validation.tpls.min.js': ['../js/angular.unobtrusive.validation.tpls.js'],
+					'wwwroot/Scripts/angular.unobtrusive.validation.tpls.min.js': ['wwwroot/Scripts/angular.unobtrusive.validation.tpls.js'],
+				},
 				options: {
 					sourceMap: true,
 				}

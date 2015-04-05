@@ -546,6 +546,7 @@ var ResponsivePath;
                     delete this.ensureValidation(scope).messages[dotNetName];
                     delete this.ensureValidation(scope).data[dotNetName];
                 };
+                ValidationService.$inject = ['$injector', '$sce', 'getValidationType'];
                 return ValidationService;
             })();
             Unobtrusive.ValidationService = ValidationService;

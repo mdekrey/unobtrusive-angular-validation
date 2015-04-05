@@ -4,7 +4,7 @@
         restrict: string = 'A';
         require: string = 'ngModel';
         private validation: ValidationService;
-
+		
         constructor(validation: ValidationService) {
             this.validation = validation;
         }

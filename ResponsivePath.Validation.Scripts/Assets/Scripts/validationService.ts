@@ -55,6 +55,7 @@
             delete this.ensureValidation(scope).data[dotNetName];
         }
 
+		static $inject = ['$injector','$sce','getValidationType'];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType) {
             this.$injector = $injector;
             this.$sce = $sce;
