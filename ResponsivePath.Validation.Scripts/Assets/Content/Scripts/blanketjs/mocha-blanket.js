@@ -97,7 +97,7 @@ var finalCoverage;
     				});
     			}
     			else {
-    				resultFiles[sourceFile] = coverage;
+    				resultFiles[destFile] = coverage;
     			}
     		});
     		rawCoverage = coverageData.files;
