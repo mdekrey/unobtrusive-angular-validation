@@ -3,23 +3,22 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		uglify: {
 			scripts: {
-				files: { 'wwwroot/Scripts/angular.unobtrusive.validation.min.js': ['wwwroot/Scripts/angular.unobtrusive.validation.js'] },
+				files: { '../js/angular.unobtrusive.validation.min.js': ['../js/angular.unobtrusive.validation.js'] },
 				options: {
 					sourceMap: true,
-					sourceMapIn: 'wwwroot/Scripts/angular.unobtrusive.validation.js.map'
 				}
 			},
 			templates: {
-				files: { 'wwwroot/Scripts/angular.unobtrusive.validation.tpls.min.js': ['wwwroot/Scripts/angular.unobtrusive.validation.tpls.js'] },
+				files: { '../js/angular.unobtrusive.validation.tpls.min.js': ['../js/angular.unobtrusive.validation.tpls.js'] },
 				options: {
-					sourceMap: false
+					sourceMap: true,
 				}
 			},
 		},
 
 		clean: {
 			tsCleanup: ["*.tmp.txt"],
-			dedupe: ["wwwroot/Scripts/*.ts"]
+			release: { src: ["../js/*.ts"], options: { force: true } }
 		},
 
 
@@ -29,15 +28,9 @@ module.exports = function (grunt) {
 					{ expand: true, cwd: 'Assets/Content/', src: ['**/*.html', '**/*.js'], dest: 'wwwroot/', filter: 'isFile' }
 				]
 			},
-			dedupe: {
+			release: {
 				files: [
-					{ expand: true, cwd: 'wwwroot/Scripts/', src: ['**/angular.unobtrusive.validation*'], dest: '../artifacts/ts', filter: 'isFile' }
-				]
-			},
-			prepareExports: {
-				files: [
-					{ expand: true, cwd: '../artifacts/ts', src: ['*.js'], dest: '../js', filter: 'isFile' },
-					{ expand: true, cwd: '../artifacts/ts', src: ['*.d.ts'], dest: '../typings', filter: 'isFile' }
+					{ expand: true, cwd: '../js/', src: ['**/*.ts'], dest: '../typings/', filter: 'isFile' }
 				]
 			}
 		},
@@ -49,6 +42,16 @@ module.exports = function (grunt) {
 				options: {
 					fast: 'never',
 					sourceMap: true,
+					target: 'es5',
+					declaration: false,
+				}
+			},
+			base_release: {
+				src: ["Assets/typings/**/*.d.ts", 'Assets/Scripts/**/_module.ts', 'Assets/Scripts/**/*.ts', '!Assets/Scripts/**/*.d.ts'],
+				out: '../js/angular.unobtrusive.validation.js',
+				options: {
+					fast: 'never',
+					sourceMap: false,
 					target: 'es5',
 					declaration: true,
 				}
@@ -64,7 +67,7 @@ module.exports = function (grunt) {
 				}
 			},
 			templates2: {
-				src: ["Assets/typings/**/*.d.ts", "../artifacts/ts/angular.unobtrusive.validation.d.ts", "Assets/Templates/**/*.ts"],
+				src: ["Assets/typings/**/*.d.ts", "../typings/angular.unobtrusive.validation.d.ts", "Assets/Templates/**/*.ts"],
 				out: 'wwwroot/Scripts/angular.unobtrusive.validation.tpls.js',
 				options: {
 					fast: 'never',
@@ -72,8 +75,17 @@ module.exports = function (grunt) {
 					sourceMap: false
 				}
 			},
+			templates2_release: {
+				src: ["Assets/typings/**/*.d.ts", "../typings/angular.unobtrusive.validation.d.ts", "Assets/Templates/**/*.ts"],
+				out: '../js/angular.unobtrusive.validation.tpls.js',
+				options: {
+					fast: 'never',
+					compile: true,
+					sourceMap: false
+				}
+			},
 			tests: {
-				src: ["Assets/typings/**/*.d.ts", "../artifacts/ts/angular.unobtrusive.validation.d.ts", 'Assets/TestScripts/**/_module.ts', 'Assets/TestScripts/**/*.ts'],
+				src: ["Assets/typings/**/*.d.ts", "../typings/angular.unobtrusive.validation.d.ts", 'Assets/TestScripts/**/_module.ts', 'Assets/TestScripts/**/*.ts'],
 				out: 'wwwroot/Scripts/tests.js',
 				options: {
 					fast: 'never',
@@ -103,10 +115,10 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask("packageTypescripts:base", ['ts:base', 'uglify:scripts', 'copy:dedupe', 'clean:dedupe', 'clean:tsCleanup', 'copy:prepareExports']);
-	grunt.registerTask("packageTypescripts:templates", ['ts:templates1', 'ts:templates2', 'uglify:templates', 'copy:dedupe', 'clean:tsCleanup', 'copy:prepareExports']);
+	grunt.registerTask("packageTypescripts:base", ['ts:base', 'ts:base_release', 'uglify:scripts', 'clean:tsCleanup', 'copy:release', 'clean:release']);
+	grunt.registerTask("packageTypescripts:templates", ['ts:templates1', 'ts:templates2', 'ts:templates2_release', 'uglify:templates', 'clean:tsCleanup']);
 	grunt.registerTask("packageTypescripts:tests", ['ts:tests']);
-	grunt.registerTask("buildTypescripts", ['packageTypescripts:base', 'packageTypescripts:tests']);
+	grunt.registerTask("buildTypescripts", ['packageTypescripts:base', 'packageTypescripts:templates', 'packageTypescripts:tests']);
 	grunt.registerTask("default", ['watch']);
 	grunt.registerTask("afterBuild", ["buildTypescripts", "copy:tests"]);
 
