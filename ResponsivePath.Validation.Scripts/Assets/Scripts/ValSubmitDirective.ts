@@ -21,7 +21,7 @@
             });
 
             var watches = [
-                scope.$watch<boolean>(() => ctrl.$invalid, (newValue: boolean) => {
+                scope.$watch<boolean>(() => ctrl && ctrl.$invalid, (newValue: boolean) => {
                     if (newValue)
                         element.addClass('disabled');
                     else

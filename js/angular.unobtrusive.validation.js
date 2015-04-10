@@ -109,7 +109,7 @@ var ResponsivePath;
                             }
                         });
                         var watches = [
-                            scope.$watch(function () { return ctrl.$invalid; }, function (newValue) {
+                            scope.$watch(function () { return ctrl && ctrl.$invalid; }, function (newValue) {
                                 if (newValue)
                                     element.addClass('disabled');
                                 else
