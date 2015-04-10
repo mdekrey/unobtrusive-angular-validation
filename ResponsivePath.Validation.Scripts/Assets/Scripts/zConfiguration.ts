@@ -180,8 +180,7 @@
                 && (!options.parameters.regex || !!(new RegExp(options.parameters.regex).exec(val)));
         });
         validationProvider.addValidator("equalto",(val: string, options: OptionsAIP<NamedAttributes, EqualToInjected, EqualToParameters>) => {
-            if (!val)
-                return true;
+            // intentionally not passing for !val - MS's server-side validation does not require the [Required] attribute, so we won't require val-required, either.
             var prefix = getModelPrefix(options.attributes.name),
                 other = options.parameters.other,
                 fullOtherName = appendModelPrefix(other, prefix),

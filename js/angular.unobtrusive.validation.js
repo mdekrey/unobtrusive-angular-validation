@@ -689,8 +689,6 @@ var ResponsivePath;
                     return (!options.parameters.min || val.length >= parseInt(options.parameters.min)) && (!options.parameters.nonalphamin || nonalphamin(val, parseInt(options.parameters.nonalphamin))) && (!options.parameters.regex || !!(new RegExp(options.parameters.regex).exec(val)));
                 });
                 validationProvider.addValidator("equalto", function (val, options) {
-                    if (!val)
-                        return true;
                     var prefix = getModelPrefix(options.attributes.name), other = options.parameters.other, fullOtherName = appendModelPrefix(other, prefix), element = options.injected.validation.dataValue(options.scope, fullOtherName);
                     return element == val;
                 }, ['validation']);

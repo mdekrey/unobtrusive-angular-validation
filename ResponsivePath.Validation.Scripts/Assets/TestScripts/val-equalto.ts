@@ -45,19 +45,27 @@
 			expect(sce.getTrustedHtml(valScope.messages[fieldName]['equalto'])).to.equal(message);
 		}
 
-		it('passes a null value',() => {
+		it('fails a null value that does not match',() => {
 			scope.target = null;
 			scope.$digest();
 
-			isValid();
+            isInvalid();
 		});
 
-		it('passes an empty value',() => {
+        it('fails an empty value that does not match',() => {
 			scope.target = '';
 			scope.$digest();
 
-			isValid();
+            isInvalid();
 		});
+
+        it('passes an empty value that does match',() => {
+            scope.target = '';
+			scope.other = '';
+            scope.$digest();
+
+            isInvalid();
+        });
 
 		it('fails an incorrect value',() => {
 			scope.target = '0';
