@@ -158,7 +158,7 @@
             var scope: any = $rootScope.$new();
 
             var form = angular.element('<form />');
-            var valSummary = angular.element('<div class="validation-summary-valid" data-valmsg-summary="true" valmsg-summary-remove-duplicates="true"><ul><li style="display:none"></li></ul></div>');
+            var valSummary = angular.element('<div class="validation-summary-valid" data-valmsg-summary="true"><ul><li style="display:none"></li></ul></div>');
             form.append(valSummary);
             var element = angular.element('<input type="text" data-val="true" data-val-required="All fields are required" name="Personal.FirstName" ng-model="firstname" />');
             form.append(element);
