@@ -40,6 +40,7 @@
 
     export interface ScopeValidationState {
         cancelSuppress: boolean;
+        showValidationSummary: boolean;
         messages: ITrustedHtmlSet;
         data: IDotNetModel;
     }

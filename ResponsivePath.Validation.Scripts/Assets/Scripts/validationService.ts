@@ -16,7 +16,6 @@
         private $injector: ng.auto.IInjectorService;
         private $sce: IMySCEService;
         private getValidationType: (s: string) => ValidationType;
-        showValidationSummary: boolean = false;
 
         ensureValidation(scope: ng.IScope): ScopeValidationState {
             var state: ScopeValidationState = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {} };
@@ -59,6 +58,19 @@
             delete this.ensureValidation(scope).messages[dotNetName];
             delete this.ensureValidation(scope).data[dotNetName];
         }
+
+        showValidationSummary(scope: ng.IScope): boolean;
+        showValidationSummary(scope: ng.IScope, value: boolean): void;
+
+        showValidationSummary(scope: ng.IScope, value?: boolean): boolean {
+            if (value === undefined)
+                return this.ensureValidation(scope).showValidationSummary;
+            else {
+                this.ensureValidation(scope).showValidationSummary = value;
+                return;
+            }
+        }
+
 
 		static $inject = ['$injector','$sce','getValidationType'];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType) {

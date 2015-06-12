@@ -72,6 +72,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
     }
     interface ScopeValidationState {
         cancelSuppress: boolean;
+        showValidationSummary: boolean;
         messages: ITrustedHtmlSet;
         data: IDotNetModel;
     }
@@ -102,7 +103,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private $injector;
         private $sce;
         private getValidationType;
-        showValidationSummary: boolean;
         ensureValidation(scope: ng.IScope): ScopeValidationState;
         buildValidation(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetSetMessageArray;
@@ -110,6 +110,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         hasCancelledSuppress: (scope: ng.IScope) => boolean;
         cancelSuppress(scope: ng.IScope): void;
         clearDotNetName(scope: ng.IScope, dotNetName: string): void;
+        showValidationSummary(scope: ng.IScope): boolean;
+        showValidationSummary(scope: ng.IScope, value: boolean): void;
         static $inject: string[];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
     }

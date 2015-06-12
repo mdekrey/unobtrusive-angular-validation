@@ -101,11 +101,11 @@ var ResponsivePath;
                     this.require = '^?form';
                     this.link = function (scope, element, attrs, ctrl) {
                         element.on('click', function ($event) {
+                            _this.validation.showValidationSummary(scope, true);
+                            _this.validation.cancelSuppress(scope);
+                            scope.$digest();
                             if (ctrl.$invalid) {
                                 $event.preventDefault();
-                                _this.validation.showValidationSummary = true;
-                                _this.validation.cancelSuppress(scope);
-                                scope.$digest();
                             }
                         });
                         var watches = [
@@ -348,7 +348,7 @@ var ResponsivePath;
                         scope.validationSummary = [];
                         var parentScope = scope.$parent;
                         var update = function () {
-                            if (!_this.validation.showValidationSummary)
+                            if (!_this.validation.showValidationSummary(parentScope))
                                 return;
                             var rawHtml = [];
                             var merged = [];
@@ -379,7 +379,7 @@ var ResponsivePath;
                         };
                         var watches = [
                             parentScope.$watchCollection(_this.validation.messageArray, update),
-                            parentScope.$watch(function () { return _this.validation.showValidationSummary; }, update)
+                            parentScope.$watch(function () { return _this.validation.showValidationSummary(parentScope); }, update)
                         ];
                         element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
@@ -510,7 +510,6 @@ var ResponsivePath;
             var ValidationService = (function () {
                 function ValidationService($injector, $sce, getValidationType) {
                     var _this = this;
-                    this.showValidationSummary = false;
                     this.messageArray = function (scope, dotNetName, setter) {
                         if (dotNetName) {
                             if (setter !== undefined) {
@@ -554,6 +553,14 @@ var ResponsivePath;
                     var validation = this.ensureValidation(scope);
                     delete this.ensureValidation(scope).messages[dotNetName];
                     delete this.ensureValidation(scope).data[dotNetName];
+                };
+                ValidationService.prototype.showValidationSummary = function (scope, value) {
+                    if (value === undefined)
+                        return this.ensureValidation(scope).showValidationSummary;
+                    else {
+                        this.ensureValidation(scope).showValidationSummary = value;
+                        return;
+                    }
                 };
                 ValidationService.$inject = ['$injector', '$sce', 'getValidationType'];
                 return ValidationService;

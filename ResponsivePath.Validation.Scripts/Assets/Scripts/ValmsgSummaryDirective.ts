@@ -23,7 +23,7 @@
             scope.validationSummary = [];
 			var parentScope = scope.$parent;
 			var update = () => {
-                if (!this.validation.showValidationSummary) return;
+                if (!this.validation.showValidationSummary(parentScope)) return;
                 var rawHtml: string[] = [];
                 var merged: any[] = [];
                 // flatten the nested arrays into "merged"
@@ -55,7 +55,7 @@
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             var watches = [
 				parentScope.$watchCollection(this.validation.messageArray, update),
-				parentScope.$watch(() => this.validation.showValidationSummary, update)
+                parentScope.$watch(() => this.validation.showValidationSummary(parentScope), update)
 			];
 
             element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));

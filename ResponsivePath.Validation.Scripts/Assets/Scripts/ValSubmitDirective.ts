@@ -11,12 +11,12 @@
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl: ng.IFormController): void => {
             element.on('click', ($event) => {
+                // Cancels the suppression of validation messages, which reveals error classes, validation summaries, etc.
+                this.validation.showValidationSummary(scope, true);
+                this.validation.cancelSuppress(scope);
+                scope.$digest();
                 if (ctrl.$invalid) {
                     $event.preventDefault();
-                    this.validation.showValidationSummary = true;
-                    // Cancels the suppression of validation messages, which reveals error classes, validation summaries, etc.
-                    this.validation.cancelSuppress(scope);
-                    scope.$digest();
                 }
             });
 
