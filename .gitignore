@@ -27,3 +27,4 @@ packages/**/*
 **/artifacts
 *.tmp.txt
 **/Templates/**/Html/*.ts
+**/project.lock.json
