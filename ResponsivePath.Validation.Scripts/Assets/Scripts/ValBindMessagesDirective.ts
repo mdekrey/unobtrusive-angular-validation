@@ -4,7 +4,7 @@
         valBindMessages: string;
     }
 
-    interface IBoundMessage {
+    export interface IBoundMessage {
         memberName: string;
         text: string;
     }
