@@ -337,7 +337,7 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var ValmsgSummaryDirective = (function () {
-                function ValmsgSummaryDirective(validation) {
+                function ValmsgSummaryDirective(validation, $sce) {
                     var _this = this;
                     this.restrict = 'A';
                     this.scope = {};
@@ -350,13 +350,16 @@ var ResponsivePath;
                         var update = function () {
                             if (!_this.validation.showValidationSummary)
                                 return;
+                            var rawHtml = [];
                             var merged = [];
                             var obj = _this.validation.messageArray(parentScope);
                             angular.forEach(obj, function (value, key) {
                                 if (obj.hasOwnProperty(key)) {
                                     scope.started = true;
                                     angular.forEach(value, function (innerValue) {
-                                        if (innerValue && merged.indexOf(innerValue) == -1) {
+                                        var rawValue = _this.sce.getTrustedHtml(innerValue);
+                                        if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
+                                            rawHtml.push(rawValue);
                                             merged.push(innerValue);
                                         }
                                     });
@@ -381,12 +384,13 @@ var ResponsivePath;
                         element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
                     this.validation = validation;
+                    this.sce = $sce;
                 }
                 ValmsgSummaryDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValmsgSummaryDirective(validation);
+                    var result = function (validation, $sce) {
+                        return new ValmsgSummaryDirective(validation, $sce);
                     };
-                    result.$inject = ['validation'];
+                    result.$inject = ['validation', '$sce'];
                     return result;
                 })();
                 return ValmsgSummaryDirective;

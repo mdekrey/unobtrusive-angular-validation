@@ -152,6 +152,46 @@
 			expect(valSummary[0].innerText).to.not.contain('You must provide a first name');
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(true);
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(false);
-		}));
+        }));
+
+        it('removes duplicate messages',() => inject(($rootScope: angular.IRootScopeService) => {
+            var scope: any = $rootScope.$new();
+
+            var form = angular.element('<form />');
+            var valSummary = angular.element('<div class="validation-summary-valid" data-valmsg-summary="true" valmsg-summary-remove-duplicates="true"><ul><li style="display:none"></li></ul></div>');
+            form.append(valSummary);
+            var element = angular.element('<input type="text" data-val="true" data-val-required="All fields are required" name="Personal.FirstName" ng-model="firstname" />');
+            form.append(element);
+            element = angular.element('<input type="text" data-val="true" data-val-required="All fields are required" name="Personal.LastName" ng-model="lastname" />');
+            form.append(element);
+            var valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
+            form.append(valSubmit);
+            compile(form)(scope);
+
+            scope.firstname = null;
+            scope.lastname = null;
+            scope.$digest();
+            valSubmit[0].click();
+
+            expect(valSummary[0].innerText).to.contain('All fields are required');
+            expect(valSummary[0].innerText).not.to.contain('All fields are requiredAll fields are required');
+            expect(valSummary[0].innerText).not.to.contain('All fields are required All fields are required');
+            expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
+            expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
+
+            scope.firstname = 'Matt';
+            scope.$digest();
+
+            expect(valSummary[0].innerText).to.contain('All fields are required');
+            expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
+            expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
+
+            scope.lastname = 'Matt';
+            scope.$digest();
+
+            expect(valSummary[0].innerText).not.to.contain('All fields are required');
+            expect(valSummary.hasClass('validation-summary-valid')).to.be(true);
+            expect(valSummary.hasClass('validation-summary-errors')).to.be(false);
+        }));
 	});
 }

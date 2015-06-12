@@ -2,6 +2,10 @@ declare module ResponsivePath.Validation.Unobtrusive {
     var mod: ng.IModule;
 }
 declare module ResponsivePath.Validation.Unobtrusive {
+    interface IBoundMessage {
+        memberName: string;
+        text: string;
+    }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
 }
