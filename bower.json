@@ -1,6 +1,6 @@
 {
   "name": "angular-validation-unobtrusive",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": [
     "js/angular.unobtrusive.validation.js",
     "js/angular.unobtrusive.validation.tpls.js"

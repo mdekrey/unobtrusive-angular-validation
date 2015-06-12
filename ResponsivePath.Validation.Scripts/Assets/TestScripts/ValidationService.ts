@@ -48,9 +48,20 @@
 			it('allows validation suppress cancellation',() => inject(($rootScope: angular.IRootScopeService) => {
 				var scope = $rootScope.$new();
 
-				validation.cancelSuppress(scope);
+                validation.cancelSuppress(scope);
+                scope.$digest();
 				expect(validation.hasCancelledSuppress(scope)).to.be(true);
-			}));	
+            }));
+
+            it('cancels supression for child scopes, too',() => inject(($rootScope: angular.IRootScopeService) => {
+                var scope = $rootScope.$new();
+                var childScope = scope.$new();
+                validation.ensureValidation(childScope);
+
+                validation.cancelSuppress(scope);
+                scope.$digest();
+                expect(validation.hasCancelledSuppress(childScope)).to.be(true);
+            }));	
 		});
 
 		describe('Getters/setters',() => {
