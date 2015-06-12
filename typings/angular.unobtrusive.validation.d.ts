@@ -110,8 +110,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         hasCancelledSuppress: (scope: ng.IScope) => boolean;
         cancelSuppress(scope: ng.IScope): void;
         clearDotNetName(scope: ng.IScope, dotNetName: string): void;
-        showValidationSummary(scope: ng.IScope): boolean;
-        showValidationSummary(scope: ng.IScope, value: boolean): void;
+        validationSummaryVisible(scope: ng.IScope): boolean;
+        validationSummaryVisible(scope: ng.IScope, value: boolean): void;
         static $inject: string[];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
     }

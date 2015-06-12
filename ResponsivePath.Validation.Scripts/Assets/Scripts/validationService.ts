@@ -1,5 +1,7 @@
 ﻿module ResponsivePath.Validation.Unobtrusive {
     var cancelSuppressionEvent = 'unobtrusiveValidation-supression-cancel';
+    var showValidationSummaryEvent = 'unobtrusiveValidation-summary-show';
+    var hideValidationSummaryEvent = 'unobtrusiveValidation-summary-hide';
 
     export interface GetSetMessageArray {
         (scope: ng.IScope): ITrustedHtmlSet;
@@ -18,9 +20,15 @@
         private getValidationType: (s: string) => ValidationType;
 
         ensureValidation(scope: ng.IScope): ScopeValidationState {
-            var state: ScopeValidationState = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {} };
+            var state: ScopeValidationState = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {}, showValidationSummary: false };
             scope.$on(cancelSuppressionEvent,(event) => {
                 state.cancelSuppress = true;
+            });
+            scope.$on(showValidationSummaryEvent,(event) => {
+                state.showValidationSummary = true;
+            });
+            scope.$on(hideValidationSummaryEvent,(event) => {
+                state.showValidationSummary = false;
             });
             scope['$$ validation'] = state;
             return state;
@@ -59,18 +67,20 @@
             delete this.ensureValidation(scope).data[dotNetName];
         }
 
-        showValidationSummary(scope: ng.IScope): boolean;
-        showValidationSummary(scope: ng.IScope, value: boolean): void;
+        validationSummaryVisible(scope: ng.IScope): boolean;
+        validationSummaryVisible(scope: ng.IScope, value: boolean): void;
 
-        showValidationSummary(scope: ng.IScope, value?: boolean): boolean {
+        validationSummaryVisible(scope: ng.IScope, value?: boolean): boolean {
             if (value === undefined)
                 return this.ensureValidation(scope).showValidationSummary;
             else {
                 this.ensureValidation(scope).showValidationSummary = value;
-                return;
+                if (value)
+                    scope.$broadcast(showValidationSummaryEvent);
+                else
+                    scope.$broadcast(hideValidationSummaryEvent);
             }
         }
-
 
 		static $inject = ['$injector','$sce','getValidationType'];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType) {

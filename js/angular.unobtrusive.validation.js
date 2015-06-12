@@ -101,8 +101,8 @@ var ResponsivePath;
                     this.require = '^?form';
                     this.link = function (scope, element, attrs, ctrl) {
                         element.on('click', function ($event) {
-                            _this.validation.showValidationSummary(scope, true);
                             _this.validation.cancelSuppress(scope);
+                            _this.validation.validationSummaryVisible(scope, true);
                             scope.$digest();
                             if (ctrl.$invalid) {
                                 $event.preventDefault();
@@ -348,7 +348,7 @@ var ResponsivePath;
                         scope.validationSummary = [];
                         var parentScope = scope.$parent;
                         var update = function () {
-                            if (!_this.validation.showValidationSummary(parentScope))
+                            if (!_this.validation.validationSummaryVisible(parentScope))
                                 return;
                             var rawHtml = [];
                             var merged = [];
@@ -379,7 +379,7 @@ var ResponsivePath;
                         };
                         var watches = [
                             parentScope.$watchCollection(_this.validation.messageArray, update),
-                            parentScope.$watch(function () { return _this.validation.showValidationSummary(parentScope); }, update)
+                            parentScope.$watch(function () { return _this.validation.validationSummaryVisible(parentScope); }, update)
                         ];
                         element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
@@ -507,6 +507,8 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var cancelSuppressionEvent = 'unobtrusiveValidation-supression-cancel';
+            var showValidationSummaryEvent = 'unobtrusiveValidation-summary-show';
+            var hideValidationSummaryEvent = 'unobtrusiveValidation-summary-hide';
             var ValidationService = (function () {
                 function ValidationService($injector, $sce, getValidationType) {
                     var _this = this;
@@ -535,9 +537,15 @@ var ResponsivePath;
                     this.getValidationType = getValidationType;
                 }
                 ValidationService.prototype.ensureValidation = function (scope) {
-                    var state = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {} };
+                    var state = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {}, showValidationSummary: false };
                     scope.$on(cancelSuppressionEvent, function (event) {
                         state.cancelSuppress = true;
+                    });
+                    scope.$on(showValidationSummaryEvent, function (event) {
+                        state.showValidationSummary = true;
+                    });
+                    scope.$on(hideValidationSummaryEvent, function (event) {
+                        state.showValidationSummary = false;
                     });
                     scope['$$ validation'] = state;
                     return state;
@@ -554,12 +562,15 @@ var ResponsivePath;
                     delete this.ensureValidation(scope).messages[dotNetName];
                     delete this.ensureValidation(scope).data[dotNetName];
                 };
-                ValidationService.prototype.showValidationSummary = function (scope, value) {
+                ValidationService.prototype.validationSummaryVisible = function (scope, value) {
                     if (value === undefined)
                         return this.ensureValidation(scope).showValidationSummary;
                     else {
                         this.ensureValidation(scope).showValidationSummary = value;
-                        return;
+                        if (value)
+                            scope.$broadcast(showValidationSummaryEvent);
+                        else
+                            scope.$broadcast(hideValidationSummaryEvent);
                     }
                 };
                 ValidationService.$inject = ['$injector', '$sce', 'getValidationType'];
