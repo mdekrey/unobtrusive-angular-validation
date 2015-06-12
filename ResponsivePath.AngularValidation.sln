@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22609.0
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponsivePath.Validation.Web", "ResponsivePath.Validation.Web\ResponsivePath.Validation.Web.csproj", "{6FBA3033-C11A-4F9A-A211-DF2DF96C6706}"
 EndProject
@@ -19,12 +19,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D99F8B08-5CA8-4768-9B51-23D49FCF805D}"
 	ProjectSection(SolutionItems) = preProject
 		bower.json = bower.json
+		global.json = global.json
 		package.bat = package.bat
 		README.md = README.md
 		ResponsivePath.Validation.UnobtrusiveAngular.nuspec = ResponsivePath.Validation.UnobtrusiveAngular.nuspec
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ResponsivePath.Validation.Scripts", "ResponsivePath.Validation.Scripts\ResponsivePath.Validation.Scripts.kproj", "{9705FD36-9B1D-48CA-85C8-153F69DB37E7}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ResponsivePath.Validation.Scripts", "ResponsivePath.Validation.Scripts\ResponsivePath.Validation.Scripts.xproj", "{9705FD36-9B1D-48CA-85C8-153F69DB37E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

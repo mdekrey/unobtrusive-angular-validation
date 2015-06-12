@@ -9,14 +9,9 @@ namespace ResponsivePath.Validation.Scripts
 {
     public class Startup
     {
-        // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
-
         public void Configure(IApplicationBuilder app)
         {
-			var webRoot = System.IO.Path.Combine(app.ApplicationServices.GetRequiredService<IHostingEnvironment>().WebRoot, "..");
+			var webRoot = System.IO.Path.Combine(app.ApplicationServices.GetRequiredService<IHostingEnvironment>().WebRootPath, "..");
 
 			app.UseStaticFiles();
 			app.UseStaticFiles(new StaticFileOptions
