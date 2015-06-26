@@ -29,6 +29,7 @@ packages/**/*
 **/Templates/**/Html/*.ts
 **/project.lock.json
 
+.idea
 components
 ResponsivePath.*
 *.bat
