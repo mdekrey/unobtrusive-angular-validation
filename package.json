@@ -1,6 +1,6 @@
 {
   "name": "angular-validation-unobtrusive",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Unobtrusive validation for angular.js without jQuery dependencies",
   "author": "Matt DeKrey <mattdekrey@gmail.com>",
   "homepage": "https://github.com/mdekrey/unobtrusive-angular-validation",
