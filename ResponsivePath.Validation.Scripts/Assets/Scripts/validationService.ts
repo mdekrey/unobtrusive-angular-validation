@@ -21,18 +21,23 @@
 
         ensureValidation(scope: ng.IScope): ScopeValidationState {
             var state: ScopeValidationState = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {}, showValidationSummary: false };
-            scope.$on(cancelSuppressionEvent,(event) => {
+            scope.$on(cancelSuppressionEvent, (event) => {
                 state.cancelSuppress = true;
             });
-            scope.$on(showValidationSummaryEvent,(event) => {
+            scope.$on(showValidationSummaryEvent, (event) => {
                 state.showValidationSummary = true;
             });
-            scope.$on(hideValidationSummaryEvent,(event) => {
+            scope.$on(hideValidationSummaryEvent, (event) => {
                 state.showValidationSummary = false;
             });
             scope['$$ validation'] = state;
             return state;
         }
+
+        getValidation(validationType: string): ValidationType {
+            return angular.copy(this.getValidationType(validationType));
+        }
+
         buildValidation(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController) {
             return new ValidationTools(attrs, ngModelController, this, scope, this.$injector, this.$sce, this.getValidationType);
         }
@@ -82,7 +87,7 @@
             }
         }
 
-		static $inject = ['$injector','$sce','getValidationType'];
+        static $inject = ['$injector', '$sce', 'getValidationType'];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType) {
             this.$injector = $injector;
             this.$sce = $sce;

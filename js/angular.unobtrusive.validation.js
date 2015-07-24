@@ -459,19 +459,20 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
-            var validationTypes = {};
             var ValidationProvider = (function () {
                 function ValidationProvider() {
+                    this.validationTypes = {};
                     this.$get.$inject = ['$injector'];
                 }
                 ValidationProvider.prototype.getValidationType = function (validatorName) {
-                    return validationTypes[validatorName];
+                    return this.validationTypes[validatorName];
                 };
                 ValidationProvider.prototype.addValidator = function (validatorName, validate, inject) {
-                    validationTypes[validatorName] = { validate: validate, inject: inject || [] };
+                    this.validationTypes[validatorName] = { validate: validate, inject: inject || [] };
                 };
                 ValidationProvider.prototype.$get = function ($injector) {
-                    return $injector.instantiate(Unobtrusive.ValidationService, { 'getValidationType': this.getValidationType });
+                    var _this = this;
+                    return $injector.instantiate(Unobtrusive.ValidationService, { 'getValidationType': function (validatorName) { return _this.getValidationType(validatorName); } });
                 };
                 ValidationProvider.$inject = [];
                 return ValidationProvider;
@@ -530,6 +531,9 @@ var ResponsivePath;
                     });
                     scope['$$ validation'] = state;
                     return state;
+                };
+                ValidationService.prototype.getValidation = function (validationType) {
+                    return angular.copy(this.getValidationType(validationType));
                 };
                 ValidationService.prototype.buildValidation = function (scope, element, attrs, ngModelController) {
                     return new Unobtrusive.ValidationTools(attrs, ngModelController, this, scope, this.$injector, this.$sce, this.getValidationType);

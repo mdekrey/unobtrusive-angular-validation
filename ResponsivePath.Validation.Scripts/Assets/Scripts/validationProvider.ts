@@ -3,19 +3,20 @@
     interface ValidationTypeCollection {
         [index: string]: ValidationType;
     }
-
-    var validationTypes: ValidationTypeCollection = {};
+    
     export class ValidationProvider implements ng.IServiceProvider {
+        private validationTypes: ValidationTypeCollection = {};
+
         getValidationType(validatorName: string): ValidationType {
-            return validationTypes[validatorName];
+            return this.validationTypes[validatorName];
         }
 
         addValidator(validatorName: string, validate: ValidateMethod, inject?: string[]) {
-            validationTypes[validatorName] = { validate: validate, inject: inject || [] };
+            this.validationTypes[validatorName] = { validate: validate, inject: inject || [] };
         }
 
         $get($injector: ng.auto.IInjectorService): ValidationService {
-            return $injector.instantiate(ValidationService, { 'getValidationType': this.getValidationType });
+            return $injector.instantiate(ValidationService, { 'getValidationType': (validatorName: string) => this.getValidationType(validatorName) });
         }
 
         private static $inject: string[] = [];

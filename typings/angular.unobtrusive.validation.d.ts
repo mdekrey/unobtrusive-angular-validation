@@ -88,6 +88,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
     class ValidationProvider implements ng.IServiceProvider {
+        private validationTypes;
         getValidationType(validatorName: string): ValidationType;
         addValidator(validatorName: string, validate: ValidateMethod, inject?: string[]): void;
         $get($injector: ng.auto.IInjectorService): ValidationService;
@@ -111,6 +112,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private $sce;
         private getValidationType;
         ensureValidation(scope: ng.IScope): ScopeValidationState;
+        getValidation(validationType: string): ValidationType;
         buildValidation(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetSetMessageArray;
         dataValue: GetSetDotNetValue;
