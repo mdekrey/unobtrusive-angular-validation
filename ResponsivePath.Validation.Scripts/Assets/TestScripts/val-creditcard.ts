@@ -28,13 +28,13 @@
 			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('creditcard');
-		}
+        function isValid() {
+            expect(valScope.messages[fieldName]).not.to.have.key('creditcard');
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['creditcard'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect(sce.getTrustedHtml(valScope.messages[fieldName]['creditcard'])).to.equal(message);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;

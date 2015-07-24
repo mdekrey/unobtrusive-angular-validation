@@ -3,9 +3,9 @@
     class ValSubmitDirective {
         restrict: string = 'A';
         require: string = '^?form';
-        private validation: ValidationService;
 
-        constructor(validation: ValidationService) {
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
             this.validation = validation;
         }
 
@@ -34,17 +34,7 @@
                     watches[key]();
             });
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValSubmitDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
 
-    mod.directive('valSubmit', ValSubmitDirective.Factory);
+    mod.directive('valSubmit', constructorAsInjectable(ValSubmitDirective));
 }

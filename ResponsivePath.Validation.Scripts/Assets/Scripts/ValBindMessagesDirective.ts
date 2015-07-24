@@ -15,14 +15,9 @@
 
     class ValBindMessagesDirective {
         restrict: string = 'A';
-        private validation: ValidationService;
-        private $parse: ng.IParseService;
-        private $sce: IMySCEService
-
-        constructor(validation: ValidationService, $parse: ng.IParseService, $sce: IMySCEService) {
-            this.validation = validation;
-            this.$parse = $parse;
-            this.$sce = $sce;
+        
+        private static $inject = ['validation', '$parse', '$sce'];
+        constructor(private validation: ValidationService, private $parse: ng.IParseService, private $sce: IMySCEService) {
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: BindMessagesAttributes): void => {
@@ -32,6 +27,7 @@
                 scope.$watchCollection(attrs.valBindMessages,(newValue: IBoundMessage) => {
                     var validationScopeState = this.validation.ensureValidation(scope);
                     var target: ITrustedHtmlUnnamedSet = {};
+
                     // ultimately, this is unsafe, but this is a pure conversion...
                     // we don't use the keys for the validation type here, so it is just an array. This still gets forEach'd later, which still works.
                     validationScopeState.messages = <ITrustedHtmlSet><Object>target;
@@ -47,17 +43,8 @@
                 (<ng.IAngularStatic>angular).forEach(disposeWatch, (d) => d());
             });
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService, $parse: ng.IParseService, $sce: IMySCEService) => {
-                return new ValBindMessagesDirective(validation, $parse, $sce);
-            };
-
-            result.$inject = ['validation', '$parse', '$sce'];
-
-            return result;
-        })();
+        
     }
 
-    mod.directive('valBindMessages', ValBindMessagesDirective.Factory);
+    mod.directive('valBindMessages', constructorAsInjectable(ValBindMessagesDirective));
 }

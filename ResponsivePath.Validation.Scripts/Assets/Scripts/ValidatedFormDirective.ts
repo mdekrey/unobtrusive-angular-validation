@@ -2,9 +2,9 @@
 
     class ValidatedFormDirective {
         restrict: string = 'E';
-        private validation: ValidationService;
 
-        constructor(validation: ValidationService) {
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
             this.validation = validation;
         }
 
@@ -13,17 +13,7 @@
             // at an inner level, such as an ng-if.
             this.validation.ensureValidation(scope);
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValidatedFormDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
 
-    mod.directive('form', ValidatedFormDirective.Factory);
+    mod.directive('form', constructorAsInjectable(ValidatedFormDirective));
 }

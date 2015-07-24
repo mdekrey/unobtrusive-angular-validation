@@ -18,14 +18,12 @@
             return $injector.instantiate(ValidationService, { 'getValidationType': this.getValidationType });
         }
 
+        private static $inject: string[] = [];
         constructor() {
             this.$get.$inject = ['$injector'];
         }
-
-        static Factory: ng.IServiceProviderFactory = () => {
-            return new ValidationProvider();
-        }
+        
     }
 
-    mod.provider('validation', ValidationProvider.Factory);
+    mod.provider('validation', constructorAsInjectable(ValidationProvider));
 }

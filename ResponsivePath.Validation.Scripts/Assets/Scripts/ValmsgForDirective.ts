@@ -13,10 +13,9 @@
         };
         templateUrl: string = 'templates/angular-unobtrusive-validation/valmsgFor.html';
         transclude: boolean = true;
-        private validation: ValidationService;
 
-        constructor(validation: ValidationService) {
-            this.validation = validation;
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
         }
 
         link = (scope: ValForScope, element: ng.IAugmentedJQuery): void => {
@@ -43,17 +42,8 @@
 
             element.on('$destroy', () => watch());
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValmsgForDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
+        
     }
 
-    mod.directive('valmsgFor', ValmsgForDirective.Factory);
+    mod.directive('valmsgFor', constructorAsInjectable(ValmsgForDirective));
 } 

@@ -5,10 +5,9 @@
 
     class ValErrorDirective {
         restrict: string = 'A';
-        private validation: ValidationService;
 
-        constructor(validation: ValidationService) {
-            this.validation = validation;
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ErrorAttributes): void => {
@@ -23,17 +22,7 @@
 
             element.on('$destroy',() => disposeWatch());
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValErrorDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
 
-    mod.directive('valError', ValErrorDirective.Factory);
+    mod.directive('valError', constructorAsInjectable(ValErrorDirective));
 }

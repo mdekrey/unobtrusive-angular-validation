@@ -4,6 +4,29 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
+            function constructorAsInjectable(targetClass) {
+                var result = function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i - 0] = arguments[_i];
+                    }
+                    var obj = Object.create(targetClass.prototype);
+                    targetClass.apply(obj, args);
+                    return obj;
+                };
+                result.$inject = targetClass.$inject;
+                return result;
+            }
+            Unobtrusive.constructorAsInjectable = constructorAsInjectable;
+        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
+    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
+})(ResponsivePath || (ResponsivePath = {}));
+var ResponsivePath;
+(function (ResponsivePath) {
+    var Validation;
+    (function (Validation) {
+        var Unobtrusive;
+        (function (Unobtrusive) {
             Unobtrusive.mod = angular.module('unobtrusive.validation', []);
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
@@ -17,6 +40,9 @@ var ResponsivePath;
             var ValBindMessagesDirective = (function () {
                 function ValBindMessagesDirective(validation, $parse, $sce) {
                     var _this = this;
+                    this.validation = validation;
+                    this.$parse = $parse;
+                    this.$sce = $sce;
                     this.restrict = 'A';
                     this.link = function (scope, element, attrs) {
                         var model = _this.$parse(attrs['valBindMessages']);
@@ -35,20 +61,11 @@ var ResponsivePath;
                             angular.forEach(disposeWatch, function (d) { return d(); });
                         });
                     };
-                    this.validation = validation;
-                    this.$parse = $parse;
-                    this.$sce = $sce;
                 }
-                ValBindMessagesDirective.Factory = (function () {
-                    var result = function (validation, $parse, $sce) {
-                        return new ValBindMessagesDirective(validation, $parse, $sce);
-                    };
-                    result.$inject = ['validation', '$parse', '$sce'];
-                    return result;
-                })();
+                ValBindMessagesDirective.$inject = ['validation', '$parse', '$sce'];
                 return ValBindMessagesDirective;
             })();
-            Unobtrusive.mod.directive('valBindMessages', ValBindMessagesDirective.Factory);
+            Unobtrusive.mod.directive('valBindMessages', Unobtrusive.constructorAsInjectable(ValBindMessagesDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -61,6 +78,7 @@ var ResponsivePath;
             var ValErrorDirective = (function () {
                 function ValErrorDirective(validation) {
                     var _this = this;
+                    this.validation = validation;
                     this.restrict = 'A';
                     this.link = function (scope, element, attrs) {
                         var disposeWatch = scope.$watchCollection(function () { return _this.validation.messageArray(scope, attrs['valError']); }, function (newValue) {
@@ -73,18 +91,11 @@ var ResponsivePath;
                         });
                         element.on('$destroy', function () { return disposeWatch(); });
                     };
-                    this.validation = validation;
                 }
-                ValErrorDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValErrorDirective(validation);
-                    };
-                    result.$inject = ['validation'];
-                    return result;
-                })();
+                ValErrorDirective.$inject = ['validation'];
                 return ValErrorDirective;
             })();
-            Unobtrusive.mod.directive('valError', ValErrorDirective.Factory);
+            Unobtrusive.mod.directive('valError', Unobtrusive.constructorAsInjectable(ValErrorDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -97,6 +108,7 @@ var ResponsivePath;
             var ValSubmitDirective = (function () {
                 function ValSubmitDirective(validation) {
                     var _this = this;
+                    this.validation = validation;
                     this.restrict = 'A';
                     this.require = '^?form';
                     this.link = function (scope, element, attrs, ctrl) {
@@ -123,16 +135,10 @@ var ResponsivePath;
                     };
                     this.validation = validation;
                 }
-                ValSubmitDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValSubmitDirective(validation);
-                    };
-                    result.$inject = ['validation'];
-                    return result;
-                })();
+                ValSubmitDirective.$inject = ['validation'];
                 return ValSubmitDirective;
             })();
-            Unobtrusive.mod.directive('valSubmit', ValSubmitDirective.Factory);
+            Unobtrusive.mod.directive('valSubmit', Unobtrusive.constructorAsInjectable(ValSubmitDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -145,22 +151,17 @@ var ResponsivePath;
             var ValidatedFormDirective = (function () {
                 function ValidatedFormDirective(validation) {
                     var _this = this;
+                    this.validation = validation;
                     this.restrict = 'E';
                     this.link = function (scope) {
                         _this.validation.ensureValidation(scope);
                     };
                     this.validation = validation;
                 }
-                ValidatedFormDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValidatedFormDirective(validation);
-                    };
-                    result.$inject = ['validation'];
-                    return result;
-                })();
+                ValidatedFormDirective.$inject = ['validation'];
                 return ValidatedFormDirective;
             })();
-            Unobtrusive.mod.directive('form', ValidatedFormDirective.Factory);
+            Unobtrusive.mod.directive('form', Unobtrusive.constructorAsInjectable(ValidatedFormDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -288,6 +289,7 @@ var ResponsivePath;
             var ValmsgForDirective = (function () {
                 function ValmsgForDirective(validation) {
                     var _this = this;
+                    this.validation = validation;
                     this.restrict = 'A';
                     this.scope = {
                         valmsgFor: '@'
@@ -315,18 +317,11 @@ var ResponsivePath;
                         });
                         element.on('$destroy', function () { return watch(); });
                     };
-                    this.validation = validation;
                 }
-                ValmsgForDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValmsgForDirective(validation);
-                    };
-                    result.$inject = ['validation'];
-                    return result;
-                })();
+                ValmsgForDirective.$inject = ['validation'];
                 return ValmsgForDirective;
             })();
-            Unobtrusive.mod.directive('valmsgFor', ValmsgForDirective.Factory);
+            Unobtrusive.mod.directive('valmsgFor', Unobtrusive.constructorAsInjectable(ValmsgForDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -337,8 +332,10 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var ValmsgSummaryDirective = (function () {
-                function ValmsgSummaryDirective(validation, $sce) {
+                function ValmsgSummaryDirective(validation, sce) {
                     var _this = this;
+                    this.validation = validation;
+                    this.sce = sce;
                     this.restrict = 'A';
                     this.scope = {};
                     this.templateUrl = 'templates/angular-unobtrusive-validation/valmsgSummary.html';
@@ -383,19 +380,11 @@ var ResponsivePath;
                         ];
                         element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
-                    this.validation = validation;
-                    this.sce = $sce;
                 }
-                ValmsgSummaryDirective.Factory = (function () {
-                    var result = function (validation, $sce) {
-                        return new ValmsgSummaryDirective(validation, $sce);
-                    };
-                    result.$inject = ['validation', '$sce'];
-                    return result;
-                })();
+                ValmsgSummaryDirective.$inject = ['validation', '$sce'];
                 return ValmsgSummaryDirective;
             })();
-            Unobtrusive.mod.directive('valmsgSummary', ValmsgSummaryDirective.Factory);
+            Unobtrusive.mod.directive('valmsgSummary', Unobtrusive.constructorAsInjectable(ValmsgSummaryDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -408,6 +397,7 @@ var ResponsivePath;
             var ValDirective = (function () {
                 function ValDirective(validation) {
                     var _this = this;
+                    this.validation = validation;
                     this.restrict = 'A';
                     this.require = 'ngModel';
                     this.link = function (scope, element, attrs, ngModelController) {
@@ -455,18 +445,11 @@ var ResponsivePath;
                             });
                         }
                     };
-                    this.validation = validation;
                 }
-                ValDirective.Factory = (function () {
-                    var result = function (validation) {
-                        return new ValDirective(validation);
-                    };
-                    result.$inject = ['validation'];
-                    return result;
-                })();
+                ValDirective.$inject = ['validation'];
                 return ValDirective;
             })();
-            Unobtrusive.mod.directive('val', ValDirective.Factory);
+            Unobtrusive.mod.directive('val', Unobtrusive.constructorAsInjectable(ValDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -490,13 +473,11 @@ var ResponsivePath;
                 ValidationProvider.prototype.$get = function ($injector) {
                     return $injector.instantiate(Unobtrusive.ValidationService, { 'getValidationType': this.getValidationType });
                 };
-                ValidationProvider.Factory = function () {
-                    return new ValidationProvider();
-                };
+                ValidationProvider.$inject = [];
                 return ValidationProvider;
             })();
             Unobtrusive.ValidationProvider = ValidationProvider;
-            Unobtrusive.mod.provider('validation', ValidationProvider.Factory);
+            Unobtrusive.mod.provider('validation', Unobtrusive.constructorAsInjectable(ValidationProvider));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));

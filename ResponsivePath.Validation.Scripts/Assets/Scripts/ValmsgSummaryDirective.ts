@@ -10,12 +10,9 @@
         scope: any = {};
         templateUrl: string = 'templates/angular-unobtrusive-validation/valmsgSummary.html';
         transclude: boolean = true;
-        private validation: ValidationService;
-        private sce: ng.ISCEService;
 
-        constructor(validation: ValidationService, $sce: ng.ISCEService) {
-            this.validation = validation;
-            this.sce = $sce;
+        private static $inject = ['validation', '$sce'];
+        constructor(private validation: ValidationService, private sce: ng.ISCEService) {
         }
 
         link = (scope: SummaryScope, element: ng.IAugmentedJQuery): void => {
@@ -60,17 +57,7 @@
 
             element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService, $sce: ng.ISCEService) => {
-                return new ValmsgSummaryDirective(validation, $sce);
-            };
-
-            result.$inject = ['validation', '$sce'];
-
-            return result;
-        })();
     }
 
-    mod.directive('valmsgSummary', ValmsgSummaryDirective.Factory);
+    mod.directive('valmsgSummary', constructorAsInjectable(ValmsgSummaryDirective));
 }

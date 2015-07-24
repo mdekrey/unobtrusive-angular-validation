@@ -3,10 +3,9 @@
     class ValDirective {
         restrict: string = 'A';
         require: string = 'ngModel';
-        private validation: ValidationService;
 		
-        constructor(validation: ValidationService) {
-            this.validation = validation;
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): void => {
@@ -68,17 +67,7 @@
                 });
             }
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
-    
-    mod.directive('val', ValDirective.Factory);
+
+    mod.directive('val', constructorAsInjectable(ValDirective));
 }

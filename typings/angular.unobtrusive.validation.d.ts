@@ -1,4 +1,11 @@
 declare module ResponsivePath.Validation.Unobtrusive {
+    function constructorAsInjectable<T>(targetClass: {
+        new (...args: any[]): T;
+    }): {
+        (...args: any[]): T;
+    };
+}
+declare module ResponsivePath.Validation.Unobtrusive {
     var mod: ng.IModule;
 }
 declare module ResponsivePath.Validation.Unobtrusive {
@@ -84,8 +91,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         getValidationType(validatorName: string): ValidationType;
         addValidator(validatorName: string, validate: ValidateMethod, inject?: string[]): void;
         $get($injector: ng.auto.IInjectorService): ValidationService;
+        private static $inject;
         constructor();
-        static Factory: ng.IServiceProviderFactory;
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
