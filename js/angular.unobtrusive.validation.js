@@ -89,6 +89,7 @@ var ResponsivePath;
                             scope.$digest();
                             if (ctrl.$invalid) {
                                 $event.preventDefault();
+                                ctrl.$setSubmitted();
                             }
                         });
                         var watches = [
@@ -233,21 +234,16 @@ var ResponsivePath;
                     this.link = function (scope, element, attrs, controller) {
                         var modelController = controller[scope.valmsgFor];
                         scope.$parent.$watchCollection(function () {
-                            return modelController.$invalid && _this.validation.messageArray(controller, scope.valmsgFor);
+                            return modelController.$invalid && _this.validation.activeMessageArray(controller, scope.valmsgFor);
                         }, function (newValue) {
                             if (!newValue) {
+                                scope.messages = {};
                                 element.addClass('field-validation-valid');
                                 element.removeClass('field-validation-error');
                                 return;
                             }
-                            var result = {};
-                            angular.forEach(modelController.$error, function (value, key) {
-                                if (value && newValue[key]) {
-                                    result[key] = newValue[key];
-                                }
-                            });
-                            scope.messages = result;
-                            if (newValue && !Object.keys(newValue).length) {
+                            scope.messages = newValue;
+                            if (newValue && !_.any(newValue)) {
                                 element.addClass('field-validation-valid');
                                 element.removeClass('field-validation-error');
                             }
@@ -273,13 +269,48 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValmsgSummaryDirective = (function () {
                 function ValmsgSummaryDirective(validation, sce) {
+                    var _this = this;
                     this.validation = validation;
                     this.sce = sce;
                     this.restrict = 'A';
                     this.scope = {};
                     this.templateUrl = 'templates/angular-unobtrusive-validation/valmsgSummary.html';
                     this.transclude = true;
-                    this.link = function (scope, element) {
+                    this.require = '^form';
+                    this.link = function (scope, element, attrs, controller) {
+                        scope.validationSummary = [];
+                        scope.submitted = false;
+                        var parentScope = scope.$parent;
+                        var update = function () {
+                            var rawHtml = [];
+                            var merged = [];
+                            var obj = _this.validation.activeMessageArray(controller);
+                            angular.forEach(obj, function (value, key) {
+                                if (obj.hasOwnProperty(key)) {
+                                    angular.forEach(value, function (innerValue) {
+                                        var rawValue = _this.sce.getTrustedHtml(innerValue);
+                                        if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
+                                            rawHtml.push(rawValue);
+                                            merged.push(innerValue);
+                                        }
+                                    });
+                                }
+                            });
+                            scope.validationSummary = merged;
+                            if (!merged.length) {
+                                element.addClass('validation-summary-valid');
+                                element.removeClass('validation-summary-errors');
+                            }
+                            else {
+                                element.removeClass('validation-summary-valid');
+                                element.addClass('validation-summary-errors');
+                            }
+                        };
+                        var watches = [
+                            scope.$watch(function () { return controller.$error; }, update, true),
+                            scope.$watch(function () { return controller.$submitted; }, function (newValue) { return scope.submitted = newValue; }),
+                        ];
+                        element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
                 }
                 ValmsgSummaryDirective.$inject = ['validation', '$sce'];
@@ -388,14 +419,34 @@ var ResponsivePath;
                     this.$injector = $injector;
                     this.$sce = $sce;
                     this.getValidationType = getValidationType;
-                    this.messageArray = function (formController, dotNetName, setter) {
-                        if (dotNetName) {
+                    this.messageArray = function (formController, modelName, setter) {
+                        if (modelName) {
                             if (setter !== undefined) {
-                                _this.ensureValidation(formController).messages[dotNetName] = setter;
+                                _this.ensureValidation(formController).messages[modelName] = setter;
                             }
-                            return _this.ensureValidation(formController).messages[dotNetName];
+                            return _this.ensureValidation(formController).messages[modelName];
                         }
                         return _this.ensureValidation(formController).messages;
+                    };
+                    this.activeMessageArray = function (formController, modelName) {
+                        var messages = _this.ensureValidation(formController).messages;
+                        if (modelName) {
+                            var modelController = formController[modelName];
+                            var result = {};
+                            angular.forEach(modelController.$error, function (value, key) {
+                                if (value && messages[modelName][key]) {
+                                    result[key] = messages[modelName][key];
+                                }
+                            });
+                            return result;
+                        }
+                        else {
+                            var resultSet = {};
+                            angular.forEach(messages, function (value, modelName) {
+                                resultSet[modelName] = _this.activeMessageArray(formController, modelName);
+                            });
+                            return resultSet;
+                        }
                     };
                     this.dataValue = function (formController, modelName, setter) {
                         if (modelName) {

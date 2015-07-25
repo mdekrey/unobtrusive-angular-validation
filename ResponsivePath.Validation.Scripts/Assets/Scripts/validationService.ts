@@ -1,8 +1,10 @@
 ﻿module ResponsivePath.Validation.Unobtrusive {
 
-    export interface GetSetMessageArray {
+    export interface GetMessageArray {
         (formController: ng.IFormController): ITrustedHtmlSet;
         (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
+    }
+    export interface GetSetMessageArray extends GetMessageArray {
         (formController: ng.IFormController, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
     }
     export interface GetSetModelValue {
@@ -29,14 +31,37 @@
         }
 
 
-        messageArray: GetSetMessageArray = (formController: ng.IFormController, dotNetName?: string, setter?: ITrustedHtmlByValidationKey): any => {
-            if (dotNetName) {
+        messageArray: GetSetMessageArray = (formController: ng.IFormController, modelName?: string, setter?: ITrustedHtmlByValidationKey): any => {
+            if (modelName) {
                 if (setter !== undefined) {
-                    this.ensureValidation(formController).messages[dotNetName] = setter;
+                    this.ensureValidation(formController).messages[modelName] = setter;
                 }
-                return this.ensureValidation(formController).messages[dotNetName];
+                return this.ensureValidation(formController).messages[modelName];
             }
             return this.ensureValidation(formController).messages;
+        }
+
+        activeMessageArray: GetMessageArray = (formController: ng.IFormController, modelName?: string): any => {
+            var messages = this.ensureValidation(formController).messages;
+            if (modelName) {
+
+                var modelController = <IValidatedModelController>formController[modelName];
+
+                var result: ITrustedHtmlByValidationKey = {};
+                angular.forEach(modelController.$error, (value: boolean, key: string) => {
+                    if (value && messages[modelName][key]) {
+                        result[key] = messages[modelName][key];
+                    }
+                });
+                return result;
+            }
+            else {
+                var resultSet: ITrustedHtmlSet = {};
+                angular.forEach(messages, (value: ITrustedHtmlByValidationKey, modelName: string) => {
+                    resultSet[modelName] = this.activeMessageArray(formController, modelName);
+                });
+                return resultSet;
+            }
         }
         dataValue: GetSetModelValue = (formController: ng.IFormController, modelName?: string, setter?: any): any => {
             if (modelName) {

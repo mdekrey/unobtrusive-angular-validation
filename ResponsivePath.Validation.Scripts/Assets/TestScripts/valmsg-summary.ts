@@ -6,12 +6,29 @@
 		var rootScope: angular.IRootScopeService;
 		var validation: ValidationService;
 		var sce: angular.ISCEService;
+        var scope: ng.IScope;
+        var form: angular.IAugmentedJQuery;
+        var valSummary: angular.IAugmentedJQuery;
+        var element: angular.IAugmentedJQuery;
+        var valSubmit: angular.IAugmentedJQuery;
 
 		beforeEach(inject(($compile: angular.ICompileService, $rootScope: angular.IRootScopeService, _validation_: ValidationService, $sce: angular.ISCEService) => {
 			compile = $compile;
 			rootScope = $rootScope;
 			validation = _validation_;
-			sce = $sce;
+            sce = $sce;
+            
+            scope = $rootScope.$new();
+
+            form = angular.element('<form>' +
+                '<div class="validation-summary-errors" data-valmsg-summary="true"><ul><li>Error one</li><li>Error two</li></ul></div>' +
+                '<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />' +
+                '<button type="submit" data-val-submit>Submit</button>' +
+                '</form>');
+            form = compile(form)(scope);
+            valSummary = form.find('div');
+            element = form.find('input');
+            valSubmit = form.find('button');
 		}));
 
 		it('leaves original errors until submit',() => inject(($rootScope: angular.IRootScopeService) => {
@@ -31,20 +48,9 @@
 		}));
 
 		it('clears original errors on submit',() => inject(($rootScope: angular.IRootScopeService) => {
-            var scope: ng.IScope = $rootScope.$new();
-
-			var form = angular.element('<form />');
-			var valSummary = angular.element('<div class="validation-summary-errors" data-valmsg-summary="true"><ul><li>Error one</li><li>Error two</li></ul></div>');
-			form.append(valSummary);
-			var element = angular.element('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />');
-			form.append(element);
-			var valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
-			form.append(valSubmit);
-			compile(form)(scope);
-
 			scope['firstname'] = null;
-			scope.$digest();
 			valSubmit[0].click();
+            scope.$digest();
 
 			expect(valSummary[0].innerText).to.contain('You must provide a first name');
 			expect(valSummary[0].innerText).to.not.contain('Error one');
@@ -108,16 +114,17 @@
 			
             scope['firstname'] = null;
             scope['lastname'] = null;
-			scope.$digest();
 			valSubmit[0].click();
+			scope.$digest();
 
 			expect(valSummary[0].innerText).to.contain('You must provide a first name');
 			expect(valSummary[0].innerText).to.contain('You must provide a last name');
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
-
+            
             scope['firstname'] = 'Matt';
             scope['lastname'] = null;
+            valSubmit[0].click();
 			scope.$digest();
 
 			expect(valSummary[0].innerText).not.to.contain('You must provide a first name');
@@ -139,10 +146,10 @@
 			compile(form)(scope);
 
             scope['firstname'] = null;
-			scope.$digest();
 			valSubmit[0].click();
+            scope.$digest();
 
-			expect(valSummary[0].innerText).to.contain('You must provide a first name');
+            expect(valSummary[0].innerText).to.contain('You must provide a first name');
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
 
@@ -170,8 +177,8 @@
 
             scope['firstname'] = null;
             scope['lastname'] = null;
-            scope.$digest();
             valSubmit[0].click();
+            scope.$digest();
 
             expect(valSummary[0].innerText).to.contain('All fields are required');
             expect(valSummary[0].innerText).not.to.contain('All fields are requiredAll fields are required');

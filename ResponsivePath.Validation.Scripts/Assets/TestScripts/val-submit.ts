@@ -32,6 +32,24 @@
 			form.remove();
 		}));
 
+        it('flags form controller as submitted', () => inject(($rootScope: angular.IRootScopeService) => {
+            var scope: ng.IScope = $rootScope.$new();
+
+            var form = angular.element('<form ng-submit="submitted = true" />');
+            var element = angular.element('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />');
+            form.append(element);
+            var valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
+            form.append(valSubmit);
+            compile(form)(scope);
+
+            scope['firstname'] = null;
+            scope.$digest();
+            valSubmit[0].click();
+
+            expect(form.controller('form').$submitted).to.be(true);
+            form.remove();
+        }));
+
 		it('allows submit with no errors',() => inject(($rootScope: angular.IRootScopeService) => {
             var scope: ng.IScope = $rootScope.$new();
 

@@ -93,9 +93,11 @@ declare module ResponsivePath.Validation.Unobtrusive {
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
-    interface GetSetMessageArray {
+    interface GetMessageArray {
         (formController: ng.IFormController): ITrustedHtmlSet;
         (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
+    }
+    interface GetSetMessageArray extends GetMessageArray {
         (formController: ng.IFormController, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
     }
     interface GetSetModelValue {
@@ -111,6 +113,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         getValidation(validationType: string): ValidationType;
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetSetMessageArray;
+        activeMessageArray: GetMessageArray;
         dataValue: GetSetModelValue;
         clearModelName(formController: ng.IFormController, modelName: string): void;
         static $inject: string[];

@@ -22,24 +22,18 @@
             var modelController = <IValidatedModelController>controller[scope.valmsgFor];
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             scope.$parent.$watchCollection(() => {
-                return modelController.$invalid && this.validation.messageArray(controller, scope.valmsgFor)
+                return modelController.$invalid && this.validation.activeMessageArray(controller, scope.valmsgFor)
             }, (newValue) => {
                 if (!newValue) {
+                    scope.messages = {};
                     element.addClass('field-validation-valid');
                     element.removeClass('field-validation-error');
                     return;
                 }
 
-                var result: ITrustedHtmlByValidationKey = {};
-                angular.forEach(modelController.$error, (value: boolean, key: string) => {
-                    if (value && newValue[key]) {
-                        result[key] = newValue[key];
-                    }
-                });
+                scope.messages = newValue;
 
-                scope.messages = result;
-
-                if (newValue && !Object.keys(newValue).length) {
+                if (newValue && !_.any(newValue)) {
                     element.addClass('field-validation-valid');
                     element.removeClass('field-validation-error');
                 }

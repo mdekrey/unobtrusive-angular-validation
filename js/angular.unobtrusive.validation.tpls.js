@@ -24,7 +24,7 @@ var ResponsivePath;
             (function (Templates) {
                 var ValmsgSummary;
                 (function (ValmsgSummary) {
-                    ValmsgSummary.html = '<div class="alert alert-error" ng-if="started" ng-show="validationSummary.length">   <ul>       <li data-ng-repeat="err in validationSummary" data-ng-bind-html="err"></li>   </ul></div><div class="alert alert-error" ng-transclude ng-if="!started"></div>';
+                    ValmsgSummary.html = '<div class="alert alert-error" ng-if="submitted" ng-show="validationSummary.length">   <ul>       <li data-ng-repeat="err in validationSummary" data-ng-bind-html="err"></li>   </ul></div><div class="alert alert-error" ng-transclude ng-if="!submitted"></div>';
                 })(ValmsgSummary = Templates.ValmsgSummary || (Templates.ValmsgSummary = {}));
             })(Templates = Unobtrusive.Templates || (Unobtrusive.Templates = {}));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));

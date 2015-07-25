@@ -1,8 +1,8 @@
 ﻿module ResponsivePath.Validation.Unobtrusive {
 
     interface SummaryScope extends ng.IScope {
-        started: boolean;
-        validationSummary: any[]; // TODO - what type is this?
+        validationSummary: ITrustedHtml[];
+        submitted: boolean;
     }
 
     class ValmsgSummaryDirective {
@@ -10,26 +10,25 @@
         scope: any = {};
         templateUrl: string = 'templates/angular-unobtrusive-validation/valmsgSummary.html';
         transclude: boolean = true;
+        require = '^form';
 
         private static $inject = ['validation', '$sce'];
         constructor(private validation: ValidationService, private sce: ng.ISCEService) {
         }
 
-        link = (scope: SummaryScope, element: ng.IAugmentedJQuery): void => {
+        link = (scope: SummaryScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controller: IValidatedFormController): void => {
             // TODO - rebuild for new structure
-
-            /*scope.started = false;
+            
             scope.validationSummary = [];
+            scope.submitted = false;
 			var parentScope = scope.$parent;
             var update = () => {
-                if (!this.validation.validationSummaryVisible(parentScope)) return;
                 var rawHtml: string[] = [];
-                var merged: any[] = [];
+                var merged: ITrustedHtml[] = [];
                 // flatten the nested arrays into "merged"
-                var obj = this.validation.messageArray(parentScope);
+                var obj = this.validation.activeMessageArray(controller);
                 (<ng.IAngularStatic>angular).forEach(obj,(value, key) => {
                     if (obj.hasOwnProperty(key)) {
-                        scope.started = true;
                         (<ng.IAngularStatic>angular).forEach(value,(innerValue) => {
                             var rawValue = this.sce.getTrustedHtml(innerValue);
                             if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
@@ -40,24 +39,22 @@
                     }
                 });
                 scope.validationSummary = merged;
-                if (scope.started) {
-                    if (!merged.length) {
-                        element.addClass('validation-summary-valid');
-                        element.removeClass('validation-summary-errors');
-                    }
-                    else {
-                        element.removeClass('validation-summary-valid');
-                        element.addClass('validation-summary-errors');
-                    }
+                if (!merged.length) {
+                    element.addClass('validation-summary-valid');
+                    element.removeClass('validation-summary-errors');
+                }
+                else {
+                    element.removeClass('validation-summary-valid');
+                    element.addClass('validation-summary-errors');
                 }
             };
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             var watches = [
-				parentScope.$watchCollection(this.validation.messageArray, update),
-                parentScope.$watch(() => this.validation.validationSummaryVisible(parentScope), update)
+                scope.$watch(() => controller.$error, update, true),
+                scope.$watch(() => controller.$submitted, (newValue: boolean) => scope.submitted = newValue),
 			];
 
-            element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));*/
+            element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));
         }
     }
 
