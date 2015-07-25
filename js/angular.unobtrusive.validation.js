@@ -221,14 +221,41 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValmsgForDirective = (function () {
                 function ValmsgForDirective(validation) {
+                    var _this = this;
                     this.validation = validation;
                     this.restrict = 'A';
+                    this.require = '^form';
                     this.scope = {
                         valmsgFor: '@'
                     };
                     this.templateUrl = 'templates/angular-unobtrusive-validation/valmsgFor.html';
                     this.transclude = true;
-                    this.link = function (scope, element) {
+                    this.link = function (scope, element, attrs, controller) {
+                        var modelController = controller[scope.valmsgFor];
+                        scope.$parent.$watchCollection(function () {
+                            return modelController.$invalid && _this.validation.messageArray(controller, scope.valmsgFor);
+                        }, function (newValue) {
+                            if (!newValue) {
+                                element.addClass('field-validation-valid');
+                                element.removeClass('field-validation-error');
+                                return;
+                            }
+                            var result = {};
+                            angular.forEach(modelController.$error, function (value, key) {
+                                if (value && newValue[key]) {
+                                    result[key] = newValue[key];
+                                }
+                            });
+                            scope.messages = result;
+                            if (newValue && !Object.keys(newValue).length) {
+                                element.addClass('field-validation-valid');
+                                element.removeClass('field-validation-error');
+                            }
+                            else {
+                                element.removeClass('field-validation-valid');
+                                element.addClass('field-validation-error');
+                            }
+                        });
                     };
                 }
                 ValmsgForDirective.$inject = ['validation'];
