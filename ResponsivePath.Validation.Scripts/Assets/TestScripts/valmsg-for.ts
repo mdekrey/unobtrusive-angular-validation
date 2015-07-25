@@ -15,7 +15,7 @@
 		}));
 
 		it('shows for individual fields',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
+            var scope: ng.IScope = $rootScope.$new();
 
 			var form = angular.element('<form />');
 			var firstName = angular.element('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />');
@@ -32,8 +32,8 @@
 
 			firstName.triggerHandler('blur');
 			lastName.triggerHandler('blur');
-			scope.firstname = null;
-			scope.lastname = null;
+			scope['firstname'] = null;
+			scope['lastname'] = null;
 			scope.$digest();
 
 			expect(firstNameMsg[0].innerText).to.contain('You must provide a first name');
@@ -47,7 +47,7 @@
 		}));
 		
 		it('shows only errored fields',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
+			var scope: ng.IScope = $rootScope.$new();
 
 			var form = angular.element('<form />');
 			var firstName = angular.element('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />');
@@ -64,8 +64,8 @@
 
 			firstName.triggerHandler('blur');
 			lastName.triggerHandler('blur');
-			scope.firstname = 'Matt';
-			scope.lastname = null;
+			scope['firstname'] = 'Matt';
+			scope['lastname'] = null;
 			scope.$digest();
 
 			expect(firstNameMsg[0].innerText).not.to.contain('You must provide a first name');

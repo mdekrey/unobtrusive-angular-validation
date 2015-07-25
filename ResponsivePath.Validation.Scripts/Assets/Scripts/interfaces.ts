@@ -37,6 +37,10 @@
         allValidationMessages: ITrustedHtmlByValidationKey;
     }
 
+    export interface IValidatedFormController extends ng.IFormController {
+        state: ScopeValidationState;
+    }
+
     export interface ScopeValidationState {
         messages: ITrustedHtmlSet;
         data: ICompleteModel;

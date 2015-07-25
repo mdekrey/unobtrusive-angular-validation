@@ -14,8 +14,9 @@
 			sce = $sce;
 		}));
 
-		it('overrides validation',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
+        // TODO - val-bind-messages
+		/*it('overrides validation',() => inject(($rootScope: angular.IRootScopeService) => {
+            var scope: ng.IScope = $rootScope.$new();
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<div val-bind-messages="validationMessages" />')(scope);
@@ -32,7 +33,7 @@
 			expect(_.map(valScope.messages['Username'],(err) => sce.getTrustedHtml(err))).to.contain('Username must be at least 6 characters.');
 
 			element.remove();
-		}));
+		}));*/
 
 	});
 }

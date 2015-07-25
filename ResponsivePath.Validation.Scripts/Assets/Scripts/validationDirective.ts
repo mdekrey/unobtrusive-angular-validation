@@ -2,13 +2,15 @@
 
     class ValDirective {
         restrict: string = 'A';
-        require: string = 'ngModel';
+        require = ['ngModel', '^form'];
 		
         private static $inject = ['validation', '$parse'];
         constructor(private validation: ValidationService, private parse: ng.IParseService) {
         }
 
-        link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): void => {
+        link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controllers: any[]): void => {
+            var ngModelController: IValidatedModelController = controllers[0];
+            var form: IValidatedFormController = controllers[1];
             var isEnabledParse = this.parse(attrs['val']);
             var isEnabled = isEnabledParse(scope);
             var additionalIfEnabled = true;
@@ -39,14 +41,14 @@
 
             var validationFor = attrs['name'];
             
-            var validators = this.validation.buildValidation(scope, element, attrs, ngModelController);
+            var validators = this.validation.buildValidation(form, element, attrs, ngModelController);
 
             ngModelController.$parsers.unshift(validators.runValidations);
             ngModelController.$formatters.unshift(validators.runValidations);
 
             // Make sure we dispose all our 
             element.on('$destroy',() => {
-                delete this.validation.clearModelName(scope, validationFor);
+                delete this.validation.clearModelName(form, validationFor);
 
                 for (var key in watches)
                     watches[key]();

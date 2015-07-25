@@ -14,17 +14,16 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
-			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-date="Invalid" />')(scope);
+			element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-date="Invalid" /></form>')(scope);
+            element = element.find('input');
 		});
 
         function isValid() {
@@ -36,14 +35,14 @@
         }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
@@ -54,7 +53,7 @@
 		var failed = ["--", "never"];
 		_.each(failed,(badValue) => {
 			it('fails "' + badValue+'"',() => {
-				scope.target = badValue;
+				scope['target'] = badValue;
 				scope.$digest();
 
 				isInvalid();
@@ -64,7 +63,7 @@
 		var passes = ["2011-01-01", "01/01/1980"];
 		_.each(passes,(goodValue) => {
 			it('passes "' + goodValue + '"',() => {
-				scope.target = goodValue;
+				scope['target'] = goodValue;
 				scope.$digest();
 
 				isValid();

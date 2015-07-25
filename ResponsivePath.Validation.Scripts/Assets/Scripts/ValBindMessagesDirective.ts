@@ -21,10 +21,12 @@
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: BindMessagesAttributes): void => {
-            var model = this.$parse(attrs['valBindMessages']);
+            // TODO - messages
+
+            /*var model = this.$parse(attrs['valBindMessages']);
 
             var disposeWatch = [
-                scope.$watchCollection(attrs.valBindMessages,(newValue: IBoundMessage) => {
+                scope.$watchCollection(attrs.valBindMessages, (newValue: IBoundMessage) => {
                     var validationScopeState = this.validation.ensureValidation(scope);
                     var target: ITrustedHtmlUnnamedSet = {};
 
@@ -41,7 +43,7 @@
 
             element.on('$destroy', () => {
                 (<ng.IAngularStatic>angular).forEach(disposeWatch, (d) => d());
-            });
+            });*/
         }
         
     }

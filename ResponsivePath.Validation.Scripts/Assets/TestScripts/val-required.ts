@@ -23,55 +23,55 @@
         }
 
 		it('fails a null value',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
-			var valScope = validation.ensureValidation(scope);
+            var scope: ng.IScope = $rootScope.$new();
 
-			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			scope.firstname = null;
+			var element = compile('<form><input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" /></form>')(scope);
+            element = element.find('input');
+			scope['firstname'] = null;
 			scope.$digest();
 
             isInvalid(element);
 		}));
 
 		it('fails an empty value',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
-			var valScope = validation.ensureValidation(scope);
+            var scope: ng.IScope = $rootScope.$new();
 
-			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			scope.firstname = '';
+			var element = compile('<form><input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" /></form>')(scope);
+            element = element.find('input');
+            scope['firstname'] = '';
 			scope.$digest();
 
             isInvalid(element);
 		}));
 
 		it('fails an false value',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
-			var valScope = validation.ensureValidation(scope);
+            var scope: ng.IScope = $rootScope.$new();
 
-			var element = compile('<input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" />')(scope);
-			scope.agreeToTerms = false;
+			var element = compile('<form><input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" /></form>')(scope);
+            element = element.find('input');
+			scope['agreeToTerms'] = false;
 			scope.$digest();
 
             isInvalid(element);
 		}));
 
 		it('passes a non-empty value',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
-			var valScope = validation.ensureValidation(scope);
+            var scope: ng.IScope = $rootScope.$new();
 
-			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			scope.firstname = 'Matt';
+			var element = compile('<form><input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" /></form>')(scope);
+            element = element.find('input');
+            scope['firstname'] = 'Matt';
 			scope.$digest();
 
             isValid(element);
 		}));
 
 		it('passes a true value',() => inject(($rootScope: angular.IRootScopeService) => {
-			var scope: any = $rootScope.$new();
-			var valScope = validation.ensureValidation(scope);
+            var scope: ng.IScope = $rootScope.$new();
 
-			var element = compile('<input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" />')(scope);
-			scope.agreeToTerms = true;
+			var element = compile('<form><input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" /></form>')(scope);
+            element = element.find('input');
+            scope['agreeToTerms'] = true;
 			scope.$digest();
 
             isValid(element);

@@ -19,10 +19,9 @@
         }
 
         link = (scope: ValForScope, element: ng.IAugmentedJQuery): void => {
-            // TODO - rebuild for new structure
-
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
-            /*var watch = scope.$parent.$watchCollection(() => {
+            /*scope.$parent.$watchCollection(() => {
+                // TODO - determine is valid
                 return this.validation.messageArray(scope.$parent, scope.valmsgFor)
             }, (newValue) => {
                 scope.messages = newValue;
@@ -40,9 +39,7 @@
                         element.addClass('field-validation-error');
                     }
                 }
-            });
-
-            element.on('$destroy', () => watch());*/
+            });*/
         }
         
     }

@@ -14,17 +14,16 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
-			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-minlength="Invalid" data-val-minlength-min="4" />')(scope);
+			element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-minlength="Invalid" data-val-minlength-min="4" /></form>')(scope);
+            element = element.find('input');
 		});
 
         function isValid() {
@@ -36,14 +35,14 @@
         }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
@@ -52,7 +51,7 @@
 		var failed = ["a", "(", "-1", "1", "abc"];
 		_.each(failed,(badValue) => {
 			it('fails "' + badValue+'"',() => {
-				scope.target = badValue;
+				scope['target'] = badValue;
 				scope.$digest();
 
 				isInvalid();
@@ -62,7 +61,7 @@
 		var passes = ["15.000.1", "4.57", "75137", "1,000", "1234567890123456789012345678901234567890", "words"];
 		_.each(passes,(goodValue) => {
 			it('passes "' + goodValue + '"',() => {
-				scope.target = goodValue;
+				scope['target'] = goodValue;
 				scope.$digest();
 
 				isValid();

@@ -1,21 +1,22 @@
 ﻿module ResponsivePath.Validation.Unobtrusive {
 
     export interface GetSetMessageArray {
-        (scope: ng.IScope): ITrustedHtmlSet;
-        (scope: ng.IScope, modelName: string): ITrustedHtmlByValidationKey;
-        (scope: ng.IScope, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
+        (formController: ng.IFormController): ITrustedHtmlSet;
+        (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
+        (formController: ng.IFormController, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
     }
     export interface GetSetModelValue {
-        (scope: ng.IScope): ICompleteModel;
-        (scope: ng.IScope, modelName: string): any;
-        (scope: ng.IScope, modelName: string, setModelValue: any): any;
+        (formController: ng.IFormController): ICompleteModel;
+        (formController: ng.IFormController, modelName: string): any;
+        (formController: ng.IFormController, modelName: string, setModelValue: any): any;
     }
 
     export class ValidationService {
 
-        ensureValidation(scope: ng.IScope): ScopeValidationState {
-            var state: ScopeValidationState = scope['$$ validation'] || { messages: {}, data: {} };
-            scope['$$ validation'] = state;
+        ensureValidation(formController: ng.IFormController): ScopeValidationState {
+            var controller: IValidatedFormController = <IValidatedFormController>formController;
+            var state: ScopeValidationState = controller.state || { messages: {}, data: {} };
+            controller.state = state;
             return state;
         }
 
@@ -23,32 +24,32 @@
             return angular.copy(this.getValidationType(validationType));
         }
 
-        buildValidation(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController) {
-            return new ValidationTools(attrs, ngModelController, this, scope, this.$injector, this.$sce, this.getValidationType);
+        buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController) {
+            return new ValidationTools(attrs, ngModelController, this, formController, this.$injector, this.$sce, this.getValidationType);
         }
 
 
-        messageArray: GetSetMessageArray = (scope: ng.IScope, dotNetName?: string, setter?: ITrustedHtmlByValidationKey): any => {
+        messageArray: GetSetMessageArray = (formController: ng.IFormController, dotNetName?: string, setter?: ITrustedHtmlByValidationKey): any => {
             if (dotNetName) {
                 if (setter !== undefined) {
-                    this.ensureValidation(scope).messages[dotNetName] = setter;
+                    this.ensureValidation(formController).messages[dotNetName] = setter;
                 }
-                return this.ensureValidation(scope).messages[dotNetName];
+                return this.ensureValidation(formController).messages[dotNetName];
             }
-            return this.ensureValidation(scope).messages;
+            return this.ensureValidation(formController).messages;
         }
-        dataValue: GetSetModelValue = (scope: ng.IScope, modelName?: string, setter?: any): any => {
+        dataValue: GetSetModelValue = (formController: ng.IFormController, modelName?: string, setter?: any): any => {
             if (modelName) {
                 if (setter !== undefined)
-                    this.ensureValidation(scope).data[modelName] = setter;
-                return this.ensureValidation(scope).data[modelName];
+                    this.ensureValidation(formController).data[modelName] = setter;
+                return this.ensureValidation(formController).data[modelName];
             }
-            return this.ensureValidation(scope).data;
+            return this.ensureValidation(formController).data;
         }
-        clearModelName(scope: ng.IScope, modelName: string) {
-            var validation = this.ensureValidation(scope);
-            delete this.ensureValidation(scope).messages[modelName];
-            delete this.ensureValidation(scope).data[modelName];
+        clearModelName(formController: ng.IFormController, modelName: string) {
+            var validation = this.ensureValidation(formController);
+            delete this.ensureValidation(formController).messages[modelName];
+            delete this.ensureValidation(formController).data[modelName];
         }
 
         static $inject = ['$injector', '$sce', 'getValidationType'];

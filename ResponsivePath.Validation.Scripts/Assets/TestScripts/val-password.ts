@@ -14,8 +14,7 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
@@ -31,20 +30,20 @@
 		describe('complex', function () {
 			beforeEach(() => {
 				scope = rootScope.$new();
-				valScope = validation.ensureValidation(scope);
 
-				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6" data-val-password-nonalphamin="2" data-val-password-regex="^.{5,8}$" />')(scope);
+				element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6" data-val-password-nonalphamin="2" data-val-password-regex="^.{5,8}$" /></form>')(scope);
+                element = element.find('input');
 			});
 
 			it('passes a null value',() => {
-				scope.target = null;
+				scope['target'] = null;
 				scope.$digest();
 
 				isValid();
 			});
 
 			it('passes an empty value',() => {
-				scope.target = '';
+				scope['target'] = '';
 				scope.$digest();
 
 				isValid();
@@ -53,7 +52,7 @@
 			var failed = ["abc!!", "abcdef", "abcdefgh!!"];
 			_.each(failed,(badValue) => {
 				it('fails "' + badValue + '"',() => {
-					scope.target = badValue;
+					scope['target'] = badValue;
 					scope.$digest();
 
 					isInvalid();
@@ -63,7 +62,7 @@
 			var passes = ["abcd!!", "test!@#$"];
 			_.each(passes,(goodValue) => {
 				it('passes "' + goodValue + '"',() => {
-					scope.target = goodValue;
+					scope['target'] = goodValue;
 					scope.$digest();
 
 					isValid();
@@ -74,20 +73,20 @@
 		describe('min only', function () {
 			beforeEach(() => {
 				scope = rootScope.$new();
-				valScope = validation.ensureValidation(scope);
 
-				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6"/>')(scope);
+				element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6"/></form>')(scope);
+                element = element.find('input');
 			});
 
 			it('passes a null value',() => {
-				scope.target = null;
+				scope['target'] = null;
 				scope.$digest();
 
 				isValid();
 			});
 
 			it('passes an empty value',() => {
-				scope.target = '';
+				scope['target'] = '';
 				scope.$digest();
 
 				isValid();
@@ -96,7 +95,7 @@
 			var failed = ["abc!!"];
 			_.each(failed,(badValue) => {
 				it('fails "' + badValue + '"',() => {
-					scope.target = badValue;
+					scope['target'] = badValue;
 					scope.$digest();
 
 					isInvalid();
@@ -106,7 +105,7 @@
 			var passes = ["abcd!!", "test!@#$", "abcdef", "abcdefgh!!"];
 			_.each(passes,(goodValue) => {
 				it('passes "' + goodValue + '"',() => {
-					scope.target = goodValue;
+					scope['target'] = goodValue;
 					scope.$digest();
 
 					isValid();
@@ -117,20 +116,20 @@
 		describe('regex only', function () {
 			beforeEach(() => {
 				scope = rootScope.$new();
-				valScope = validation.ensureValidation(scope);
 
-				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-regex="^.{5,8}$" />')(scope);
+				element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-regex="^.{5,8}$" /></form>')(scope);
+                element = element.find('input');
 			});
 
 			it('passes a null value',() => {
-				scope.target = null;
+				scope['target'] = null;
 				scope.$digest();
 
 				isValid();
 			});
 
 			it('passes an empty value',() => {
-				scope.target = '';
+				scope['target'] = '';
 				scope.$digest();
 
 				isValid();
@@ -139,7 +138,7 @@
 			var failed = ["abcdefgh!!"];
 			_.each(failed,(badValue) => {
 				it('fails "' + badValue + '"',() => {
-					scope.target = badValue;
+					scope['target'] = badValue;
 					scope.$digest();
 
 					isInvalid();
@@ -149,7 +148,7 @@
 			var passes = ["abc!!", "abcdef", "abcd!!", "test!@#$"];
 			_.each(passes,(goodValue) => {
 				it('passes "' + goodValue + '"',() => {
-					scope.target = goodValue;
+					scope['target'] = goodValue;
 					scope.$digest();
 
 					isValid();
@@ -160,20 +159,20 @@
 		describe('nonalphamin only', function () {
 			beforeEach(() => {
 				scope = rootScope.$new();
-				valScope = validation.ensureValidation(scope);
 
-				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-nonalphamin="2"" />')(scope);
+				element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-nonalphamin="2"" /></form>')(scope);
+                element = element.find('input');
 			});
 
 			it('passes a null value',() => {
-				scope.target = null;
+				scope['target'] = null;
 				scope.$digest();
 
 				isValid();
 			});
 
 			it('passes an empty value',() => {
-				scope.target = '';
+				scope['target'] = '';
 				scope.$digest();
 
 				isValid();
@@ -182,7 +181,7 @@
 			var failed = ["abcdef"];
 			_.each(failed,(badValue) => {
 				it('fails "' + badValue + '"',() => {
-					scope.target = badValue;
+					scope['target'] = badValue;
 					scope.$digest();
 
 					isInvalid();
@@ -192,7 +191,7 @@
 			var passes = ["abc!!", "abcd!!", "test!@#$", "abcdefgh!!"];
 			_.each(passes,(goodValue) => {
 				it('passes "' + goodValue + '"',() => {
-					scope.target = goodValue;
+					scope['target'] = goodValue;
 					scope.$digest();
 
 					isValid();

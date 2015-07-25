@@ -17,7 +17,7 @@
             private attrs: ng.IAttributes,
             private ngModelController: IValidatedModelController,
             private svc: ValidationService,
-            private scope: ng.IScope,
+            private formController: IValidatedFormController,
             private $injector: ng.auto.IInjectorService,
             private $sce: IMySCEService,
             private getValidationType: (keyName: string) => ValidationType) {
@@ -27,13 +27,13 @@
             ngModelController.allValidationMessages = {};
 
             this.validators = this.buildValidatorsFromAttributes();
-
-            svc.messageArray(scope, this.validationFor, ngModelController.allValidationMessages);
+            
+            svc.messageArray(formController, this.validationFor, ngModelController.allValidationMessages);
         }
 
         enable(): void {
             this.validationEnabled = true;
-            this.runValidations(this.svc.dataValue(this.scope, this.validationFor));
+            this.runValidations(this.svc.dataValue(this.formController, this.validationFor));
         }
         disable(): void {
             this.validationEnabled = false;
@@ -42,7 +42,7 @@
             })
         }
         runValidations = (newValue: any) => {
-            this.svc.dataValue(this.scope, this.validationFor, newValue);
+            this.svc.dataValue(this.formController, this.validationFor, newValue);
             if (this.validationEnabled) {
                 // Run validations for all of our client-side validation and store in a local array.
                 (<ng.IAngularStatic>angular).forEach(this.validators, (value, key) => {
@@ -93,7 +93,7 @@
                 var validate: ValidationType = this.getValidationType(keyName);
                 if (validate) {
                     this.ngModelController.allValidationMessages[keyName] = this.$sce.trustAsHtml(this.attrs[key]);
-                    result[keyName] = new Validator(keyName, validate, this.attrs, this.scope, this.ngModelController, this, this.$injector);
+                    result[keyName] = new Validator(keyName, validate, this.attrs, this.formController, this.ngModelController, this, this.$injector);
                 }
                 else {
                     console.log('WARNING: Unhandled validation attribute: ' + keyName);

@@ -12,7 +12,7 @@
             public name: string,
             validate: ValidationType,
             public attributes: ng.IAttributes,
-            public scope: ng.IScope,
+            public formController: IValidatedFormController,
             public ngModel: IValidatedModelController,
             protected validationTools: ValidationTools,
             $injector: ng.auto.IInjectorService) {

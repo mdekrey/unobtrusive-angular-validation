@@ -16,15 +16,13 @@
 			httpBackend = $httpBackend;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
 			var form = angular.element('<form name="form"/>');
 			element = angular.element('<input type="text" data-val="true" name="Target" ng-model="target" data-val-remote="Invalid" data-val-remote-additionalfields="*.Other" data-val-remote-type="SPECIAL" data-val-remote-url="/some/path" />');
@@ -32,7 +30,7 @@
 			form.append(element);
 			form.append(matchElement);
 			compile(form)(scope);
-			scope.form['Other'].$setViewValue('othervalue');
+			scope['form']['Other'].$setViewValue('othervalue');
 			scope.$digest();
 		});
 		afterEach(() => { httpBackend.verifyNoOutstandingExpectation(); });
@@ -48,14 +46,14 @@
         }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
@@ -63,7 +61,7 @@
 
 		it('fails',() => {
 			httpBackend.expect('SPECIAL', '/some/path', { 'Target': '0', 'Other': 'othervalue' }).respond(false);
-			scope.target = '0';
+			scope['target'] = '0';
 			scope.$digest();
 
 			isValid();
@@ -74,7 +72,7 @@
 
 		it('fails with custom message',() => {
 			httpBackend.expect('SPECIAL', '/some/path', { 'Target': '0', 'Other': 'othervalue' }).respond('Custom message');
-			scope.target = '0';
+			scope['target'] = '0';
 			scope.$digest();
 
 			isValid();
@@ -87,12 +85,12 @@
 			httpBackend.when('SPECIAL', '/some/path', { 'Target': '0', 'Other': 'othervalue' }).respond(() => {
 				throw new Error('Should have cancelled.');
 			});
-			scope.target = '0';
+			scope['target'] = '0';
 			scope.$digest();
 
 			isValid();
 			httpBackend.expect('SPECIAL', '/some/path', { 'Target': '01', 'Other': 'othervalue' }).respond(true);
-			scope.target = '01';
+			scope['target'] = '01';
 			scope.$digest();
 
 			isValid();
@@ -103,7 +101,7 @@
 
 		it('passes',() => {
 			httpBackend.expect('SPECIAL', '/some/path', { 'Target': '0', 'Other': 'othervalue' }).respond(true);
-			scope.target = '0';
+			scope['target'] = '0';
 			scope.$digest();
 
 			isValid();

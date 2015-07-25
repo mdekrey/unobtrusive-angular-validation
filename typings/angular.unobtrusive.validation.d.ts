@@ -19,13 +19,11 @@ declare module ResponsivePath.Validation.Unobtrusive {
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
-}
-declare module ResponsivePath.Validation.Unobtrusive {
     class ValidationTools {
         private attrs;
         private ngModelController;
         private svc;
-        private scope;
+        private formController;
         private $injector;
         private $sce;
         private getValidationType;
@@ -33,7 +31,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private validationEnabled;
         private validationFor;
         private validators;
-        constructor(attrs: ng.IAttributes, ngModelController: IValidatedModelController, svc: ValidationService, scope: ng.IScope, $injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
+        constructor(attrs: ng.IAttributes, ngModelController: IValidatedModelController, svc: ValidationService, formController: IValidatedFormController, $injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
         enable(): void;
         disable(): void;
         runValidations: (newValue: any) => any;
@@ -74,6 +72,9 @@ declare module ResponsivePath.Validation.Unobtrusive {
     interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
     }
+    interface IValidatedFormController extends ng.IFormController {
+        state: ScopeValidationState;
+    }
     interface ScopeValidationState {
         messages: ITrustedHtmlSet;
         data: ICompleteModel;
@@ -93,25 +94,25 @@ declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
     interface GetSetMessageArray {
-        (scope: ng.IScope): ITrustedHtmlSet;
-        (scope: ng.IScope, modelName: string): ITrustedHtmlByValidationKey;
-        (scope: ng.IScope, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
+        (formController: ng.IFormController): ITrustedHtmlSet;
+        (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
+        (formController: ng.IFormController, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
     }
     interface GetSetModelValue {
-        (scope: ng.IScope): ICompleteModel;
-        (scope: ng.IScope, modelName: string): any;
-        (scope: ng.IScope, modelName: string, setModelValue: any): any;
+        (formController: ng.IFormController): ICompleteModel;
+        (formController: ng.IFormController, modelName: string): any;
+        (formController: ng.IFormController, modelName: string, setModelValue: any): any;
     }
     class ValidationService {
         private $injector;
         private $sce;
         private getValidationType;
-        ensureValidation(scope: ng.IScope): ScopeValidationState;
+        ensureValidation(formController: ng.IFormController): ScopeValidationState;
         getValidation(validationType: string): ValidationType;
-        buildValidation(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
+        buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetSetMessageArray;
         dataValue: GetSetModelValue;
-        clearModelName(scope: ng.IScope, modelName: string): void;
+        clearModelName(formController: ng.IFormController, modelName: string): void;
         static $inject: string[];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
     }
@@ -126,10 +127,10 @@ declare module ResponsivePath.Validation.Unobtrusive {
     class Validator {
         name: string;
         attributes: ng.IAttributes;
-        scope: ng.IScope;
+        formController: IValidatedFormController;
         ngModel: IValidatedModelController;
         protected validationTools: ValidationTools;
-        constructor(name: string, validate: ValidationType, attributes: ng.IAttributes, scope: ng.IScope, ngModel: IValidatedModelController, validationTools: ValidationTools, $injector: ng.auto.IInjectorService);
+        constructor(name: string, validate: ValidationType, attributes: ng.IAttributes, formController: IValidatedFormController, ngModel: IValidatedModelController, validationTools: ValidationTools, $injector: ng.auto.IInjectorService);
         validate: ValidateMethod;
         parameters: ValidationParameters;
         injected: InjectedValidationValues;
