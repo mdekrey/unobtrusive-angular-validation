@@ -1,6 +1,8 @@
 ﻿module ResponsivePath.Validation.Unobtrusive.Tests {
-	describe('Unit: Directive valmsg-summary', function () {
-		beforeEach(module('unobtrusive.validation', 'ngMock'));
+    describe('Unit: Directive valmsg-summary', function () {
+        beforeEach(module('unobtrusive.validation', 'ngMock', function (validationProvider: ValidationProvider) {
+            validationProvider.setValidationMessagingTiming(ValidationTiming.OnSubmit);
+        }));
 
 		var compile: angular.ICompileService;
 		var rootScope: angular.IRootScopeService;
@@ -49,6 +51,7 @@
 
 		it('clears original errors on submit',() => inject(($rootScope: angular.IRootScopeService) => {
 			scope['firstname'] = null;
+            scope.$digest();
 			valSubmit[0].click();
             scope.$digest();
 
@@ -92,6 +95,7 @@
             scope['firstname'] = null;
 			scope.$digest();
 			valSubmit[0].click();
+            scope.$digest();
 
 			expect(valSummary[0].innerText).to.contain('You must provide a first name');
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
@@ -114,7 +118,8 @@
 			
             scope['firstname'] = null;
             scope['lastname'] = null;
-			valSubmit[0].click();
+			scope.$digest();
+            valSubmit[0].click();
 			scope.$digest();
 
 			expect(valSummary[0].innerText).to.contain('You must provide a first name');
@@ -124,6 +129,7 @@
             
             scope['firstname'] = 'Matt';
             scope['lastname'] = null;
+			scope.$digest();
             valSubmit[0].click();
 			scope.$digest();
 
@@ -146,7 +152,8 @@
 			compile(form)(scope);
 
             scope['firstname'] = null;
-			valSubmit[0].click();
+			scope.$digest();
+            valSubmit[0].click();
             scope.$digest();
 
             expect(valSummary[0].innerText).to.contain('You must provide a first name');
@@ -154,7 +161,9 @@
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
 
             scope['firstname'] = 'Matt';
-			scope.$digest();
+            scope.$digest();
+            valSubmit[0].click();
+            scope.$digest();
 
 			expect(valSummary[0].innerText).to.not.contain('You must provide a first name');
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(true);
@@ -177,9 +186,10 @@
 
             scope['firstname'] = null;
             scope['lastname'] = null;
+            scope.$digest();
             valSubmit[0].click();
             scope.$digest();
-
+            
             expect(valSummary[0].innerText).to.contain('All fields are required');
             expect(valSummary[0].innerText).not.to.contain('All fields are requiredAll fields are required');
             expect(valSummary[0].innerText).not.to.contain('All fields are required All fields are required');
@@ -188,12 +198,16 @@
 
             scope['firstname'] = 'Matt';
             scope.$digest();
+            valSubmit[0].click();
+            scope.$digest();
 
             expect(valSummary[0].innerText).to.contain('All fields are required');
             expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
             expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
 
             scope['lastname'] = 'Matt';
+            scope.$digest();
+            valSubmit[0].click();
             scope.$digest();
 
             expect(valSummary[0].innerText).not.to.contain('All fields are required');

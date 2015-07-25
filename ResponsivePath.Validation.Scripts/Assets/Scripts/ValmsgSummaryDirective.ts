@@ -39,19 +39,24 @@
                     }
                 });
                 scope.validationSummary = merged;
-                if (!merged.length) {
-                    element.addClass('validation-summary-valid');
-                    element.removeClass('validation-summary-errors');
-                }
-                else {
-                    element.removeClass('validation-summary-valid');
-                    element.addClass('validation-summary-errors');
+                if (scope.submitted) {
+                    if (!merged.length) {
+                        element.addClass('validation-summary-valid');
+                        element.removeClass('validation-summary-errors');
+                    }
+                    else {
+                        element.removeClass('validation-summary-valid');
+                        element.addClass('validation-summary-errors');
+                    }
                 }
             };
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             var watches = [
                 scope.$watch(() => controller.$error, update, true),
-                scope.$watch(() => controller.$submitted, (newValue: boolean) => scope.submitted = newValue),
+                scope.$watch(() => controller.validationState.activeErrors, (newValue: any) => {
+                    scope.submitted = !!newValue;
+                    update();
+                }),
 			];
 
             element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));

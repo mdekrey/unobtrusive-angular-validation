@@ -17,8 +17,8 @@
 
         ensureValidation(formController: ng.IFormController): ScopeValidationState {
             var controller: IValidatedFormController = <IValidatedFormController>formController;
-            var state: ScopeValidationState = controller.state || { messages: {}, data: {} };
-            controller.state = state;
+            var state: ScopeValidationState = controller.validationState || { messages: {}, data: {}, activeErrors: null };
+            controller.validationState = state;
             return state;
         }
 
@@ -48,7 +48,7 @@
                 var modelController = <IValidatedModelController>formController[modelName];
 
                 var result: ITrustedHtmlByValidationKey = {};
-                angular.forEach(modelController.$error, (value: boolean, key: string) => {
+                angular.forEach(modelController.activeErrors || modelController.$error, (value: boolean, key: string) => {
                     if (value && messages[modelName][key]) {
                         result[key] = messages[modelName][key];
                     }
@@ -77,11 +77,35 @@
             delete this.ensureValidation(formController).data[modelName];
         }
 
-        static $inject = ['$injector', '$sce', 'getValidationType'];
+        getValidationTiming() {
+            return this.validationMessagingTiming;
+        }
+
+        getShouldSetFormSubmitted() {
+            return this.shouldSetFormSubmitted;
+        }
+
+        copyValidation(formController: ng.IFormController) {
+            if (this.getValidationTiming() == ValidationTiming.OnSubmit) {
+                angular.forEach(Object.keys(formController), (key: string) => {
+                    if (key[0] == '$')
+                        return;
+                    if (formController[key].$error) {
+                        formController[key].activeErrors = angular.copy(formController[key].$error);
+                    }
+                });
+            }
+
+            this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
+        }
+
+        static $inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted'];
         constructor(
             private $injector: ng.auto.IInjectorService,
             private $sce: IMySCEService,
-            private getValidationType: (keyName: string) => ValidationType) {
+            private getValidationType: (keyName: string) => ValidationType,
+            private validationMessagingTiming: ValidationTiming,
+            private shouldSetFormSubmitted: boolean) {
         }
     }
 

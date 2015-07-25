@@ -71,25 +71,40 @@ declare module ResponsivePath.Validation.Unobtrusive {
     }
     interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
+        activeErrors: {
+            [errorType: string]: boolean;
+        };
     }
     interface IValidatedFormController extends ng.IFormController {
-        state: ScopeValidationState;
+        validationState: ScopeValidationState;
     }
     interface ScopeValidationState {
         messages: ITrustedHtmlSet;
         data: ICompleteModel;
+        activeErrors: {
+            [errorType: string]: IValidatedModelController[];
+        };
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
+    enum ValidationTiming {
+        Realtime = 0,
+        OnBlur = 1,
+        OnSubmit = 2,
+    }
     class ValidationProvider implements ng.IServiceProvider {
         private validationTypes;
+        private timing;
+        private shouldSetFormSubmitted;
         getValidationType(validatorName: string): ValidationType;
         addValidator(validatorName: string, validate: ValidateMethod, inject?: string[]): void;
         $get($injector: ng.auto.IInjectorService): ValidationService;
         private static $inject;
         constructor();
+        setValidationMessagingTiming(timing: ValidationTiming): void;
+        setShouldSetFormSubmitted(shouldSetFormSubmitted: boolean): void;
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
@@ -109,6 +124,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private $injector;
         private $sce;
         private getValidationType;
+        private validationMessagingTiming;
+        private shouldSetFormSubmitted;
         ensureValidation(formController: ng.IFormController): ScopeValidationState;
         getValidation(validationType: string): ValidationType;
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
@@ -116,8 +133,11 @@ declare module ResponsivePath.Validation.Unobtrusive {
         activeMessageArray: GetMessageArray;
         dataValue: GetSetModelValue;
         clearModelName(formController: ng.IFormController, modelName: string): void;
+        getValidationTiming(): ValidationTiming;
+        getShouldSetFormSubmitted(): boolean;
+        copyValidation(formController: ng.IFormController): void;
         static $inject: string[];
-        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
+        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: ValidationTiming, shouldSetFormSubmitted: boolean);
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {

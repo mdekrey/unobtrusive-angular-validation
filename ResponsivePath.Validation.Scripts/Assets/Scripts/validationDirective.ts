@@ -14,6 +14,12 @@
             var isEnabledParse = this.parse(attrs['val']);
             var isEnabled = isEnabledParse(scope);
             var additionalIfEnabled = true;
+            
+            var copyValidation = () => {
+                ngModelController.activeErrors = angular.copy(ngModelController.$error);
+                this.validation.copyValidation(form);
+            }
+            ngModelController.activeErrors = {};
 
             function updateEnabled() {
                 if (isEnabled && additionalIfEnabled) {
@@ -28,7 +34,12 @@
                 scope.$watch(() => isEnabledParse(scope), (newValue) => {
                     isEnabled = newValue;
                     updateEnabled();
-                })
+                }),
+                scope.$watch(() => ngModelController.$modelValue, () => {
+                    if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
+                        copyValidation();
+                    }
+                }),
             ];
 
             if (attrs['valIf']) {
@@ -52,6 +63,11 @@
 
                 for (var key in watches)
                     watches[key]();
+            });
+
+            element.on('blur', () => {
+                copyValidation();
+                scope.$digest();
             });
         }
     }

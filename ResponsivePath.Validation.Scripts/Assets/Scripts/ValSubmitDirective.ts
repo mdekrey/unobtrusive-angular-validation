@@ -11,11 +11,14 @@
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl: ng.IFormController): void => {
             element.on('click', ($event) => {
+                this.validation.copyValidation(ctrl);
                 scope.$digest();
                 if (ctrl.$invalid) {
                     $event.preventDefault();
-                    // TODO - flag form as submitted as a configuration?
-                    ctrl.$setSubmitted();
+
+                    if (this.validation.getShouldSetFormSubmitted()) {
+                        ctrl.$setSubmitted();
+                    }
                 }
             });
 
