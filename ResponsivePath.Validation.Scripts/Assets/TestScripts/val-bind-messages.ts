@@ -19,7 +19,7 @@
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<div val-bind-messages="validationMessages" />')(scope);
-			valScope.cancelSuppress = true;
+			//valScope.cancelSuppress = true;
 			scope.validationMessages = [
 				{ memberName: 'FirstName', text: 'You must provide a first name' },
 				{ memberName: 'Username', text: 'Username already in use' },

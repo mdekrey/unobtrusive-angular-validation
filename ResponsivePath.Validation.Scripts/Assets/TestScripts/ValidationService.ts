@@ -37,33 +37,7 @@
 				expect(validationScope).not.to.be(validationScope2);
 			}));
 		});
-
-		describe('Validation suppression...',() => {
-			it('defaults to suppressing',() => inject(($rootScope: angular.IRootScopeService) => {
-				var scope = $rootScope.$new();
-
-				expect(validation.hasCancelledSuppress(scope)).to.be(false);
-			}));
-
-			it('allows validation suppress cancellation',() => inject(($rootScope: angular.IRootScopeService) => {
-				var scope = $rootScope.$new();
-
-                validation.cancelSuppress(scope);
-                scope.$digest();
-				expect(validation.hasCancelledSuppress(scope)).to.be(true);
-            }));
-
-            it('cancels supression for child scopes, too',() => inject(($rootScope: angular.IRootScopeService) => {
-                var scope = $rootScope.$new();
-                var childScope = scope.$new();
-                validation.ensureValidation(childScope);
-
-                validation.cancelSuppress(scope);
-                scope.$digest();
-                expect(validation.hasCancelledSuppress(childScope)).to.be(true);
-            }));	
-		});
-
+        
 		describe('Getters/setters',() => {
 			var compile: angular.ICompileService;
 			var rootScope: angular.IRootScopeService;
@@ -92,8 +66,7 @@
 				compile(form)(rootScope);
 				scope = element.scope();
 				valScope = validation.ensureValidation(scope);
-
-				valScope.cancelSuppress = true;
+                
 				scope.form['Obj.Other'].$setViewValue('othervalue');
 				scope.$digest();
 			});

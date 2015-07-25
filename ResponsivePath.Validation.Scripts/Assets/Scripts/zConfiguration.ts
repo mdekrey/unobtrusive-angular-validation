@@ -42,7 +42,7 @@
         regex: string;
     }
     interface NamedAttributes extends ng.IAttributes {
-        // stores the DotNetName
+        // stores the model name
         name: string
     }
     interface EqualToParameters extends ValidationParameters {

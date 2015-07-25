@@ -14,16 +14,23 @@
 			sce = $sce;
 		}));
 
+        function isValid(element: ng.IAugmentedJQuery) {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
+
+        function isInvalid(element: ng.IAugmentedJQuery) {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
+
 		it('fails a null value',() => inject(($rootScope: angular.IRootScopeService) => {
 			var scope: any = $rootScope.$new();
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			valScope.cancelSuppress = true;
 			scope.firstname = null;
 			scope.$digest();
 
-			expect(sce.getTrustedHtml(valScope.messages['Personal.FirstName']['required'])).to.equal('You must provide a first name');
+            isInvalid(element);
 		}));
 
 		it('fails an empty value',() => inject(($rootScope: angular.IRootScopeService) => {
@@ -31,11 +38,10 @@
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			valScope.cancelSuppress = true;
 			scope.firstname = '';
 			scope.$digest();
 
-			expect(sce.getTrustedHtml(valScope.messages['Personal.FirstName']['required'])).to.equal('You must provide a first name');
+            isInvalid(element);
 		}));
 
 		it('fails an false value',() => inject(($rootScope: angular.IRootScopeService) => {
@@ -43,11 +49,10 @@
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" />')(scope);
-			valScope.cancelSuppress = true;
 			scope.agreeToTerms = false;
 			scope.$digest();
 
-			expect(sce.getTrustedHtml(valScope.messages['AgreeToTerms']['required'])).to.equal('You must agree to the terms of service');
+            isInvalid(element);
 		}));
 
 		it('passes a non-empty value',() => inject(($rootScope: angular.IRootScopeService) => {
@@ -55,11 +60,10 @@
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<input type="text" data-val="true" data-val-required="You must provide a first name" name="Personal.FirstName" ng-model="firstname" />')(scope);
-			valScope.cancelSuppress = true;
 			scope.firstname = 'Matt';
 			scope.$digest();
 
-			expect(valScope.messages['Personal.FirstName']).not.to.have.key('required');
+            isValid(element);
 		}));
 
 		it('passes a true value',() => inject(($rootScope: angular.IRootScopeService) => {
@@ -67,11 +71,10 @@
 			var valScope = validation.ensureValidation(scope);
 
 			var element = compile('<input type="checkbox" data-val="true" data-val-required="You must agree to the terms of service" name="AgreeToTerms" ng-model="agreeToTerms" />')(scope);
-			valScope.cancelSuppress = true;
 			scope.agreeToTerms = true;
 			scope.$digest();
 
-			expect(valScope.messages['AgreeToTerms']).not.to.have.key('required');
+            isValid(element);
 		}));
 		
 	});

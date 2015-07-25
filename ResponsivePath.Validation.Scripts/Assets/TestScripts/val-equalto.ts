@@ -34,16 +34,15 @@
 			compile(form)(scope);
 			scope.form['Obj.Other'].$setViewValue('othervalue');
 			scope.$digest();
-			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('equalto');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['equalto'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('fails a null value that does not match',() => {
 			scope.target = null;

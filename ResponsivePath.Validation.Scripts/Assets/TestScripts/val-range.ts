@@ -25,16 +25,15 @@
 			valScope = validation.ensureValidation(scope);
 
 			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-range="Invalid" data-val-range-min="4.2" data-val-range-max="8.7" />')(scope);
-			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('range');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['range'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;

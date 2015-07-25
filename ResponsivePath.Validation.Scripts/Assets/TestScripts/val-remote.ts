@@ -34,18 +34,18 @@
 			compile(form)(scope);
 			scope.form['Other'].$setViewValue('othervalue');
 			scope.$digest();
-			valScope.cancelSuppress = true;
 		});
 		afterEach(() => { httpBackend.verifyNoOutstandingExpectation(); });
 		afterEach(() => { httpBackend.verifyNoOutstandingRequest(); });
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('remote');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid(errorMessage?: string) {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['remote'])).to.equal(errorMessage || message);
-		}
+        function isInvalid(errorMessage?: string) {
+            // TODO - verify custom error message
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;

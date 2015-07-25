@@ -11,9 +11,7 @@
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl: ng.IFormController): void => {
             element.on('click', ($event) => {
-                // Cancels the suppression of validation messages, which reveals error classes, validation summaries, etc.
-                this.validation.cancelSuppress(scope);
-                this.validation.validationSummaryVisible(scope, true);
+                // TODO - flag form as submitted? as a configuration?
                 scope.$digest();
                 if (ctrl.$invalid) {
                     $event.preventDefault();

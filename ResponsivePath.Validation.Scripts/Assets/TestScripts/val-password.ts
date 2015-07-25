@@ -20,13 +20,13 @@
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('password');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['password'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		describe('complex', function () {
 			beforeEach(() => {
@@ -34,7 +34,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6" data-val-password-nonalphamin="2" data-val-password-regex="^.{5,8}$" />')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {
@@ -78,7 +77,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-min="6"/>')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {
@@ -122,7 +120,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-regex="^.{5,8}$" />')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {
@@ -166,7 +163,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-password="Invalid" data-val-password-nonalphamin="2"" />')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {

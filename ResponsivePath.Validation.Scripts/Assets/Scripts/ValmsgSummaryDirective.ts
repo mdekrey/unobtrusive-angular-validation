@@ -16,7 +16,9 @@
         }
 
         link = (scope: SummaryScope, element: ng.IAugmentedJQuery): void => {
-            scope.started = false;
+            // TODO - rebuild for new structure
+
+            /*scope.started = false;
             scope.validationSummary = [];
 			var parentScope = scope.$parent;
             var update = () => {
@@ -55,7 +57,7 @@
                 parentScope.$watch(() => this.validation.validationSummaryVisible(parentScope), update)
 			];
 
-            element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));
+            element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));*/
         }
     }
 

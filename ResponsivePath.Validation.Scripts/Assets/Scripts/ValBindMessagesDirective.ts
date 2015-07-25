@@ -10,7 +10,7 @@
     }
 
     interface ITrustedHtmlUnnamedSet {
-        [dotNetName: string]: ITrustedHtml[];
+        [modelName: string]: ITrustedHtml[];
     }
 
     class ValBindMessagesDirective {

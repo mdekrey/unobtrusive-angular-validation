@@ -24,8 +24,7 @@
 			var valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
 			form.append(valSubmit);
 			compile(form)(scope);
-
-			valScope.cancelSuppress = true;
+            
 			scope.firstname = null;
 			scope.$digest();
 			valSubmit[0].click();
@@ -44,8 +43,7 @@
 			var valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
 			form.append(valSubmit);
 			compile(form)(scope);
-
-			valScope.cancelSuppress = true;
+            
 			scope.firstname = 'Matt';
 			scope.$digest();
 			valSubmit[0].click();

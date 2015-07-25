@@ -25,16 +25,15 @@
 			valScope = validation.ensureValidation(scope);
 
 			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-regex="Invalid" data-val-regex-pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" />')(scope);
-			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('regex');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['regex'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;

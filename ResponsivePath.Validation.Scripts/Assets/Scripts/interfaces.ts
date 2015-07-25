@@ -26,23 +26,20 @@
     }
 
     export interface ITrustedHtmlSet {
-        [dotNetName: string]: ITrustedHtmlByValidationKey;
+        [modelName: string]: ITrustedHtmlByValidationKey;
     }
     
-    export interface IDotNetModel {
-        [dotNetName: string]: any;
+    export interface ICompleteModel {
+        [modelName: string]: any;
     }
 
     export interface IValidatedModelController extends ng.INgModelController {
-        suppressValidationMessages: boolean;
-        validationMessages: ITrustedHtmlByValidationKey;
+        allValidationMessages: ITrustedHtmlByValidationKey;
     }
 
     export interface ScopeValidationState {
-        cancelSuppress: boolean;
-        showValidationSummary: boolean;
         messages: ITrustedHtmlSet;
-        data: IDotNetModel;
+        data: ICompleteModel;
     }
 
 }

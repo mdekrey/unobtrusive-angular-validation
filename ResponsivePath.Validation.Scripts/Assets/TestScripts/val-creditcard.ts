@@ -25,15 +25,14 @@
 			valScope = validation.ensureValidation(scope);
 
 			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-creditcard="Invalid" />')(scope);
-			valScope.cancelSuppress = true;
 		});
 
         function isValid() {
-            expect(valScope.messages[fieldName]).not.to.have.key('creditcard');
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
         }
 
         function isInvalid() {
-            expect(sce.getTrustedHtml(valScope.messages[fieldName]['creditcard'])).to.equal(message);
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
         }
 
 		it('passes a null value',() => {

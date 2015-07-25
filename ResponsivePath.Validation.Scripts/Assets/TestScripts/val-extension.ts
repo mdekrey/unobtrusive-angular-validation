@@ -20,13 +20,13 @@
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('extension');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['extension'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		describe('default', function () {
 			beforeEach(() => {
@@ -34,7 +34,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-extension="Invalid" />')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {
@@ -78,7 +77,6 @@
 				valScope = validation.ensureValidation(scope);
 
 				element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-extension="Invalid" data-val-extension-extension="doc,docx,pdf,txt" />')(scope);
-				valScope.cancelSuppress = true;
 			});
 
 			it('passes a null value',() => {

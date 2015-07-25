@@ -25,16 +25,15 @@
 			valScope = validation.ensureValidation(scope);
 
 			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-maxlength="Invalid" data-val-maxlength-max="3" />')(scope);
-			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('maxlength');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['maxlength'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;

@@ -77,19 +77,9 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValErrorDirective = (function () {
                 function ValErrorDirective(validation) {
-                    var _this = this;
                     this.validation = validation;
                     this.restrict = 'A';
                     this.link = function (scope, element, attrs) {
-                        var disposeWatch = scope.$watchCollection(function () { return _this.validation.messageArray(scope, attrs['valError']); }, function (newValue) {
-                            if (newValue && Object.keys(newValue).length) {
-                                element.addClass('error');
-                            }
-                            else {
-                                element.removeClass('error');
-                            }
-                        });
-                        element.on('$destroy', function () { return disposeWatch(); });
                     };
                 }
                 ValErrorDirective.$inject = ['validation'];
@@ -107,14 +97,11 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValSubmitDirective = (function () {
                 function ValSubmitDirective(validation) {
-                    var _this = this;
                     this.validation = validation;
                     this.restrict = 'A';
                     this.require = '^?form';
                     this.link = function (scope, element, attrs, ctrl) {
                         element.on('click', function ($event) {
-                            _this.validation.cancelSuppress(scope);
-                            _this.validation.validationSummaryVisible(scope, true);
                             scope.$digest();
                             if (ctrl.$invalid) {
                                 $event.preventDefault();
@@ -182,97 +169,82 @@ var ResponsivePath;
             var ValidationTools = (function () {
                 function ValidationTools(attrs, ngModelController, svc, scope, $injector, $sce, getValidationType) {
                     var _this = this;
+                    this.attrs = attrs;
+                    this.ngModelController = ngModelController;
+                    this.svc = svc;
+                    this.scope = scope;
+                    this.$injector = $injector;
+                    this.$sce = $sce;
+                    this.getValidationType = getValidationType;
                     this.showValidationSummary = false;
                     this.validationEnabled = true;
-                    this.buildValidatorsFromAttributes = function (attrs, scope, ngModel) {
-                        var keys = Object.keys(attrs).sort();
-                        var result = {};
-                        angular.forEach(keys, function (key) {
-                            if (key == 'val' || key == 'valIf' || key == 'valRealtime' || !startsWith(key, 'val'))
-                                return;
-                            var handled = false;
-                            if (key.substr(3).charAt(0).toLowerCase() == key.substr(3).charAt(0)) {
-                                return;
-                            }
-                            var keyName = camelCase(key.substr(3));
-                            angular.forEach(result, function (validator, validatorName) {
-                                if (startsWith(keyName, validatorName)) {
-                                    validator.parameters[camelCase(keyName.substr(validatorName.length))] = attrs[key];
-                                    handled = true;
-                                    return;
-                                }
-                            });
-                            if (handled)
-                                return;
-                            var validate = _this.getValidationType(keyName);
-                            if (validate) {
-                                result[keyName] = new Unobtrusive.Validator(keyName, validate, _this.$sce.trustAsHtml(attrs[key]), attrs, scope, ngModel, _this, _this.$injector);
-                            }
-                            else {
-                                console.log('WARNING: Unhandled validation attribute: ' + keyName);
-                            }
-                        });
-                        return result;
-                    };
                     this.runValidations = function (newValue) {
                         _this.svc.dataValue(_this.scope, _this.validationFor, newValue);
                         if (_this.validationEnabled) {
-                            _this.ngModelController.validationMessages = {};
                             angular.forEach(_this.validators, function (value, key) {
                                 if (!value.validate(newValue, value))
                                     value.fail();
                                 else
                                     value.pass();
                             });
-                            _this.populateMessages();
                         }
                         return newValue;
                     };
-                    this.fail = function (key, message) {
+                    this.fail = function (key) {
                         if (_this.validationEnabled) {
                             _this.ngModelController.$setValidity(key, false);
-                            _this.ngModelController.validationMessages[key] = message ? _this.$sce.trustAsHtml(message) : (_this.validators[key].message);
                         }
                     };
                     this.pass = function (key) {
                         _this.ngModelController.$setValidity(key, true);
                     };
                     this.validationFor = attrs['name'];
-                    this.ngModelController = ngModelController;
-                    this.svc = svc;
-                    this.scope = scope;
-                    this.$sce = $sce;
-                    this.getValidationType = getValidationType;
-                    this.$injector = $injector;
-                    ngModelController.suppressValidationMessages = true;
-                    ngModelController.validationMessages = {};
-                    this.validators = this.buildValidatorsFromAttributes(attrs, scope, ngModelController);
+                    ngModelController.allValidationMessages = {};
+                    this.validators = this.buildValidatorsFromAttributes();
+                    svc.messageArray(scope, this.validationFor, ngModelController.allValidationMessages);
                 }
                 ValidationTools.prototype.enable = function () {
                     this.validationEnabled = true;
                     this.runValidations(this.svc.dataValue(this.scope, this.validationFor));
-                    this.populateMessages();
                 };
                 ValidationTools.prototype.disable = function () {
                     var _this = this;
                     this.validationEnabled = false;
-                    this.ngModelController.validationMessages = {};
                     angular.forEach(this.validators, function (value, key) {
                         _this.pass(key);
                     });
-                    this.populateMessages();
                 };
-                ValidationTools.prototype.populateMessages = function () {
-                    if (!this.ngModelController.suppressValidationMessages) {
-                        this.svc.messageArray(this.scope, this.validationFor, this.ngModelController.validationMessages);
-                    }
-                };
-                ValidationTools.prototype.cancelSuppress = function () {
-                    this.ngModelController.suppressValidationMessages = false;
-                    this.populateMessages();
-                };
-                ValidationTools.prototype.enableSuppress = function () {
-                    this.ngModelController.suppressValidationMessages = true;
+                ValidationTools.prototype.buildValidatorsFromAttributes = function () {
+                    var _this = this;
+                    var keys = Object.keys(this.attrs).sort();
+                    var result = {};
+                    angular.forEach(keys, function (key) {
+                        if (key == 'val' || key == 'valIf' || key == 'valRealtime' || !startsWith(key, 'val'))
+                            return;
+                        var handled = false;
+                        if (key.substr(3).charAt(0).toLowerCase() == key.substr(3).charAt(0)) {
+                            return;
+                        }
+                        var keyName = camelCase(key.substr(3));
+                        angular.forEach(result, function (validator, validatorName) {
+                            if (startsWith(keyName, validatorName)) {
+                                validator.parameters[camelCase(keyName.substr(validatorName.length))] = _this.attrs[key];
+                                handled = true;
+                                return;
+                            }
+                        });
+                        if (handled)
+                            return;
+                        var validate = _this.getValidationType(keyName);
+                        if (validate) {
+                            _this.ngModelController.allValidationMessages[keyName] = _this.$sce.trustAsHtml(_this.attrs[key]);
+                            result[keyName] = new Unobtrusive.Validator(keyName, validate, _this.attrs, _this.scope, _this.ngModelController, _this, _this.$injector);
+                        }
+                        else {
+                            console.log('WARNING: Unhandled validation attribute: ' + keyName);
+                        }
+                    });
+                    return result;
                 };
                 return ValidationTools;
             })();
@@ -288,7 +260,6 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValmsgForDirective = (function () {
                 function ValmsgForDirective(validation) {
-                    var _this = this;
                     this.validation = validation;
                     this.restrict = 'A';
                     this.scope = {
@@ -297,25 +268,6 @@ var ResponsivePath;
                     this.templateUrl = 'templates/angular-unobtrusive-validation/valmsgFor.html';
                     this.transclude = true;
                     this.link = function (scope, element) {
-                        var watch = scope.$parent.$watchCollection(function () {
-                            return _this.validation.messageArray(scope.$parent, scope.valmsgFor);
-                        }, function (newValue) {
-                            scope.messages = newValue;
-                            if (newValue !== undefined) {
-                                scope.started = true;
-                            }
-                            if (scope.started) {
-                                if (newValue && !Object.keys(newValue).length) {
-                                    element.addClass('field-validation-valid');
-                                    element.removeClass('field-validation-error');
-                                }
-                                else {
-                                    element.removeClass('field-validation-valid');
-                                    element.addClass('field-validation-error');
-                                }
-                            }
-                        });
-                        element.on('$destroy', function () { return watch(); });
                     };
                 }
                 ValmsgForDirective.$inject = ['validation'];
@@ -333,7 +285,6 @@ var ResponsivePath;
         (function (Unobtrusive) {
             var ValmsgSummaryDirective = (function () {
                 function ValmsgSummaryDirective(validation, sce) {
-                    var _this = this;
                     this.validation = validation;
                     this.sce = sce;
                     this.restrict = 'A';
@@ -341,44 +292,6 @@ var ResponsivePath;
                     this.templateUrl = 'templates/angular-unobtrusive-validation/valmsgSummary.html';
                     this.transclude = true;
                     this.link = function (scope, element) {
-                        scope.started = false;
-                        scope.validationSummary = [];
-                        var parentScope = scope.$parent;
-                        var update = function () {
-                            if (!_this.validation.validationSummaryVisible(parentScope))
-                                return;
-                            var rawHtml = [];
-                            var merged = [];
-                            var obj = _this.validation.messageArray(parentScope);
-                            angular.forEach(obj, function (value, key) {
-                                if (obj.hasOwnProperty(key)) {
-                                    scope.started = true;
-                                    angular.forEach(value, function (innerValue) {
-                                        var rawValue = _this.sce.getTrustedHtml(innerValue);
-                                        if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
-                                            rawHtml.push(rawValue);
-                                            merged.push(innerValue);
-                                        }
-                                    });
-                                }
-                            });
-                            scope.validationSummary = merged;
-                            if (scope.started) {
-                                if (!merged.length) {
-                                    element.addClass('validation-summary-valid');
-                                    element.removeClass('validation-summary-errors');
-                                }
-                                else {
-                                    element.removeClass('validation-summary-valid');
-                                    element.addClass('validation-summary-errors');
-                                }
-                            }
-                        };
-                        var watches = [
-                            parentScope.$watchCollection(_this.validation.messageArray, update),
-                            parentScope.$watch(function () { return _this.validation.validationSummaryVisible(parentScope); }, update)
-                        ];
-                        element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
                 }
                 ValmsgSummaryDirective.$inject = ['validation', '$sce'];
@@ -395,58 +308,49 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var ValDirective = (function () {
-                function ValDirective(validation) {
+                function ValDirective(validation, parse) {
                     var _this = this;
                     this.validation = validation;
+                    this.parse = parse;
                     this.restrict = 'A';
                     this.require = 'ngModel';
                     this.link = function (scope, element, attrs, ngModelController) {
-                        if (attrs['val'] != 'true')
-                            return;
+                        var isEnabledParse = _this.parse(attrs['val']);
+                        var isEnabled = isEnabledParse(scope);
+                        var additionalIfEnabled = true;
+                        function updateEnabled() {
+                            if (isEnabled && additionalIfEnabled) {
+                                validators.enable();
+                            }
+                            else {
+                                validators.disable();
+                            }
+                        }
+                        var watches = [
+                            scope.$watch(function () { return isEnabledParse(scope); }, function (newValue) {
+                                isEnabled = newValue;
+                                updateEnabled();
+                            })
+                        ];
+                        if (attrs['valIf']) {
+                            var additionalIfEnabledParse = _this.parse(attrs['valIf']);
+                            watches.push(scope.$watch(function () { return additionalIfEnabledParse(scope); }, function (newValue) {
+                                additionalIfEnabled = newValue;
+                                updateEnabled();
+                            }));
+                        }
                         var validationFor = attrs['name'];
                         var validators = _this.validation.buildValidation(scope, element, attrs, ngModelController);
                         ngModelController.$parsers.unshift(validators.runValidations);
                         ngModelController.$formatters.unshift(validators.runValidations);
-                        var watches = [
-                            scope.$watch(_this.validation.hasCancelledSuppress, function (newValue) {
-                                if (newValue)
-                                    validators.cancelSuppress();
-                            })
-                        ];
-                        if (attrs['valIf']) {
-                            watches.push(scope.$watch(attrs['valIf'], function (newValue, oldValue) {
-                                if (newValue)
-                                    validators.enable();
-                                else
-                                    validators.disable();
-                            }));
-                        }
-                        else {
-                            validators.enable();
-                        }
                         element.on('$destroy', function () {
-                            delete _this.validation.clearDotNetName(scope, validationFor);
+                            delete _this.validation.clearModelName(scope, validationFor);
                             for (var key in watches)
                                 watches[key]();
                         });
-                        element.on('blur', function () {
-                            validators.cancelSuppress();
-                            scope.$digest();
-                        });
-                        if (!attrs.hasOwnProperty('valRealtime')) {
-                            element.on('focus', function () {
-                                validators.enableSuppress();
-                            });
-                        }
-                        else {
-                            element.on('focus', function () {
-                                validators.cancelSuppress();
-                                scope.$digest();
-                            });
-                        }
                     };
                 }
-                ValDirective.$inject = ['validation'];
+                ValDirective.$inject = ['validation', '$parse'];
                 return ValDirective;
             })();
             Unobtrusive.mod.directive('val', Unobtrusive.constructorAsInjectable(ValDirective));
@@ -488,12 +392,12 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
-            var cancelSuppressionEvent = 'unobtrusiveValidation-supression-cancel';
-            var showValidationSummaryEvent = 'unobtrusiveValidation-summary-show';
-            var hideValidationSummaryEvent = 'unobtrusiveValidation-summary-hide';
             var ValidationService = (function () {
                 function ValidationService($injector, $sce, getValidationType) {
                     var _this = this;
+                    this.$injector = $injector;
+                    this.$sce = $sce;
+                    this.getValidationType = getValidationType;
                     this.messageArray = function (scope, dotNetName, setter) {
                         if (dotNetName) {
                             if (setter !== undefined) {
@@ -503,32 +407,17 @@ var ResponsivePath;
                         }
                         return _this.ensureValidation(scope).messages;
                     };
-                    this.dataValue = function (scope, dotNetName, setter) {
-                        if (dotNetName) {
+                    this.dataValue = function (scope, modelName, setter) {
+                        if (modelName) {
                             if (setter !== undefined)
-                                _this.ensureValidation(scope).data[dotNetName] = setter;
-                            return _this.ensureValidation(scope).data[dotNetName];
+                                _this.ensureValidation(scope).data[modelName] = setter;
+                            return _this.ensureValidation(scope).data[modelName];
                         }
                         return _this.ensureValidation(scope).data;
                     };
-                    this.hasCancelledSuppress = function (scope) {
-                        return _this.ensureValidation(scope).cancelSuppress;
-                    };
-                    this.$injector = $injector;
-                    this.$sce = $sce;
-                    this.getValidationType = getValidationType;
                 }
                 ValidationService.prototype.ensureValidation = function (scope) {
-                    var state = scope['$$ validation'] || { cancelSuppress: false, messages: {}, data: {}, showValidationSummary: false };
-                    scope.$on(cancelSuppressionEvent, function (event) {
-                        state.cancelSuppress = true;
-                    });
-                    scope.$on(showValidationSummaryEvent, function (event) {
-                        state.showValidationSummary = true;
-                    });
-                    scope.$on(hideValidationSummaryEvent, function (event) {
-                        state.showValidationSummary = false;
-                    });
+                    var state = scope['$$ validation'] || { messages: {}, data: {} };
                     scope['$$ validation'] = state;
                     return state;
                 };
@@ -538,25 +427,10 @@ var ResponsivePath;
                 ValidationService.prototype.buildValidation = function (scope, element, attrs, ngModelController) {
                     return new Unobtrusive.ValidationTools(attrs, ngModelController, this, scope, this.$injector, this.$sce, this.getValidationType);
                 };
-                ValidationService.prototype.cancelSuppress = function (scope) {
-                    this.ensureValidation(scope).cancelSuppress = true;
-                    scope.$broadcast(cancelSuppressionEvent);
-                };
-                ValidationService.prototype.clearDotNetName = function (scope, dotNetName) {
+                ValidationService.prototype.clearModelName = function (scope, modelName) {
                     var validation = this.ensureValidation(scope);
-                    delete this.ensureValidation(scope).messages[dotNetName];
-                    delete this.ensureValidation(scope).data[dotNetName];
-                };
-                ValidationService.prototype.validationSummaryVisible = function (scope, value) {
-                    if (value === undefined)
-                        return this.ensureValidation(scope).showValidationSummary;
-                    else {
-                        this.ensureValidation(scope).showValidationSummary = value;
-                        if (value)
-                            scope.$broadcast(showValidationSummaryEvent);
-                        else
-                            scope.$broadcast(hideValidationSummaryEvent);
-                    }
+                    delete this.ensureValidation(scope).messages[modelName];
+                    delete this.ensureValidation(scope).data[modelName];
                 };
                 ValidationService.$inject = ['$injector', '$sce', 'getValidationType'];
                 return ValidationService;
@@ -572,17 +446,16 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var Validator = (function () {
-                function Validator(keyName, validate, message, attributes, scope, ngModel, validationTools, $injector) {
+                function Validator(name, validate, attributes, scope, ngModel, validationTools, $injector) {
                     var _this = this;
-                    this.parameters = {};
-                    this.injected = {};
-                    this.name = keyName;
-                    this.validate = validate.validate;
-                    this.message = message;
+                    this.name = name;
                     this.attributes = attributes;
                     this.scope = scope;
                     this.ngModel = ngModel;
                     this.validationTools = validationTools;
+                    this.parameters = {};
+                    this.injected = {};
+                    this.validate = validate.validate;
                     if (validate.inject) {
                         angular.forEach(validate.inject, function (name) {
                             _this.injected[name] = $injector.get(name);
@@ -590,7 +463,7 @@ var ResponsivePath;
                     }
                 }
                 Validator.prototype.fail = function (message) {
-                    this.validationTools.fail(this.name, message);
+                    this.validationTools.fail(this.name);
                 };
                 Validator.prototype.pass = function () {
                     this.validationTools.pass(this.name);

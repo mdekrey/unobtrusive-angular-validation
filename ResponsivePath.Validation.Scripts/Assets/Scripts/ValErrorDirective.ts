@@ -11,16 +11,18 @@
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ErrorAttributes): void => {
-            var disposeWatch = scope.$watchCollection(() => this.validation.messageArray(scope, attrs['valError']),(newValue) => {
-                if (newValue && Object.keys(newValue).length) {
-                    element.addClass('error');
-                }
-                else {
-                    element.removeClass('error');
-                }
-            });
+            // TODO - this would add "error" class when matching model name was $invalid. Is this needed anymore? Maybe for backwards compatibility?
 
-            element.on('$destroy',() => disposeWatch());
+            //var disposeWatch = scope.$watchCollection(() => this.validation.messageArray(scope, attrs['valError']),(newValue) => {
+            //    if (newValue && Object.keys(newValue).length) {
+            //        element.addClass('error');
+            //    }
+            //    else {
+            //        element.removeClass('error');
+            //    }
+            //});
+
+            //element.on('$destroy',() => disposeWatch());
         }
     }
 

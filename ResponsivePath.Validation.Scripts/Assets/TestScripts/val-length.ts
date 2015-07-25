@@ -25,16 +25,15 @@
 			valScope = validation.ensureValidation(scope);
 
 			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-length="Invalid" data-val-length-min="4" data-val-length-max="8" />')(scope);
-			valScope.cancelSuppress = true;
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('length');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['length'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
 			scope.target = null;
