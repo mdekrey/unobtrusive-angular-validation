@@ -17,8 +17,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
-}
-declare module ResponsivePath.Validation.Unobtrusive {
     class ValidationTools {
         private attrs;
         private ngModelController;

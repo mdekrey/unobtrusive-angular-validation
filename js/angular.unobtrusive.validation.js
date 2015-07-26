@@ -59,26 +59,6 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
-            var ValErrorDirective = (function () {
-                function ValErrorDirective(validation) {
-                    this.validation = validation;
-                    this.restrict = 'A';
-                    this.link = function (scope, element, attrs) {
-                    };
-                }
-                ValErrorDirective.$inject = ['validation'];
-                return ValErrorDirective;
-            })();
-            Unobtrusive.mod.directive('valError', Unobtrusive.constructorAsInjectable(ValErrorDirective));
-        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
-    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
-})(ResponsivePath || (ResponsivePath = {}));
-var ResponsivePath;
-(function (ResponsivePath) {
-    var Validation;
-    (function (Validation) {
-        var Unobtrusive;
-        (function (Unobtrusive) {
             var ValSubmitDirective = (function () {
                 function ValSubmitDirective(validation) {
                     var _this = this;
