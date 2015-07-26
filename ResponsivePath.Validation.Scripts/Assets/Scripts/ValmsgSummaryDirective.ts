@@ -17,8 +17,6 @@
         }
 
         link = (scope: SummaryScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controller: IValidatedFormController): void => {
-            // TODO - rebuild for new structure
-            
             scope.validationSummary = [];
             scope.submitted = false;
 			var parentScope = scope.$parent;
