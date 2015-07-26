@@ -37,28 +37,6 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
-            var ValBindMessagesDirective = (function () {
-                function ValBindMessagesDirective(validation, $parse, $sce) {
-                    this.validation = validation;
-                    this.$parse = $parse;
-                    this.$sce = $sce;
-                    this.restrict = 'A';
-                    this.link = function (scope, element, attrs) {
-                    };
-                }
-                ValBindMessagesDirective.$inject = ['validation', '$parse', '$sce'];
-                return ValBindMessagesDirective;
-            })();
-            Unobtrusive.mod.directive('valBindMessages', Unobtrusive.constructorAsInjectable(ValBindMessagesDirective));
-        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
-    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
-})(ResponsivePath || (ResponsivePath = {}));
-var ResponsivePath;
-(function (ResponsivePath) {
-    var Validation;
-    (function (Validation) {
-        var Unobtrusive;
-        (function (Unobtrusive) {
             var ValSubmitDirective = (function () {
                 function ValSubmitDirective(validation) {
                     var _this = this;
