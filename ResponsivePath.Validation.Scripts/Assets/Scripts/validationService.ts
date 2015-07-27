@@ -100,13 +100,18 @@
             return result;
         }
 
-        static $inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted'];
+        getDelayedValidClass(): string { return this.delayedValidClass; }
+        getDelayedInvalidClass(): string { return this.delayedInvalidClass; }
+
+        static $inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted', 'delayedValidClass', 'delayedInvalidClass'];
         constructor(
             private $injector: ng.auto.IInjectorService,
             private $sce: IMySCEService,
             private getValidationType: (keyName: string) => ValidationType,
             private validationMessagingTiming: ValidationTiming,
-            private shouldSetFormSubmitted: boolean) {
+            private shouldSetFormSubmitted: boolean,
+            private delayedValidClass: string,
+            private delayedInvalidClass: string) {
         }
     }
 

@@ -17,6 +17,8 @@
         private validationTypes: ValidationTypeCollection = {};
         private timing: ValidationTiming = ValidationTiming.Realtime;
         private shouldSetFormSubmitted: boolean = true;
+        private delayedValidClass: string = 'ng-delayed-valid';
+        private delayedInvalidClass: string = 'ng-delayed-invalid';
 
         getValidationType(validatorName: string): ValidationType {
             return this.validationTypes[validatorName];
@@ -31,6 +33,8 @@
                 'getValidationType': (validatorName: string) => this.getValidationType(validatorName),
                 'validationMessagingTiming': this.timing,
                 'shouldSetFormSubmitted': this.shouldSetFormSubmitted,
+                'delayedValidClass': this.delayedValidClass,
+                'delayedInvalidClass': this.delayedInvalidClass,
             });
         }
 
@@ -45,6 +49,11 @@
 
         setShouldSetFormSubmitted(shouldSetFormSubmitted: boolean) {
             this.shouldSetFormSubmitted = shouldSetFormSubmitted;
+        }
+
+        setValidityClasses(delayedValidClass: string, delayedInvalidClass: string) {
+            this.delayedValidClass = delayedValidClass;
+            this.delayedInvalidClass = delayedInvalidClass;
         }
     }
 

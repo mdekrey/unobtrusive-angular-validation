@@ -89,6 +89,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private validationTypes;
         private timing;
         private shouldSetFormSubmitted;
+        private delayedValidClass;
+        private delayedInvalidClass;
         getValidationType(validatorName: string): ValidationType;
         addValidator(validatorName: string, validate: ValidateMethod, inject?: string[]): void;
         $get($injector: ng.auto.IInjectorService): ValidationService;
@@ -96,6 +98,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         constructor();
         setValidationMessagingTiming(timing: ValidationTiming): void;
         setShouldSetFormSubmitted(shouldSetFormSubmitted: boolean): void;
+        setValidityClasses(delayedValidClass: string, delayedInvalidClass: string): void;
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
@@ -109,6 +112,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
         private getValidationType;
         private validationMessagingTiming;
         private shouldSetFormSubmitted;
+        private delayedValidClass;
+        private delayedInvalidClass;
         ensureValidation(formController: ng.IFormController): ScopeValidationState;
         getValidation(validationType: string): ValidationType;
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
@@ -119,8 +124,10 @@ declare module ResponsivePath.Validation.Unobtrusive {
         getShouldSetFormSubmitted(): boolean;
         copyValidation(formController: ng.IFormController): void;
         private static getModelNames(formController);
+        getDelayedValidClass(): string;
+        getDelayedInvalidClass(): string;
         static $inject: string[];
-        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: ValidationTiming, shouldSetFormSubmitted: boolean);
+        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: ValidationTiming, shouldSetFormSubmitted: boolean, delayedValidClass: string, delayedInvalidClass: string);
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {

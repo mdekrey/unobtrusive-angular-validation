@@ -329,6 +329,16 @@ var ResponsivePath;
                                 isEnabled = newValue;
                                 updateEnabled();
                             }),
+                            scope.$watchCollection(function () { return ngModelController.activeErrors; }, function (newActiveErrors) {
+                                if (Object.keys(newActiveErrors).length) {
+                                    element.addClass(_this.validation.getDelayedInvalidClass());
+                                    element.removeClass(_this.validation.getDelayedValidClass());
+                                }
+                                else {
+                                    element.removeClass(_this.validation.getDelayedInvalidClass());
+                                    element.addClass(_this.validation.getDelayedValidClass());
+                                }
+                            }),
                         ];
                         if (attrs['valIf']) {
                             var additionalIfEnabledParse = _this.parse(attrs['valIf']);
@@ -379,6 +389,8 @@ var ResponsivePath;
                     this.validationTypes = {};
                     this.timing = 0 /* Realtime */;
                     this.shouldSetFormSubmitted = true;
+                    this.delayedValidClass = 'ng-delayed-valid';
+                    this.delayedInvalidClass = 'ng-delayed-invalid';
                     this.$get.$inject = ['$injector'];
                 }
                 ValidationProvider.prototype.getValidationType = function (validatorName) {
@@ -393,6 +405,8 @@ var ResponsivePath;
                         'getValidationType': function (validatorName) { return _this.getValidationType(validatorName); },
                         'validationMessagingTiming': this.timing,
                         'shouldSetFormSubmitted': this.shouldSetFormSubmitted,
+                        'delayedValidClass': this.delayedValidClass,
+                        'delayedInvalidClass': this.delayedInvalidClass,
                     });
                 };
                 ValidationProvider.prototype.setValidationMessagingTiming = function (timing) {
@@ -400,6 +414,10 @@ var ResponsivePath;
                 };
                 ValidationProvider.prototype.setShouldSetFormSubmitted = function (shouldSetFormSubmitted) {
                     this.shouldSetFormSubmitted = shouldSetFormSubmitted;
+                };
+                ValidationProvider.prototype.setValidityClasses = function (delayedValidClass, delayedInvalidClass) {
+                    this.delayedValidClass = delayedValidClass;
+                    this.delayedInvalidClass = delayedInvalidClass;
                 };
                 ValidationProvider.$inject = [];
                 return ValidationProvider;
@@ -416,13 +434,15 @@ var ResponsivePath;
         var Unobtrusive;
         (function (Unobtrusive) {
             var ValidationService = (function () {
-                function ValidationService($injector, $sce, getValidationType, validationMessagingTiming, shouldSetFormSubmitted) {
+                function ValidationService($injector, $sce, getValidationType, validationMessagingTiming, shouldSetFormSubmitted, delayedValidClass, delayedInvalidClass) {
                     var _this = this;
                     this.$injector = $injector;
                     this.$sce = $sce;
                     this.getValidationType = getValidationType;
                     this.validationMessagingTiming = validationMessagingTiming;
                     this.shouldSetFormSubmitted = shouldSetFormSubmitted;
+                    this.delayedValidClass = delayedValidClass;
+                    this.delayedInvalidClass = delayedInvalidClass;
                     this.messageArray = function (formController, modelName) {
                         if (modelName) {
                             return formController[modelName].allValidationMessages;
@@ -502,7 +522,13 @@ var ResponsivePath;
                     });
                     return result;
                 };
-                ValidationService.$inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted'];
+                ValidationService.prototype.getDelayedValidClass = function () {
+                    return this.delayedValidClass;
+                };
+                ValidationService.prototype.getDelayedInvalidClass = function () {
+                    return this.delayedInvalidClass;
+                };
+                ValidationService.$inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted', 'delayedValidClass', 'delayedInvalidClass'];
                 return ValidationService;
             })();
             Unobtrusive.ValidationService = ValidationService;

@@ -36,6 +36,16 @@
                     isEnabled = newValue;
                     updateEnabled();
                 }),
+                scope.$watchCollection(() => ngModelController.activeErrors, (newActiveErrors: any) => {
+                    if (Object.keys(newActiveErrors).length) {
+                        element.addClass(this.validation.getDelayedInvalidClass());
+                        element.removeClass(this.validation.getDelayedValidClass());
+                    }
+                    else {
+                        element.removeClass(this.validation.getDelayedInvalidClass());
+                        element.addClass(this.validation.getDelayedValidClass());
+                    }
+                }),
             ];
 
             if (attrs['valIf']) {
