@@ -4,11 +4,6 @@
         (formController: ng.IFormController): ITrustedHtmlSet;
         (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
     }
-    export interface GetSetModelValue {
-        (formController: ng.IFormController): ICompleteModel;
-        (formController: ng.IFormController, modelName: string): any;
-        (formController: ng.IFormController, modelName: string, setModelValue: any): any;
-    }
 
     export class ValidationService {
 

@@ -103,11 +103,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         (formController: ng.IFormController): ITrustedHtmlSet;
         (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
     }
-    interface GetSetModelValue {
-        (formController: ng.IFormController): ICompleteModel;
-        (formController: ng.IFormController, modelName: string): any;
-        (formController: ng.IFormController, modelName: string, setModelValue: any): any;
-    }
     class ValidationService {
         private $injector;
         private $sce;
