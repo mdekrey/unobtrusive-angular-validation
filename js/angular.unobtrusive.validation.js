@@ -342,7 +342,7 @@ var ResponsivePath;
                         ngModelController.$parsers.unshift(validators.runValidations);
                         ngModelController.$formatters.unshift(validators.runValidations);
                         element.on('$destroy', function () {
-                            delete _this.validation.clearModelName(form, validationFor);
+                            _this.validation.clearModelName(form, validationFor);
                             for (var key in watches)
                                 watches[key]();
                         });

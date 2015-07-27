@@ -55,7 +55,7 @@
 
             // Make sure we dispose all our 
             element.on('$destroy', () => {
-                delete this.validation.clearModelName(form, validationFor);
+                this.validation.clearModelName(form, validationFor);
 
                 for (var key in watches)
                     watches[key]();
