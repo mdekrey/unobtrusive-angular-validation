@@ -32,7 +32,7 @@
 
         enable(): void {
             this.validationEnabled = true;
-            this.runValidations(this.svc.dataValue(this.formController, this.validationFor));
+            this.runValidations((<IValidatedModelController>this.formController[this.validationFor]).$modelValue);
         }
         disable(): void {
             this.validationEnabled = false;
@@ -41,7 +41,6 @@
             })
         }
         runValidations = (newValue: any) => {
-            this.svc.dataValue(this.formController, this.validationFor, newValue);
             if (this.validationEnabled) {
                 // Run validations for all of our client-side validation and store in a local array.
                 (<ng.IAngularStatic>angular).forEach(this.validators, (value, key) => {

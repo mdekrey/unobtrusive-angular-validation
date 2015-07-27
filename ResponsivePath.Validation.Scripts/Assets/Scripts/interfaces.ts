@@ -44,7 +44,6 @@
     }
 
     export interface ScopeValidationState {
-        data: ICompleteModel;
         activeErrors: { /* array of model controllers failing the error type */[errorType: string]: IValidatedModelController[]; };
     }
 

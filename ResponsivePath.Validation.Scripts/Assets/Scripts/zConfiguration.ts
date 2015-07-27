@@ -184,7 +184,7 @@
             var prefix = getModelPrefix(options.attributes.name),
                 other = options.parameters.other,
                 fullOtherName = appendModelPrefix(other, prefix),
-                element = options.injected.validation.dataValue(options.formController, fullOtherName);
+                element = (<IValidatedModelController>options.formController[fullOtherName]).$modelValue;
 			
             return element == val;
         }, ['validation']);
@@ -205,7 +205,7 @@
             data[options.attributes.name] = val;
             (<ng.IAngularStatic>angular).forEach((options.parameters.additionalfields || '').split(','), (fieldName: string) => {
                 var dataName = appendModelPrefix(fieldName, prefix);
-                data[dataName] = options.injected.validation.dataValue(options.formController, dataName);
+                data[dataName] = (<IValidatedModelController>options.formController[dataName]).$modelValue;
             });
 
             var timeout = options.injected.$q.defer();

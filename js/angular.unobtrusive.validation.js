@@ -103,7 +103,6 @@ var ResponsivePath;
                     this.showValidationSummary = false;
                     this.validationEnabled = true;
                     this.runValidations = function (newValue) {
-                        _this.svc.dataValue(_this.formController, _this.validationFor, newValue);
                         if (_this.validationEnabled) {
                             angular.forEach(_this.validators, function (value, key) {
                                 if (!value.validate(newValue, value))
@@ -135,7 +134,7 @@ var ResponsivePath;
                 }
                 ValidationTools.prototype.enable = function () {
                     this.validationEnabled = true;
-                    this.runValidations(this.svc.dataValue(this.formController, this.validationFor));
+                    this.runValidations(this.formController[this.validationFor].$modelValue);
                 };
                 ValidationTools.prototype.disable = function () {
                     var _this = this;
@@ -454,18 +453,12 @@ var ResponsivePath;
                             return resultSet;
                         }
                     };
-                    this.dataValue = function (formController, modelName, setter) {
-                        if (modelName) {
-                            if (setter !== undefined)
-                                _this.ensureValidation(formController).data[modelName] = setter;
-                            return _this.ensureValidation(formController).data[modelName];
-                        }
-                        return _this.ensureValidation(formController).data;
-                    };
                 }
                 ValidationService.prototype.ensureValidation = function (formController) {
                     var controller = formController;
-                    var state = controller.$validationState || { messages: {}, data: {}, activeErrors: null };
+                    var state = controller.$validationState || {
+                        activeErrors: (this.getValidationTiming() === 0 /* Realtime */) ? formController.$error : null
+                    };
                     controller.$validationState = state;
                     return state;
                 };
@@ -476,8 +469,6 @@ var ResponsivePath;
                     return new Unobtrusive.ValidationTools(attrs, ngModelController, this, formController, this.$injector, this.$sce, this.getValidationType);
                 };
                 ValidationService.prototype.clearModelName = function (formController, modelName) {
-                    var validation = this.ensureValidation(formController);
-                    delete this.ensureValidation(formController).data[modelName];
                     delete formController[modelName];
                 };
                 ValidationService.prototype.getValidationTiming = function () {
@@ -653,7 +644,7 @@ var ResponsivePath;
                     return (!options.parameters.min || val.length >= parseInt(options.parameters.min)) && (!options.parameters.nonalphamin || nonalphamin(val, parseInt(options.parameters.nonalphamin))) && (!options.parameters.regex || !!(new RegExp(options.parameters.regex).exec(val)));
                 });
                 validationProvider.addValidator("equalto", function (val, options) {
-                    var prefix = getModelPrefix(options.attributes.name), other = options.parameters.other, fullOtherName = appendModelPrefix(other, prefix), element = options.injected.validation.dataValue(options.formController, fullOtherName);
+                    var prefix = getModelPrefix(options.attributes.name), other = options.parameters.other, fullOtherName = appendModelPrefix(other, prefix), element = options.formController[fullOtherName].$modelValue;
                     return element == val;
                 }, ['validation']);
                 validationProvider.addValidator("extension", function (val, options) {
@@ -672,7 +663,7 @@ var ResponsivePath;
                     data[options.attributes.name] = val;
                     angular.forEach((options.parameters.additionalfields || '').split(','), function (fieldName) {
                         var dataName = appendModelPrefix(fieldName, prefix);
-                        data[dataName] = options.injected.validation.dataValue(options.formController, dataName);
+                        data[dataName] = options.formController[dataName].$modelValue;
                     });
                     var timeout = options.injected.$q.defer();
                     options.ngModel.remoteTimeout = timeout;

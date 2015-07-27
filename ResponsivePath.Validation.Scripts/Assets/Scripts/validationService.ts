@@ -14,7 +14,11 @@
 
         ensureValidation(formController: ng.IFormController): ScopeValidationState {
             var controller: IValidatedFormController = <IValidatedFormController>formController;
-            var state: ScopeValidationState = controller.$validationState || { messages: {}, data: {}, activeErrors: null };
+            var state: ScopeValidationState = controller.$validationState
+                || {
+                    activeErrors: (this.getValidationTiming() === ValidationTiming.Realtime) ? formController.$error : null
+                };
+            
             controller.$validationState = state;
             return state;
         }
@@ -62,17 +66,7 @@
                 return resultSet;
             }
         }
-        dataValue: GetSetModelValue = (formController: ng.IFormController, modelName?: string, setter?: any): any => {
-            if (modelName) {
-                if (setter !== undefined)
-                    this.ensureValidation(formController).data[modelName] = setter;
-                return this.ensureValidation(formController).data[modelName];
-            }
-            return this.ensureValidation(formController).data;
-        }
         clearModelName(formController: ng.IFormController, modelName: string) {
-            var validation = this.ensureValidation(formController);
-            delete this.ensureValidation(formController).data[modelName];
             delete formController[modelName];
         }
 

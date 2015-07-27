@@ -73,14 +73,6 @@
                 expect(sce.getTrustedHtml(validation.messageArray(formController)['Obj.Target']['required'])).to.be('Invalid');
                 expect(sce.getTrustedHtml(validation.messageArray(formController, 'Obj.Target')['required'])).to.be('Invalid');
             });
-
-            it('can get and object values', () => {
-                expect(validation.dataValue(formController)['Obj.Other']).to.be('othervalue');
-                expect(validation.dataValue(formController, 'Obj.Other')).to.be('othervalue');
-                expect(validation.dataValue(formController, 'Obj.Other', 'something else')).to.be('something else');
-                expect(validation.dataValue(formController)['Obj.Other']).to.be('something else');
-                expect(validation.dataValue(formController, 'Obj.Other')).to.be('something else');
-            });
         });
     });
 }

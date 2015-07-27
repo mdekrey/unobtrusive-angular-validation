@@ -62,7 +62,7 @@
 			isValid();
 		});
 
-		it('fails',() => {
+        it('fails', () => {
 			httpBackend.expect('SPECIAL', '/some/path', { 'Target': '0', 'Other': 'othervalue' }).respond(false);
 			scope['target'] = '0';
 			scope.$digest();

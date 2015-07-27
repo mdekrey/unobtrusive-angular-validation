@@ -72,7 +72,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         $validationState: ScopeValidationState;
     }
     interface ScopeValidationState {
-        data: ICompleteModel;
         activeErrors: {
             [errorType: string]: IValidatedModelController[];
         };
@@ -120,7 +119,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetMessageArray;
         activeMessageArray: GetMessageArray;
-        dataValue: GetSetModelValue;
         clearModelName(formController: ng.IFormController, modelName: string): void;
         getValidationTiming(): ValidationTiming;
         getShouldSetFormSubmitted(): boolean;
