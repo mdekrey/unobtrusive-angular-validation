@@ -69,13 +69,9 @@
                 scope.$digest();
             });
 
-            it('can get and set messages', () => {
+            it('can get messages', () => {
                 expect(sce.getTrustedHtml(validation.messageArray(formController)['Obj.Target']['required'])).to.be('Invalid');
                 expect(sce.getTrustedHtml(validation.messageArray(formController, 'Obj.Target')['required'])).to.be('Invalid');
-                expect(sce.getTrustedHtml(validation.messageArray(formController, 'Obj.Target', { anothererror: sce.trustAsHtml('Something Else') })['anothererror'])).to.be('Something Else');
-                expect(sce.getTrustedHtml(validation.messageArray(formController)['Obj.Target']['required'])).to.be(undefined);
-                expect(sce.getTrustedHtml(validation.messageArray(formController)['Obj.Target']['anothererror'])).to.be('Something Else');
-                expect(sce.getTrustedHtml(validation.messageArray(formController, 'Obj.Target')['anothererror'])).to.be('Something Else');
             });
 
             it('can get and object values', () => {

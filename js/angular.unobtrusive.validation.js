@@ -114,9 +114,15 @@ var ResponsivePath;
                         }
                         return newValue;
                     };
-                    this.fail = function (key) {
+                    this.fail = function (key, message) {
                         if (_this.validationEnabled) {
                             _this.ngModelController.$setValidity(key, false);
+                        }
+                        if (message) {
+                            _this.ngModelController.overrideValidationMessages[key] = _this.$sce.trustAsHtml(message);
+                        }
+                        else {
+                            _this.ngModelController.overrideValidationMessages[key] = null;
                         }
                     };
                     this.pass = function (key) {
@@ -124,8 +130,8 @@ var ResponsivePath;
                     };
                     this.validationFor = attrs['name'];
                     ngModelController.allValidationMessages = {};
+                    ngModelController.overrideValidationMessages = {};
                     this.validators = this.buildValidatorsFromAttributes();
-                    svc.messageArray(formController, this.validationFor, ngModelController.allValidationMessages);
                 }
                 ValidationTools.prototype.enable = function () {
                     this.validationEnabled = true;
@@ -272,7 +278,7 @@ var ResponsivePath;
                         };
                         var watches = [
                             scope.$watch(function () { return controller.$error; }, update, true),
-                            scope.$watch(function () { return controller.validationState.activeErrors; }, function (newValue) {
+                            scope.$watch(function () { return _this.validation.ensureValidation(controller).activeErrors; }, function (newValue) {
                                 scope.submitted = !!newValue;
                                 update();
                             }),
@@ -306,11 +312,11 @@ var ResponsivePath;
                         var isEnabledParse = _this.parse(attrs['val']);
                         var isEnabled = isEnabledParse(scope);
                         var additionalIfEnabled = true;
-                        var copyValidation = function () {
-                            ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                            _this.validation.copyValidation(form);
-                        };
                         ngModelController.activeErrors = {};
+                        ngModelController.overrideValidationMessages = {};
+                        if (_this.validation.getValidationTiming() === 0 /* Realtime */) {
+                            ngModelController.activeErrors = ngModelController.$error;
+                        }
                         function updateEnabled() {
                             if (isEnabled && additionalIfEnabled) {
                                 validators.enable();
@@ -323,11 +329,6 @@ var ResponsivePath;
                             scope.$watch(function () { return isEnabledParse(scope); }, function (newValue) {
                                 isEnabled = newValue;
                                 updateEnabled();
-                            }),
-                            scope.$watch(function () { return ngModelController.$modelValue; }, function () {
-                                if (_this.validation.getValidationTiming() === 0 /* Realtime */) {
-                                    copyValidation();
-                                }
                             }),
                         ];
                         if (attrs['valIf']) {
@@ -346,10 +347,13 @@ var ResponsivePath;
                             for (var key in watches)
                                 watches[key]();
                         });
-                        element.on('blur', function () {
-                            copyValidation();
-                            scope.$digest();
-                        });
+                        if (_this.validation.getValidationTiming() === 1 /* OnBlur */) {
+                            element.on('blur', function () {
+                                ngModelController.activeErrors = angular.copy(ngModelController.$error);
+                                _this.validation.copyValidation(form);
+                                scope.$digest();
+                            });
+                        }
                     };
                 }
                 ValDirective.$inject = ['validation', '$parse'];
@@ -420,30 +424,31 @@ var ResponsivePath;
                     this.getValidationType = getValidationType;
                     this.validationMessagingTiming = validationMessagingTiming;
                     this.shouldSetFormSubmitted = shouldSetFormSubmitted;
-                    this.messageArray = function (formController, modelName, setter) {
+                    this.messageArray = function (formController, modelName) {
                         if (modelName) {
-                            if (setter !== undefined) {
-                                _this.ensureValidation(formController).messages[modelName] = setter;
-                            }
-                            return _this.ensureValidation(formController).messages[modelName];
+                            return formController[modelName].allValidationMessages;
                         }
-                        return _this.ensureValidation(formController).messages;
+                        var result = {};
+                        angular.forEach(ValidationService.getModelNames(formController), function (modelName) {
+                            result[modelName] = formController[modelName].allValidationMessages;
+                        });
+                        return result;
                     };
                     this.activeMessageArray = function (formController, modelName) {
-                        var messages = _this.ensureValidation(formController).messages;
                         if (modelName) {
                             var modelController = formController[modelName];
                             var result = {};
                             angular.forEach(modelController.activeErrors || modelController.$error, function (value, key) {
-                                if (value && messages[modelName][key]) {
-                                    result[key] = messages[modelName][key];
+                                var message = modelController.overrideValidationMessages[key] || modelController.allValidationMessages[key];
+                                if (value && message) {
+                                    result[key] = message;
                                 }
                             });
                             return result;
                         }
                         else {
                             var resultSet = {};
-                            angular.forEach(messages, function (value, modelName) {
+                            angular.forEach(ValidationService.getModelNames(formController), function (modelName) {
                                 resultSet[modelName] = _this.activeMessageArray(formController, modelName);
                             });
                             return resultSet;
@@ -460,8 +465,8 @@ var ResponsivePath;
                 }
                 ValidationService.prototype.ensureValidation = function (formController) {
                     var controller = formController;
-                    var state = controller.validationState || { messages: {}, data: {}, activeErrors: null };
-                    controller.validationState = state;
+                    var state = controller.$validationState || { messages: {}, data: {}, activeErrors: null };
+                    controller.$validationState = state;
                     return state;
                 };
                 ValidationService.prototype.getValidation = function (validationType) {
@@ -472,8 +477,8 @@ var ResponsivePath;
                 };
                 ValidationService.prototype.clearModelName = function (formController, modelName) {
                     var validation = this.ensureValidation(formController);
-                    delete this.ensureValidation(formController).messages[modelName];
                     delete this.ensureValidation(formController).data[modelName];
+                    delete formController[modelName];
                 };
                 ValidationService.prototype.getValidationTiming = function () {
                     return this.validationMessagingTiming;
@@ -483,15 +488,28 @@ var ResponsivePath;
                 };
                 ValidationService.prototype.copyValidation = function (formController) {
                     if (this.getValidationTiming() == 2 /* OnSubmit */) {
-                        angular.forEach(Object.keys(formController), function (key) {
-                            if (key[0] == '$')
-                                return;
-                            if (formController[key].$error) {
-                                formController[key].activeErrors = angular.copy(formController[key].$error);
-                            }
+                        this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
+                        angular.forEach(ValidationService.getModelNames(formController), function (key) {
+                            formController[key].activeErrors = angular.copy(formController[key].$error);
                         });
                     }
-                    this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
+                    else if (this.getValidationTiming() == 1 /* OnBlur */) {
+                        this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
+                    }
+                    else {
+                        this.ensureValidation(formController).activeErrors = formController.$error;
+                    }
+                };
+                ValidationService.getModelNames = function (formController) {
+                    var result = [];
+                    angular.forEach(Object.keys(formController), function (key) {
+                        if (key[0] == '$')
+                            return;
+                        if (formController[key].$error) {
+                            result.push(key);
+                        }
+                    });
+                    return result;
                 };
                 ValidationService.$inject = ['$injector', '$sce', 'getValidationType', 'validationMessagingTiming', 'shouldSetFormSubmitted'];
                 return ValidationService;
@@ -524,7 +542,7 @@ var ResponsivePath;
                     }
                 }
                 Validator.prototype.fail = function (message) {
-                    this.validationTools.fail(this.name);
+                    this.validationTools.fail(this.name, message);
                 };
                 Validator.prototype.pass = function () {
                     this.validationTools.pass(this.name);

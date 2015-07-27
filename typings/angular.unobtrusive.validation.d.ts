@@ -27,7 +27,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         enable(): void;
         disable(): void;
         runValidations: (newValue: any) => any;
-        fail: (key: string) => void;
+        fail: (key: string, message?: string) => void;
         pass: (key: string) => void;
         private buildValidatorsFromAttributes();
     }
@@ -63,15 +63,15 @@ declare module ResponsivePath.Validation.Unobtrusive {
     }
     interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
+        overrideValidationMessages: ITrustedHtmlByValidationKey;
         activeErrors: {
             [errorType: string]: boolean;
         };
     }
     interface IValidatedFormController extends ng.IFormController {
-        validationState: ScopeValidationState;
+        $validationState: ScopeValidationState;
     }
     interface ScopeValidationState {
-        messages: ITrustedHtmlSet;
         data: ICompleteModel;
         activeErrors: {
             [errorType: string]: IValidatedModelController[];
@@ -104,9 +104,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         (formController: ng.IFormController): ITrustedHtmlSet;
         (formController: ng.IFormController, modelName: string): ITrustedHtmlByValidationKey;
     }
-    interface GetSetMessageArray extends GetMessageArray {
-        (formController: ng.IFormController, modelName: string, setMessages: ITrustedHtmlByValidationKey): ITrustedHtmlByValidationKey;
-    }
     interface GetSetModelValue {
         (formController: ng.IFormController): ICompleteModel;
         (formController: ng.IFormController, modelName: string): any;
@@ -121,13 +118,14 @@ declare module ResponsivePath.Validation.Unobtrusive {
         ensureValidation(formController: ng.IFormController): ScopeValidationState;
         getValidation(validationType: string): ValidationType;
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
-        messageArray: GetSetMessageArray;
+        messageArray: GetMessageArray;
         activeMessageArray: GetMessageArray;
         dataValue: GetSetModelValue;
         clearModelName(formController: ng.IFormController, modelName: string): void;
         getValidationTiming(): ValidationTiming;
         getShouldSetFormSubmitted(): boolean;
         copyValidation(formController: ng.IFormController): void;
+        private static getModelNames(formController);
         static $inject: string[];
         constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: ValidationTiming, shouldSetFormSubmitted: boolean);
     }

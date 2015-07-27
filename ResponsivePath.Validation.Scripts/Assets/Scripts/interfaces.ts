@@ -35,15 +35,15 @@
 
     export interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
+        overrideValidationMessages: ITrustedHtmlByValidationKey;
         activeErrors: { [errorType: string]: boolean; };
     }
 
     export interface IValidatedFormController extends ng.IFormController {
-        validationState: ScopeValidationState;
+        $validationState: ScopeValidationState;
     }
 
     export interface ScopeValidationState {
-        messages: ITrustedHtmlSet;
         data: ICompleteModel;
         activeErrors: { /* array of model controllers failing the error type */[errorType: string]: IValidatedModelController[]; };
     }

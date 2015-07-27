@@ -18,13 +18,14 @@
 
         var scope: ng.IScope;
 		var fieldName: string = 'Target';
-		var message: string = 'Invalid';
+        var message: string = 'Invalid';
+        var form: angular.IAugmentedJQuery;
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
 
-			var form = angular.element('<form name="form"/>');
+			form = angular.element('<form name="form"/>');
 			element = angular.element('<input type="text" data-val="true" name="Target" ng-model="target" data-val-remote="Invalid" data-val-remote-additionalfields="*.Other" data-val-remote-type="SPECIAL" data-val-remote-url="/some/path" />');
 			var matchElement = angular.element('<input type="text" data-val="true" name="Other" ng-model="other" />');
 			form.append(element);
@@ -41,8 +42,10 @@
         }
 
         function isInvalid(errorMessage?: string) {
-            // TODO - verify custom error message
-            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+            expect((<IValidatedModelController>element.controller('ngModel')).$invalid).to.be(true);
+            if (errorMessage) {
+                expect(sce.getTrustedHtml(validation.activeMessageArray(form.controller('form'), 'Target')['remote'])).to.be(errorMessage);
+            }
         }
 
 		it('passes a null value',() => {

@@ -25,10 +25,9 @@
             this.validationFor = attrs['name'];
 
             ngModelController.allValidationMessages = {};
+            ngModelController.overrideValidationMessages = {};
 
             this.validators = this.buildValidatorsFromAttributes();
-            
-            svc.messageArray(formController, this.validationFor, ngModelController.allValidationMessages);
         }
 
         enable(): void {
@@ -54,9 +53,16 @@
             }
             return newValue;
         }
-        fail = (key: string): void => {
+        fail = (key: string, message?: string): void => {
             if (this.validationEnabled) {
                 this.ngModelController.$setValidity(key, false);
+            }
+
+            if (message) {
+                this.ngModelController.overrideValidationMessages[key] = this.$sce.trustAsHtml(message);
+            }
+            else {
+                this.ngModelController.overrideValidationMessages[key] = null;
             }
         }
         pass = (key: string): void => {

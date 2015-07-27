@@ -29,8 +29,7 @@
         parameters: ValidationParameters = {};
         injected: InjectedValidationValues = {};
         fail(message?: string): void {
-            // TODO - handle the custom message
-            this.validationTools.fail(this.name);
+            this.validationTools.fail(this.name, message);
         }
         pass() {
             this.validationTools.pass(this.name);

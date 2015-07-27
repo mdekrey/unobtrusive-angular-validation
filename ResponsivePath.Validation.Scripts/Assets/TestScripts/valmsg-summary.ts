@@ -48,7 +48,7 @@
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
 		}));
-
+        
 		it('clears original errors on submit',() => inject(($rootScope: angular.IRootScopeService) => {
 			scope['firstname'] = null;
             scope.$digest();
@@ -61,7 +61,7 @@
 			expect(valSummary.hasClass('validation-summary-errors')).to.be(true);
 			expect(valSummary.hasClass('validation-summary-valid')).to.be(false);
 		}));
-
+        
 		it('stays empty before submit',() => inject(($rootScope: angular.IRootScopeService) => {
             var scope: ng.IScope = $rootScope.$new();
 

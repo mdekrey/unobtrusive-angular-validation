@@ -30,7 +30,7 @@
                     element.removeClass('field-validation-error');
                     return;
                 }
-
+                
                 scope.messages = newValue;
 
                 if (newValue && !_.any(newValue)) {

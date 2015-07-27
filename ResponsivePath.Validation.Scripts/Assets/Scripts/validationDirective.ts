@@ -15,11 +15,12 @@
             var isEnabled = isEnabledParse(scope);
             var additionalIfEnabled = true;
             
-            var copyValidation = () => {
-                ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                this.validation.copyValidation(form);
-            }
             ngModelController.activeErrors = {};
+            ngModelController.overrideValidationMessages = {};
+
+            if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
+                ngModelController.activeErrors = ngModelController.$error;
+            }
 
             function updateEnabled() {
                 if (isEnabled && additionalIfEnabled) {
@@ -34,11 +35,6 @@
                 scope.$watch(() => isEnabledParse(scope), (newValue) => {
                     isEnabled = newValue;
                     updateEnabled();
-                }),
-                scope.$watch(() => ngModelController.$modelValue, () => {
-                    if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
-                        copyValidation();
-                    }
                 }),
             ];
 
@@ -58,17 +54,20 @@
             ngModelController.$formatters.unshift(validators.runValidations);
 
             // Make sure we dispose all our 
-            element.on('$destroy',() => {
+            element.on('$destroy', () => {
                 delete this.validation.clearModelName(form, validationFor);
 
                 for (var key in watches)
                     watches[key]();
             });
 
-            element.on('blur', () => {
-                copyValidation();
-                scope.$digest();
-            });
+            if (this.validation.getValidationTiming() === ValidationTiming.OnBlur) {
+                element.on('blur', () => {
+                    ngModelController.activeErrors = angular.copy(ngModelController.$error);
+                    this.validation.copyValidation(form);
+                    scope.$digest();
+                });
+            }
         }
     }
 
