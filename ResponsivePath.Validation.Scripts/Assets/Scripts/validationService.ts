@@ -83,9 +83,6 @@
             else if (this.getValidationTiming() == ValidationTiming.OnBlur) {
                 this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
             }
-            else {
-                this.ensureValidation(formController).activeErrors = formController.$error;
-            }
         }
 
         private static getModelNames(formController: ng.IFormController) {

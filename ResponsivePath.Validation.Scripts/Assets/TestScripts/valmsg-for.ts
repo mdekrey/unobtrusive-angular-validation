@@ -77,6 +77,28 @@
 
 			form.remove();
 		}));
+
+        it('hides when there is no message', () => inject(($rootScope: angular.IRootScopeService) => {
+            var scope: ng.IScope = $rootScope.$new();
+
+            var form = angular.element('<form />');
+            var firstName = angular.element('<input type="text" data-val="true" required name="Personal.FirstName" ng-model="firstname" />');
+            form.append(firstName);
+            var firstNameMsg = angular.element('<span class="field-validation-valid" data-valmsg-for="Personal.FirstName" data-valmsg-replace="true"></span>');
+            form.append(firstNameMsg);
+            
+            compile(form)(scope);
+
+            firstName.triggerHandler('blur');
+            scope['firstname'] = 'Matt';
+            scope.$digest();
+
+            expect(firstNameMsg[0].innerText).not.to.contain('You must provide a first name');
+            expect(firstNameMsg.hasClass('field-validation-error')).to.be(false);
+            expect(firstNameMsg.hasClass('field-validation-valid')).to.be(true);
+
+            form.remove();
+        }));
 		
 	});
 }

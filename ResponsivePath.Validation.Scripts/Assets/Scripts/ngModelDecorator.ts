@@ -2,7 +2,7 @@
 
     class NgModelDirective {
         restrict: string = 'A';
-        require = ['ngModel', '^form'];
+        require = ['ngModel', '^?form'];
 
         private static $inject = ['validation'];
         constructor(private validation: ValidationService) {
@@ -15,6 +15,9 @@
             
             if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
                 ngModelController.activeErrors = ngModelController.$error;
+                if (form) {
+                    this.validation.ensureValidation(form).activeErrors = form.$error;
+                }
             }
             
             var watches = [
@@ -34,7 +37,9 @@
             
             // Make sure we dispose all our 
             element.on('$destroy', () => {
-                this.validation.clearModelName(form, validationFor);
+                if (form) {
+                    this.validation.clearModelName(form, validationFor);
+                }
 
                 for (var key in watches)
                     watches[key]();
@@ -43,7 +48,9 @@
             if (this.validation.getValidationTiming() === ValidationTiming.OnBlur) {
                 element.on('blur', () => {
                     ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                    this.validation.copyValidation(form);
+                    if (form) {
+                        this.validation.copyValidation(form);
+                    }
                     scope.$digest();
                 });
             }

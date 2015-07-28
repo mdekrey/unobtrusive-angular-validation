@@ -14,6 +14,13 @@
             formController = element.controller('form');
         }));
 
+        it('can access validation types', () => {
+            var email = validation.getValidation('email');
+
+            expect(email.validate('test@example.com', null)).to.be(true);
+            expect(email.validate('test', null)).to.be(false);
+        });
+
         describe('Validation Scoping...', () => {
             it('can get a unique validation scope', () => inject(($rootScope: angular.IRootScopeService) => {
                 var validationScope = validation.ensureValidation(formController);

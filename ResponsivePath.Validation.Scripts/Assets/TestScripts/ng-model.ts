@@ -67,6 +67,7 @@
 
             it('uses the same validation objects', () => {
                 expect((<IValidatedModelController>element.controller('ngModel')).activeErrors).to.be((<IValidatedModelController>element.controller('ngModel')).$error);
+                expect((<IValidatedFormController>form.controller('form')).$validationState.activeErrors).to.be((<IValidatedFormController>form.controller('form')).$error);
             });
         });
 
