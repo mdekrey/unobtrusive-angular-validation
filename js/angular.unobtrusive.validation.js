@@ -298,6 +298,59 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
+            var NgModelDirective = (function () {
+                function NgModelDirective(validation) {
+                    var _this = this;
+                    this.validation = validation;
+                    this.restrict = 'A';
+                    this.require = ['ngModel', '^form'];
+                    this.link = function (scope, element, attrs, controllers) {
+                        var ngModelController = controllers[0];
+                        var form = controllers[1];
+                        ngModelController.activeErrors = {};
+                        if (_this.validation.getValidationTiming() === 0 /* Realtime */) {
+                            ngModelController.activeErrors = ngModelController.$error;
+                        }
+                        var watches = [
+                            scope.$watchCollection(function () { return ngModelController.activeErrors; }, function (newActiveErrors) {
+                                if (Object.keys(newActiveErrors).length) {
+                                    element.addClass(_this.validation.getDelayedInvalidClass());
+                                    element.removeClass(_this.validation.getDelayedValidClass());
+                                }
+                                else {
+                                    element.removeClass(_this.validation.getDelayedInvalidClass());
+                                    element.addClass(_this.validation.getDelayedValidClass());
+                                }
+                            }),
+                        ];
+                        var validationFor = attrs['name'];
+                        element.on('$destroy', function () {
+                            _this.validation.clearModelName(form, validationFor);
+                            for (var key in watches)
+                                watches[key]();
+                        });
+                        if (_this.validation.getValidationTiming() === 1 /* OnBlur */) {
+                            element.on('blur', function () {
+                                ngModelController.activeErrors = angular.copy(ngModelController.$error);
+                                _this.validation.copyValidation(form);
+                                scope.$digest();
+                            });
+                        }
+                    };
+                }
+                NgModelDirective.$inject = ['validation'];
+                return NgModelDirective;
+            })();
+            Unobtrusive.mod.directive('ngModel', Unobtrusive.constructorAsInjectable(NgModelDirective));
+        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
+    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
+})(ResponsivePath || (ResponsivePath = {}));
+var ResponsivePath;
+(function (ResponsivePath) {
+    var Validation;
+    (function (Validation) {
+        var Unobtrusive;
+        (function (Unobtrusive) {
             var ValDirective = (function () {
                 function ValDirective(validation, parse) {
                     var _this = this;
@@ -311,11 +364,7 @@ var ResponsivePath;
                         var isEnabledParse = _this.parse(attrs['val']);
                         var isEnabled = isEnabledParse(scope);
                         var additionalIfEnabled = true;
-                        ngModelController.activeErrors = {};
                         ngModelController.overrideValidationMessages = {};
-                        if (_this.validation.getValidationTiming() === 0 /* Realtime */) {
-                            ngModelController.activeErrors = ngModelController.$error;
-                        }
                         function updateEnabled() {
                             if (isEnabled && additionalIfEnabled) {
                                 validators.enable();
@@ -329,16 +378,6 @@ var ResponsivePath;
                                 isEnabled = newValue;
                                 updateEnabled();
                             }),
-                            scope.$watchCollection(function () { return ngModelController.activeErrors; }, function (newActiveErrors) {
-                                if (Object.keys(newActiveErrors).length) {
-                                    element.addClass(_this.validation.getDelayedInvalidClass());
-                                    element.removeClass(_this.validation.getDelayedValidClass());
-                                }
-                                else {
-                                    element.removeClass(_this.validation.getDelayedInvalidClass());
-                                    element.addClass(_this.validation.getDelayedValidClass());
-                                }
-                            }),
                         ];
                         if (attrs['valIf']) {
                             var additionalIfEnabledParse = _this.parse(attrs['valIf']);
@@ -347,22 +386,13 @@ var ResponsivePath;
                                 updateEnabled();
                             }));
                         }
-                        var validationFor = attrs['name'];
                         var validators = _this.validation.buildValidation(form, element, attrs, ngModelController);
                         ngModelController.$parsers.unshift(validators.runValidations);
                         ngModelController.$formatters.unshift(validators.runValidations);
                         element.on('$destroy', function () {
-                            _this.validation.clearModelName(form, validationFor);
                             for (var key in watches)
                                 watches[key]();
                         });
-                        if (_this.validation.getValidationTiming() === 1 /* OnBlur */) {
-                            element.on('blur', function () {
-                                ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                                _this.validation.copyValidation(form);
-                                scope.$digest();
-                            });
-                        }
                     };
                 }
                 ValDirective.$inject = ['validation', '$parse'];

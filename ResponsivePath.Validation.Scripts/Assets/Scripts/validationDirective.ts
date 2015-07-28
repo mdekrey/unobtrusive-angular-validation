@@ -15,13 +15,8 @@
             var isEnabled = isEnabledParse(scope);
             var additionalIfEnabled = true;
             
-            ngModelController.activeErrors = {};
             ngModelController.overrideValidationMessages = {};
-
-            if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
-                ngModelController.activeErrors = ngModelController.$error;
-            }
-
+            
             function updateEnabled() {
                 if (isEnabled && additionalIfEnabled) {
                     validators.enable();
@@ -36,16 +31,6 @@
                     isEnabled = newValue;
                     updateEnabled();
                 }),
-                scope.$watchCollection(() => ngModelController.activeErrors, (newActiveErrors: any) => {
-                    if (Object.keys(newActiveErrors).length) {
-                        element.addClass(this.validation.getDelayedInvalidClass());
-                        element.removeClass(this.validation.getDelayedValidClass());
-                    }
-                    else {
-                        element.removeClass(this.validation.getDelayedInvalidClass());
-                        element.addClass(this.validation.getDelayedValidClass());
-                    }
-                }),
             ];
 
             if (attrs['valIf']) {
@@ -56,8 +41,6 @@
                 }));
             }
 
-            var validationFor = attrs['name'];
-            
             var validators = this.validation.buildValidation(form, element, attrs, ngModelController);
 
             ngModelController.$parsers.unshift(validators.runValidations);
@@ -65,19 +48,9 @@
 
             // Make sure we dispose all our 
             element.on('$destroy', () => {
-                this.validation.clearModelName(form, validationFor);
-
                 for (var key in watches)
                     watches[key]();
             });
-
-            if (this.validation.getValidationTiming() === ValidationTiming.OnBlur) {
-                element.on('blur', () => {
-                    ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                    this.validation.copyValidation(form);
-                    scope.$digest();
-                });
-            }
         }
     }
 

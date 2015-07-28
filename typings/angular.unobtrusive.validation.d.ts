@@ -80,6 +80,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
+}
+declare module ResponsivePath.Validation.Unobtrusive {
     enum ValidationTiming {
         Realtime = 0,
         OnBlur = 1,

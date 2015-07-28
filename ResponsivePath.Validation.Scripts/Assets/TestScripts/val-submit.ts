@@ -66,6 +66,10 @@
 
 			expect(scope['submitted']).to.be(true);
 			form.remove();
-		}));
+        }));
+
+        it('copies validation on submit', inject(($rootScope: angular.IRootScopeService) => {
+            // TODO
+        }));
 	});
 }
