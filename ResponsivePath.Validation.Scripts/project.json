@@ -2,14 +2,14 @@
     "webroot": "wwwroot",
     "version": "1.0.0-*",
     "dependencies": {
-        "Microsoft.AspNet.Server.IIS": "1.0.0-beta4",
-		"Microsoft.AspNet.StaticFiles": "1.0.0-beta4"
+        "Microsoft.AspNet.Server.IIS": "1.0.0-beta6",
+		    "Microsoft.AspNet.StaticFiles": "1.0.0-beta6"
     },
     "frameworks": {
         "dnx451": { },
         "dnxcore50": { }
     },
-    "bundleExclude": [
+    "publishExclude": [
         "node_modules",
         "bower_components",
         "wwwroot/Assets",

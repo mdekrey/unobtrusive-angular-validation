@@ -11,18 +11,12 @@
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controllers: any[]): void => {
             var ngModelController: IValidatedModelController = controllers[0];
             var form: IValidatedFormController = controllers[1];
-            ngModelController.activeErrors = {};
-            
-            if (this.validation.getValidationTiming() === ValidationTiming.Realtime) {
-                ngModelController.activeErrors = ngModelController.$error;
-                if (form) {
-                    this.validation.ensureValidation(form).activeErrors = form.$error;
-                }
-            }
+            ngModelController.blurErrors = {};
+            ngModelController.submittedErrors = {};
             
             var watches = [
                 scope.$watchCollection(() => ngModelController.activeErrors, (newActiveErrors: any) => {
-                    if (Object.keys(newActiveErrors).length) {
+                    if (newActiveErrors && Object.keys(newActiveErrors).length) {
                         element.addClass(this.validation.getDelayedInvalidClass());
                         element.removeClass(this.validation.getDelayedValidClass());
                     }
@@ -32,6 +26,8 @@
                     }
                 }),
             ];
+
+            this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
             
             var validationFor = attrs['name'];
             
@@ -45,15 +41,13 @@
                     watches[key]();
             });
 
-            if (this.validation.getValidationTiming() === ValidationTiming.OnBlur) {
-                element.on('blur', () => {
-                    ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                    if (form) {
-                        this.validation.copyValidation(form);
-                    }
-                    scope.$digest();
-                });
-            }
+            element.on('blur', () => {
+                ngModelController.blurErrors = angular.copy(ngModelController.$error);
+                if (form) {
+                    form.$$validationState.blurred();
+                }
+                scope.$digest();
+            });
         }
     }
 

@@ -51,7 +51,7 @@
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             var watches = [
                 scope.$watch(() => controller.$error, update, true),
-                scope.$watch(() => this.validation.ensureValidation(controller).activeErrors, (newValue: any) => {
+                scope.$watch(() => this.validation.ensureValidation(controller).activeErrors, (newValue: IModelsByError) => {
                     scope.submitted = !!newValue;
                     update();
                 }),

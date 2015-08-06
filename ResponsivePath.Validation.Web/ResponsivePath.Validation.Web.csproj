@@ -25,6 +25,7 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <TargetFrameworkProfile />
     <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -105,10 +106,14 @@
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
     <Content Include="RazorDemo.cshtml" />
+    <Content Include="Scripts\angular.unobtrusive.validation.min.js.map" />
+    <Content Include="Scripts\angular.unobtrusive.validation.tpls.min.js.map" />
     <None Include="Scripts\_references.js" />
     <Content Include="Libraries\_intellisense.js" />
     <Content Include="Scripts\angular.unobtrusive.validation.js" />
     <Content Include="Scripts\angular.unobtrusive.validation.min.js" />
+    <Content Include="Scripts\angular.unobtrusive.validation.tpls.js" />
+    <Content Include="Scripts\angular.unobtrusive.validation.tpls.min.js" />
     <Content Include="SpecRunner.html" />
     <Content Include="spec\directive.valBindMessages.spec.js" />
     <Content Include="spec\directive.valError.spec.js" />

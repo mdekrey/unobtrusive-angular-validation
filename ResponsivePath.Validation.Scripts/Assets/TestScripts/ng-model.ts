@@ -5,6 +5,7 @@
         var form: ng.IAugmentedJQuery;
         var element: ng.IAugmentedJQuery;
         var valSubmit: ng.IAugmentedJQuery;
+        var modelController: IValidatedModelController;
 
         function build($compile: angular.ICompileService, $rootScope: angular.IRootScopeService) {
             scope = $rootScope.$new();
@@ -14,7 +15,8 @@
             valSubmit = angular.element('<input type="submit" data-val-submit value="Submit" />');
             form.append(valSubmit);
             $compile(form)(scope);
-                scope.$digest();
+            scope.$digest();
+            modelController = element.controller('ngModel');
         };
 
         describe('when configured for custom error classes', () => {
@@ -25,7 +27,7 @@
             beforeEach(inject(build));
             
             it('adds the configured error class', () => {
-                (<IValidatedModelController>element.controller('ngModel')).activeErrors['err'] = true;
+                modelController.activeErrors['err'] = true;
                 scope.$digest();
 
                 expect(element.hasClass('custom-invalid')).to.be(true);
@@ -44,7 +46,7 @@
             beforeEach(inject(build));
 
             it('adds the default error class', () => {
-                (<IValidatedModelController>element.controller('ngModel')).activeErrors['err'] = true;
+                modelController.$setValidity('err', false);
                 scope.$digest();
 
                 expect(element.hasClass('ng-delayed-invalid')).to.be(true);
@@ -55,6 +57,14 @@
                 expect(element.hasClass('ng-delayed-invalid')).to.be(false);
                 expect(element.hasClass('ng-delayed-valid')).to.be(true);
             });
+
+            it('copies errors at blur', inject((validation: ValidationService) => {
+                modelController.$setValidity('err', false);
+                expect(modelController.blurErrors['err']).to.be(undefined);
+
+                element.triggerHandler('blur');
+                expect(modelController.blurErrors['err']).to.be(true);
+            }));
         });
 
 
@@ -66,8 +76,8 @@
             beforeEach(inject(build));
 
             it('uses the same validation objects', () => {
-                expect((<IValidatedModelController>element.controller('ngModel')).activeErrors).to.be((<IValidatedModelController>element.controller('ngModel')).$error);
-                expect((<IValidatedFormController>form.controller('form')).$validationState.activeErrors).to.be((<IValidatedFormController>form.controller('form')).$error);
+                expect(modelController.activeErrors).to.be(modelController.$error);
+                expect((<IValidatedFormController>form.controller('form')).$$validationState.activeErrors).to.be((<IValidatedFormController>form.controller('form')).$error);
             });
         });
 
@@ -79,11 +89,11 @@
             beforeEach(inject(build));
 
             it('copies errors at blur', inject((validation: ValidationService) => {
-                (<IValidatedModelController>element.controller('ngModel')).$error['err'] = true;
-                expect((<IValidatedModelController>element.controller('ngModel')).activeErrors['err']).to.be(undefined);
+                modelController.$setValidity('err', false);
+                expect(modelController.activeErrors['err']).to.be(undefined);
 
                 element.triggerHandler('blur');
-                expect((<IValidatedModelController>element.controller('ngModel')).activeErrors['err']).to.be(true);
+                expect(modelController.activeErrors['err']).to.be(true);
             }));
         });
 
@@ -95,13 +105,28 @@
             beforeEach(inject(build));
 
             it('does not handle copying of errors', () => {
-                (<IValidatedModelController>element.controller('ngModel')).$error['err'] = true;
-                expect((<IValidatedModelController>element.controller('ngModel')).activeErrors['err']).to.be(undefined);
+                modelController.$setValidity('err', false);
+                expect(modelController.activeErrors['err']).to.be(undefined);
 
                 element.triggerHandler('blur');
-                expect((<IValidatedModelController>element.controller('ngModel')).activeErrors['err']).to.be(undefined);
+                expect(modelController.activeErrors['err']).to.be(undefined);
             });
         });
 
+        describe('when configured for DotNet', () => {
+            beforeEach(module('unobtrusive.validation', 'ngMock', (validationProvider: ResponsivePath.Validation.Unobtrusive.ValidationProvider) => {
+                validationProvider.setValidationMessagingTiming(ValidationTiming.DotNet);
+            }));
+
+            beforeEach(inject(build));
+
+            it('copies errors at blur', inject((validation: ValidationService) => {
+                modelController.$setValidity('err', false);
+                expect(modelController.activeErrors['err']).to.be(undefined);
+
+                element.triggerHandler('blur');
+                expect(modelController.activeErrors['err']).to.be(true);
+            }));
+        });
     });
 }

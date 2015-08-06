@@ -4,18 +4,68 @@
         [index: string]: ValidationType;
     }
 
-    export enum ValidationTiming {
+    export interface IValidationTiming {
+        registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController);
+        registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController);
+    }
+    
+    export module ValidationTiming {
         // Show validation, such as validation summaries, in real-time as the user types
-        Realtime,
+        export var Realtime: IValidationTiming = {
+            registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController) {
+                form.$$validationState.activeErrors = form.$error;
+            },
+
+            registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController) {
+                model.activeErrors = model.$error;
+            }
+        };
+
         // Update validation when the user blurs a field
-        OnBlur,
+        export var OnBlur: IValidationTiming = {
+            registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController) {
+                var watch = scope.$watch(() => form.$$validationState.blurErrors, () => form.$$validationState.activeErrors = form.$$validationState.blurErrors, true);
+                element.on('$destroy', () => watch());
+            },
+
+            registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController) {
+                var watch = scope.$watch(() => model.blurErrors, () => model.activeErrors = model.blurErrors, true);
+                element.on('$destroy', () => watch());
+            }
+        };
+
         // Update validation only when the user attempts to submit the form
-        OnSubmit,
+        export var OnSubmit: IValidationTiming = {
+            registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController) {
+                var watch = scope.$watch(() => form.$$validationState.submittedErrors, () => form.$$validationState.activeErrors = form.$$validationState.submittedErrors, true);
+                element.on('$destroy', () => watch());
+            },
+
+            registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController) {
+                var watch = scope.$watch(() => model.submittedErrors, () => model.activeErrors = model.submittedErrors, true);
+                element.on('$destroy', () => watch());
+            }
+        };
+
+
+        // Update validation of models on blur, but form only on submit
+        export var DotNet: IValidationTiming = {
+            registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController) {
+                var watch = scope.$watch(() => form.$$validationState.submittedErrors, () => form.$$validationState.activeErrors = form.$$validationState.submittedErrors, true);
+                element.on('$destroy', () => watch());
+            },
+
+            registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController) {
+                var watch = scope.$watch(() => model.blurErrors, () => model.activeErrors = model.blurErrors, true);
+                element.on('$destroy', () => watch());
+            }
+        };
+
     }
     
     export class ValidationProvider implements ng.IServiceProvider {
         private validationTypes: ValidationTypeCollection = {};
-        private timing: ValidationTiming = ValidationTiming.Realtime;
+        private timing: IValidationTiming = ValidationTiming.Realtime;
         private shouldSetFormSubmitted: boolean = true;
         private delayedValidClass: string = 'ng-delayed-valid';
         private delayedInvalidClass: string = 'ng-delayed-invalid';
@@ -43,7 +93,7 @@
             this.$get.$inject = ['$injector'];
         }
         
-        setValidationMessagingTiming(timing: ValidationTiming) {
+        setValidationMessagingTiming(timing: IValidationTiming) {
             this.timing = timing;
         }
 

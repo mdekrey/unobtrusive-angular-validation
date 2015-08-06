@@ -37,6 +37,8 @@ declare module ResponsivePath.Validation.Unobtrusive {
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
+}
+declare module ResponsivePath.Validation.Unobtrusive {
     interface ITrustedHtml {
     }
     interface IMySCEService {
@@ -61,20 +63,28 @@ declare module ResponsivePath.Validation.Unobtrusive {
     interface ICompleteModel {
         [modelName: string]: any;
     }
+    interface IErrorSet {
+        [errorType: string]: boolean;
+    }
     interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
         overrideValidationMessages: ITrustedHtmlByValidationKey;
-        activeErrors: {
-            [errorType: string]: boolean;
-        };
+        blurErrors: IErrorSet;
+        submittedErrors: IErrorSet;
+        activeErrors: IErrorSet;
     }
     interface IValidatedFormController extends ng.IFormController {
-        $validationState: ScopeValidationState;
+        $$validationState: ScopeValidationState;
+    }
+    interface IModelsByError {
+        [errorType: string]: IValidatedModelController[];
     }
     interface ScopeValidationState {
-        activeErrors: {
-            [errorType: string]: IValidatedModelController[];
-        };
+        blurErrors: IModelsByError;
+        submittedErrors: IModelsByError;
+        activeErrors: IModelsByError;
+        blurred(): void;
+        submitted(): void;
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {
@@ -82,10 +92,15 @@ declare module ResponsivePath.Validation.Unobtrusive {
 declare module ResponsivePath.Validation.Unobtrusive {
 }
 declare module ResponsivePath.Validation.Unobtrusive {
-    enum ValidationTiming {
-        Realtime = 0,
-        OnBlur = 1,
-        OnSubmit = 2,
+    interface IValidationTiming {
+        registerForm(scope: ng.IScope, element: ng.IAugmentedJQuery, form: IValidatedFormController): any;
+        registerModel(scope: ng.IScope, element: ng.IAugmentedJQuery, model: IValidatedModelController, form?: IValidatedFormController): any;
+    }
+    module ValidationTiming {
+        var Realtime: IValidationTiming;
+        var OnBlur: IValidationTiming;
+        var OnSubmit: IValidationTiming;
+        var DotNet: IValidationTiming;
     }
     class ValidationProvider implements ng.IServiceProvider {
         private validationTypes;
@@ -98,7 +113,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         $get($injector: ng.auto.IInjectorService): ValidationService;
         private static $inject;
         constructor();
-        setValidationMessagingTiming(timing: ValidationTiming): void;
+        setValidationMessagingTiming(timing: IValidationTiming): void;
         setShouldSetFormSubmitted(shouldSetFormSubmitted: boolean): void;
         setValidityClasses(delayedValidClass: string, delayedInvalidClass: string): void;
     }
@@ -122,14 +137,13 @@ declare module ResponsivePath.Validation.Unobtrusive {
         messageArray: GetMessageArray;
         activeMessageArray: GetMessageArray;
         clearModelName(formController: ng.IFormController, modelName: string): void;
-        getValidationTiming(): ValidationTiming;
+        getValidationTiming(): IValidationTiming;
         getShouldSetFormSubmitted(): boolean;
-        copyValidation(formController: ng.IFormController): void;
-        private static getModelNames(formController);
+        static getModelNames(formController: ng.IFormController): any[];
         getDelayedValidClass(): string;
         getDelayedInvalidClass(): string;
         static $inject: string[];
-        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: ValidationTiming, shouldSetFormSubmitted: boolean, delayedValidClass: string, delayedInvalidClass: string);
+        constructor($injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType, validationMessagingTiming: IValidationTiming, shouldSetFormSubmitted: boolean, delayedValidClass: string, delayedInvalidClass: string);
     }
 }
 declare module ResponsivePath.Validation.Unobtrusive {

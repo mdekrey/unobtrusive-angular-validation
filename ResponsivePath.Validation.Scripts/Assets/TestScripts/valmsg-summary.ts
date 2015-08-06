@@ -52,7 +52,7 @@
 		it('clears original errors on submit',() => inject(($rootScope: angular.IRootScopeService) => {
 			scope['firstname'] = null;
             scope.$digest();
-			valSubmit[0].click();
+            valSubmit[0].click();
             scope.$digest();
 
 			expect(valSummary[0].innerText).to.contain('You must provide a first name');

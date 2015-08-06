@@ -11,13 +11,14 @@
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl: ng.IFormController): void => {
             element.on('click', ($event) => {
-                this.validation.copyValidation(ctrl);
+                this.validation.ensureValidation(ctrl).submitted();
                 scope.$digest();
                 if (ctrl.$invalid) {
                     $event.preventDefault();
 
                     if (this.validation.getShouldSetFormSubmitted()) {
                         ctrl.$setSubmitted();
+                        scope.$digest();
                     }
                 }
             });

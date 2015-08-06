@@ -33,18 +33,33 @@
         [modelName: string]: any;
     }
 
+    export interface IErrorSet {
+        [errorType: string]: boolean;
+    };
+
     export interface IValidatedModelController extends ng.INgModelController {
         allValidationMessages: ITrustedHtmlByValidationKey;
         overrideValidationMessages: ITrustedHtmlByValidationKey;
-        activeErrors: { [errorType: string]: boolean; };
+        blurErrors: IErrorSet;
+        submittedErrors: IErrorSet;
+        activeErrors: IErrorSet;
     }
 
     export interface IValidatedFormController extends ng.IFormController {
-        $validationState: ScopeValidationState;
+        $$validationState: ScopeValidationState;
+    }
+
+    export interface IModelsByError {
+        /* array of model controllers failing the error type */
+        [errorType: string]: IValidatedModelController[];
     }
 
     export interface ScopeValidationState {
-        activeErrors: { /* array of model controllers failing the error type */[errorType: string]: IValidatedModelController[]; };
+        blurErrors: IModelsByError;
+        submittedErrors: IModelsByError;
+        activeErrors: IModelsByError;
+        blurred(): void;
+        submitted(): void;
     }
 
 }

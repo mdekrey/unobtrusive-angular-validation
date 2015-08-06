@@ -45,12 +45,13 @@ var ResponsivePath;
                     this.require = '^?form';
                     this.link = function (scope, element, attrs, ctrl) {
                         element.on('click', function ($event) {
-                            _this.validation.copyValidation(ctrl);
+                            _this.validation.ensureValidation(ctrl).submitted();
                             scope.$digest();
                             if (ctrl.$invalid) {
                                 $event.preventDefault();
                                 if (_this.validation.getShouldSetFormSubmitted()) {
                                     ctrl.$setSubmitted();
+                                    scope.$digest();
                                 }
                             }
                         });
@@ -298,6 +299,61 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
+            var FormDirective = (function () {
+                function FormDirective(validation) {
+                    var _this = this;
+                    this.validation = validation;
+                    this.restrict = 'E';
+                    this.require = 'form';
+                    this.link = function (scope, element, attrs, form) {
+                        form.$$validationState = {
+                            blurErrors: null,
+                            submittedErrors: null,
+                            activeErrors: {},
+                            activeErrorsByModel: {},
+                            blurred: function () {
+                                form.$$validationState.blurErrors = FormDirective.copyErrors(form.$error);
+                            },
+                            submitted: function () {
+                                angular.forEach(Unobtrusive.ValidationService.getModelNames(form), function (modelName) {
+                                    form[modelName].submittedErrors = angular.copy(form[modelName].$error);
+                                });
+                                form.$$validationState.submittedErrors = FormDirective.copyErrors(form.$error);
+                            }
+                        };
+                        _this.validation.getValidationTiming().registerForm(scope, element, form);
+                    };
+                }
+                FormDirective.copyErrors = function (errors) {
+                    var result = {};
+                    angular.forEach(errors, function (val, key) {
+                        result[key] = val.slice(0);
+                    });
+                    return result;
+                };
+                FormDirective.$inject = ['validation'];
+                return FormDirective;
+            })();
+            Unobtrusive.mod.directive('form', Unobtrusive.constructorAsInjectable(FormDirective));
+        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
+    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
+})(ResponsivePath || (ResponsivePath = {}));
+var ResponsivePath;
+(function (ResponsivePath) {
+    var Validation;
+    (function (Validation) {
+        var Unobtrusive;
+        (function (Unobtrusive) {
+            ;
+        })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
+    })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
+})(ResponsivePath || (ResponsivePath = {}));
+var ResponsivePath;
+(function (ResponsivePath) {
+    var Validation;
+    (function (Validation) {
+        var Unobtrusive;
+        (function (Unobtrusive) {
             var NgModelDirective = (function () {
                 function NgModelDirective(validation) {
                     var _this = this;
@@ -307,16 +363,11 @@ var ResponsivePath;
                     this.link = function (scope, element, attrs, controllers) {
                         var ngModelController = controllers[0];
                         var form = controllers[1];
-                        ngModelController.activeErrors = {};
-                        if (_this.validation.getValidationTiming() === 0 /* Realtime */) {
-                            ngModelController.activeErrors = ngModelController.$error;
-                            if (form) {
-                                _this.validation.ensureValidation(form).activeErrors = form.$error;
-                            }
-                        }
+                        ngModelController.blurErrors = {};
+                        ngModelController.submittedErrors = {};
                         var watches = [
                             scope.$watchCollection(function () { return ngModelController.activeErrors; }, function (newActiveErrors) {
-                                if (Object.keys(newActiveErrors).length) {
+                                if (newActiveErrors && Object.keys(newActiveErrors).length) {
                                     element.addClass(_this.validation.getDelayedInvalidClass());
                                     element.removeClass(_this.validation.getDelayedValidClass());
                                 }
@@ -326,6 +377,7 @@ var ResponsivePath;
                                 }
                             }),
                         ];
+                        _this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
                         var validationFor = attrs['name'];
                         element.on('$destroy', function () {
                             if (form) {
@@ -334,15 +386,13 @@ var ResponsivePath;
                             for (var key in watches)
                                 watches[key]();
                         });
-                        if (_this.validation.getValidationTiming() === 1 /* OnBlur */) {
-                            element.on('blur', function () {
-                                ngModelController.activeErrors = angular.copy(ngModelController.$error);
-                                if (form) {
-                                    _this.validation.copyValidation(form);
-                                }
-                                scope.$digest();
-                            });
-                        }
+                        element.on('blur', function () {
+                            ngModelController.blurErrors = angular.copy(ngModelController.$error);
+                            if (form) {
+                                form.$$validationState.blurred();
+                            }
+                            scope.$digest();
+                        });
                     };
                 }
                 NgModelDirective.$inject = ['validation'];
@@ -415,16 +465,51 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
+            var ValidationTiming;
             (function (ValidationTiming) {
-                ValidationTiming[ValidationTiming["Realtime"] = 0] = "Realtime";
-                ValidationTiming[ValidationTiming["OnBlur"] = 1] = "OnBlur";
-                ValidationTiming[ValidationTiming["OnSubmit"] = 2] = "OnSubmit";
-            })(Unobtrusive.ValidationTiming || (Unobtrusive.ValidationTiming = {}));
-            var ValidationTiming = Unobtrusive.ValidationTiming;
+                ValidationTiming.Realtime = {
+                    registerForm: function (scope, element, form) {
+                        form.$$validationState.activeErrors = form.$error;
+                    },
+                    registerModel: function (scope, element, model, form) {
+                        model.activeErrors = model.$error;
+                    }
+                };
+                ValidationTiming.OnBlur = {
+                    registerForm: function (scope, element, form) {
+                        var watch = scope.$watch(function () { return form.$$validationState.blurErrors; }, function () { return form.$$validationState.activeErrors = form.$$validationState.blurErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    },
+                    registerModel: function (scope, element, model, form) {
+                        var watch = scope.$watch(function () { return model.blurErrors; }, function () { return model.activeErrors = model.blurErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    }
+                };
+                ValidationTiming.OnSubmit = {
+                    registerForm: function (scope, element, form) {
+                        var watch = scope.$watch(function () { return form.$$validationState.submittedErrors; }, function () { return form.$$validationState.activeErrors = form.$$validationState.submittedErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    },
+                    registerModel: function (scope, element, model, form) {
+                        var watch = scope.$watch(function () { return model.submittedErrors; }, function () { return model.activeErrors = model.submittedErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    }
+                };
+                ValidationTiming.DotNet = {
+                    registerForm: function (scope, element, form) {
+                        var watch = scope.$watch(function () { return form.$$validationState.submittedErrors; }, function () { return form.$$validationState.activeErrors = form.$$validationState.submittedErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    },
+                    registerModel: function (scope, element, model, form) {
+                        var watch = scope.$watch(function () { return model.blurErrors; }, function () { return model.activeErrors = model.blurErrors; }, true);
+                        element.on('$destroy', function () { return watch(); });
+                    }
+                };
+            })(ValidationTiming = Unobtrusive.ValidationTiming || (Unobtrusive.ValidationTiming = {}));
             var ValidationProvider = (function () {
                 function ValidationProvider() {
                     this.validationTypes = {};
-                    this.timing = 0 /* Realtime */;
+                    this.timing = ValidationTiming.Realtime;
                     this.shouldSetFormSubmitted = true;
                     this.delayedValidClass = 'ng-delayed-valid';
                     this.delayedInvalidClass = 'ng-delayed-invalid';
@@ -494,7 +579,7 @@ var ResponsivePath;
                         if (modelName) {
                             var modelController = formController[modelName];
                             var result = {};
-                            angular.forEach(modelController.activeErrors || modelController.$error, function (value, key) {
+                            angular.forEach(modelController.activeErrors, function (value, key) {
                                 var message = modelController.overrideValidationMessages[key] || modelController.allValidationMessages[key];
                                 if (value && message) {
                                     result[key] = message;
@@ -513,11 +598,7 @@ var ResponsivePath;
                 }
                 ValidationService.prototype.ensureValidation = function (formController) {
                     var controller = formController;
-                    var state = controller.$validationState || {
-                        activeErrors: (this.getValidationTiming() === 0 /* Realtime */) ? formController.$error : null
-                    };
-                    controller.$validationState = state;
-                    return state;
+                    return controller.$$validationState;
                 };
                 ValidationService.prototype.getValidation = function (validationType) {
                     return angular.copy(this.getValidationType(validationType));
@@ -533,17 +614,6 @@ var ResponsivePath;
                 };
                 ValidationService.prototype.getShouldSetFormSubmitted = function () {
                     return this.shouldSetFormSubmitted;
-                };
-                ValidationService.prototype.copyValidation = function (formController) {
-                    if (this.getValidationTiming() == 2 /* OnSubmit */) {
-                        this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
-                        angular.forEach(ValidationService.getModelNames(formController), function (key) {
-                            formController[key].activeErrors = angular.copy(formController[key].$error);
-                        });
-                    }
-                    else if (this.getValidationTiming() == 1 /* OnBlur */) {
-                        this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
-                    }
                 };
                 ValidationService.getModelNames = function (formController) {
                     var result = [];

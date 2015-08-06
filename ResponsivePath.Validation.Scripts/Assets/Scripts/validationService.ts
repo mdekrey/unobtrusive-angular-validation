@@ -9,13 +9,7 @@
 
         ensureValidation(formController: ng.IFormController): ScopeValidationState {
             var controller: IValidatedFormController = <IValidatedFormController>formController;
-            var state: ScopeValidationState = controller.$validationState
-                || {
-                    activeErrors: (this.getValidationTiming() === ValidationTiming.Realtime) ? formController.$error : null
-                };
-            
-            controller.$validationState = state;
-            return state;
+            return controller.$$validationState;
         }
 
         getValidation(validationType: string): ValidationType {
@@ -45,7 +39,7 @@
                 var modelController = <IValidatedModelController>formController[modelName];
 
                 var result: ITrustedHtmlByValidationKey = {};
-                angular.forEach(modelController.activeErrors || modelController.$error, (value: boolean, key: string) => {
+                angular.forEach(modelController.activeErrors, (value: boolean, key: string) => {
                     var message = modelController.overrideValidationMessages[key] || modelController.allValidationMessages[key];
                     if (value && message) {
                         result[key] = message;
@@ -73,19 +67,7 @@
             return this.shouldSetFormSubmitted;
         }
 
-        copyValidation(formController: ng.IFormController) {
-            if (this.getValidationTiming() == ValidationTiming.OnSubmit) {
-                this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
-                angular.forEach(ValidationService.getModelNames(formController), (key: string) => {
-                    formController[key].activeErrors = angular.copy(formController[key].$error);
-                });
-            }
-            else if (this.getValidationTiming() == ValidationTiming.OnBlur) {
-                this.ensureValidation(formController).activeErrors = angular.copy(formController.$error);
-            }
-        }
-
-        private static getModelNames(formController: ng.IFormController) {
+        static getModelNames(formController: ng.IFormController) {
             var result = [];
             angular.forEach(Object.keys(formController), (key: string) => {
                 if (key[0] == '$')
@@ -105,7 +87,7 @@
             private $injector: ng.auto.IInjectorService,
             private $sce: IMySCEService,
             private getValidationType: (keyName: string) => ValidationType,
-            private validationMessagingTiming: ValidationTiming,
+            private validationMessagingTiming: IValidationTiming,
             private shouldSetFormSubmitted: boolean,
             private delayedValidClass: string,
             private delayedInvalidClass: string) {
