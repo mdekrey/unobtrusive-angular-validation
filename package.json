@@ -1,0 +1,21 @@
+{
+  "name": "angular-validation-unobtrusive",
+  "version": "1.0.5",
+  "description": "Unobtrusive validation for angular.js without jQuery dependencies",
+  "author": "Matt DeKrey <mattdekrey@gmail.com>",
+  "homepage": "https://github.com/mdekrey/unobtrusive-angular-validation",
+  "main": [
+    "js/angular.unobtrusive.validation.js",
+    "js/angular.unobtrusive.validation.tpls.js"
+  ],
+  "keywords": [
+    "angular",
+    "angularjs",
+    "validation",
+    "angular",
+    "validation",
+    "validator",
+    "client-side"
+  ],
+  "license": "MS-PL"
+}
