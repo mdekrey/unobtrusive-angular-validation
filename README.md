@@ -26,11 +26,11 @@ Note that customized rules should not fail if the value is falsy; the required r
 
 If you want to integrate directly with the javascript and aren't using NuGet (or are on a non-C# project), you can download the files from our repository directly:
 
-[Development](https://raw.githubusercontent.com/mdekrey/unobtrusive-angular-validation/master/js/angular.unobtrusive.validation.js)
-([templates](https://raw.githubusercontent.com/mdekrey/unobtrusive-angular-validation/master/js/angular.unobtrusive.validation.tpls.js))
+[Development](js/angular.unobtrusive.validation.js)
+([templates](js/angular.unobtrusive.validation.tpls.js))
 | 
-[Minified](https://raw.githubusercontent.com/mdekrey/unobtrusive-angular-validation/master/js/angular.unobtrusive.validation.min.js)
-([templates](https://raw.githubusercontent.com/mdekrey/unobtrusive-angular-validation/master/js/angular.unobtrusive.validation.tpls.min.js))
+[Minified](js/angular.unobtrusive.validation.min.js)
+([templates](js/angular.unobtrusive.validation.tpls.min.js))
 
 ####Bower Installation
 ```
