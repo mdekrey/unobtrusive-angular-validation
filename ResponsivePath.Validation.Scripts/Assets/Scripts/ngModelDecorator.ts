@@ -33,9 +33,10 @@
             
             // Make sure we dispose all our 
             element.on('$destroy', () => {
-                if (form) {
-                    this.validation.clearModelName(form, validationFor);
-                }
+                // a removed element shouldn't continue to be invalid
+                _.each(ngModelController.$error, (val, key) => {
+                    ngModelController.$setValidity(key, true);
+                });
 
                 for (var key in watches)
                     watches[key]();

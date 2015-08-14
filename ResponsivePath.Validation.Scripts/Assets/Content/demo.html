@@ -10,6 +10,9 @@
 	<script type="text/javascript" src="/scripts/angular.unobtrusive.validation.tpls.js"></script>
 	<script type="text/javascript">
         angular.module('unobtrusive.validation.demo', ['unobtrusive.validation'])
+            .config(function (validationProvider) {
+                validationProvider.setValidationMessagingTiming(ResponsivePath.Validation.Unobtrusive.ValidationTiming.DotNet);
+            })
         .run(function ($rootScope) {
             $rootScope.alert = function (arg) { window.alert(arg); };
         });

@@ -97,7 +97,7 @@
 			scope.$digest();
 
 			element.remove();
-			scope.$digest();
+            scope.$digest();
             expect(validation.activeMessageArray(formController)).not.to.have.key('FirstName');
 		}));
         

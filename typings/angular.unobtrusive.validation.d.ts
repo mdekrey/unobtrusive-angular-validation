@@ -136,7 +136,6 @@ declare module ResponsivePath.Validation.Unobtrusive {
         buildValidation(formController: IValidatedFormController, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): ValidationTools;
         messageArray: GetMessageArray;
         activeMessageArray: GetMessageArray;
-        clearModelName(formController: ng.IFormController, modelName: string): void;
         getValidationTiming(): IValidationTiming;
         getShouldSetFormSubmitted(): boolean;
         static getModelNames(formController: ng.IFormController): any[];

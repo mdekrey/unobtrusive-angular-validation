@@ -80,6 +80,13 @@
                 expect(sce.getTrustedHtml(validation.messageArray(formController)['Obj.Target']['required'])).to.be('Invalid');
                 expect(sce.getTrustedHtml(validation.messageArray(formController, 'Obj.Target')['required'])).to.be('Invalid');
             });
+
+            it('can get active messages', () => {
+                delete (<IValidatedModelController>element.controller('ngModel')).activeErrors['required'];
+
+                expect(sce.getTrustedHtml(validation.activeMessageArray(formController)['Obj.Target']['required'])).to.be('Invalid');
+                expect(sce.getTrustedHtml(validation.activeMessageArray(formController, 'Obj.Target')['required'])).not.to.be('Invalid');
+            });
         });
     });
 }

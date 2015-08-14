@@ -33,7 +33,7 @@
                 
                 scope.messages = newValue;
 
-                if (newValue && !_.any(newValue)) {
+                if (!newValue || !Object.keys(newValue).length) {
                     element.addClass('field-validation-valid');
                     element.removeClass('field-validation-error');
                 }

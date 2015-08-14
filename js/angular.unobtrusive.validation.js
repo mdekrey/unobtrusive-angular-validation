@@ -211,7 +211,7 @@ var ResponsivePath;
                                 return;
                             }
                             scope.messages = newValue;
-                            if (newValue && !_.any(newValue)) {
+                            if (!newValue || !Object.keys(newValue).length) {
                                 element.addClass('field-validation-valid');
                                 element.removeClass('field-validation-error');
                             }
@@ -380,9 +380,9 @@ var ResponsivePath;
                         _this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
                         var validationFor = attrs['name'];
                         element.on('$destroy', function () {
-                            if (form) {
-                                _this.validation.clearModelName(form, validationFor);
-                            }
+                            _.each(ngModelController.$error, function (val, key) {
+                                ngModelController.$setValidity(key, true);
+                            });
                             for (var key in watches)
                                 watches[key]();
                         });
@@ -589,8 +589,12 @@ var ResponsivePath;
                         }
                         else {
                             var resultSet = {};
-                            angular.forEach(ValidationService.getModelNames(formController), function (modelName) {
-                                resultSet[modelName] = _this.activeMessageArray(formController, modelName);
+                            angular.forEach(_this.ensureValidation(formController).activeErrors, function (erroredModels, errorType) {
+                                angular.forEach(erroredModels, function (modelController) {
+                                    modelName = modelController.$name;
+                                    resultSet[modelName] = resultSet[modelName] || {};
+                                    resultSet[modelName][errorType] = modelController.overrideValidationMessages[errorType] || modelController.allValidationMessages[errorType];
+                                });
                             });
                             return resultSet;
                         }
@@ -605,9 +609,6 @@ var ResponsivePath;
                 };
                 ValidationService.prototype.buildValidation = function (formController, element, attrs, ngModelController) {
                     return new Unobtrusive.ValidationTools(attrs, ngModelController, this, formController, this.$injector, this.$sce, this.getValidationType);
-                };
-                ValidationService.prototype.clearModelName = function (formController, modelName) {
-                    delete formController[modelName];
                 };
                 ValidationService.prototype.getValidationTiming = function () {
                     return this.validationMessagingTiming;

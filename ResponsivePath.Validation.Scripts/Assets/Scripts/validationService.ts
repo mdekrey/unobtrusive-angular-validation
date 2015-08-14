@@ -49,14 +49,15 @@
             }
             else {
                 var resultSet: ITrustedHtmlSet = {};
-                angular.forEach(ValidationService.getModelNames(formController), (modelName: string) => {
-                    resultSet[modelName] = this.activeMessageArray(formController, modelName);
+                angular.forEach(this.ensureValidation(formController).activeErrors, (erroredModels: IValidatedModelController[], errorType: string) => {
+                    angular.forEach(erroredModels, (modelController: IValidatedModelController) => {
+                        modelName = modelController.$name;
+                        resultSet[modelName] = resultSet[modelName] || {};
+                        resultSet[modelName][errorType] = modelController.overrideValidationMessages[errorType] || modelController.allValidationMessages[errorType];
+                    });
                 });
                 return resultSet;
             }
-        }
-        clearModelName(formController: ng.IFormController, modelName: string) {
-            delete formController[modelName];
         }
 
         getValidationTiming() {
