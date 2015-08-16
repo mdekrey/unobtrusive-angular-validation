@@ -52,7 +52,7 @@
                 scope.$watch(() => this.validation.ensureValidation(controller).activeErrors, (newValue: IModelsByError) => {
                     scope.submitted = !!newValue;
                     update();
-                }),
+                }, true),
 			];
 
             element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));

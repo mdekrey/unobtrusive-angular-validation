@@ -279,7 +279,7 @@ var ResponsivePath;
                             scope.$watch(function () { return _this.validation.ensureValidation(controller).activeErrors; }, function (newValue) {
                                 scope.submitted = !!newValue;
                                 update();
-                            }),
+                            }, true),
                         ];
                         element.on('$destroy', function () { return angular.forEach(watches, function (watch) { return watch(); }); });
                     };
