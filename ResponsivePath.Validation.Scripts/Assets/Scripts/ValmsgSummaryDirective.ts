@@ -26,15 +26,13 @@
                 // flatten the nested arrays into "merged"
                 var obj = this.validation.activeMessageArray(controller);
                 (<ng.IAngularStatic>angular).forEach(obj,(value, key) => {
-                    if (obj.hasOwnProperty(key)) {
-                        (<ng.IAngularStatic>angular).forEach(value,(innerValue) => {
-                            var rawValue = this.sce.getTrustedHtml(innerValue);
-                            if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
-                                rawHtml.push(rawValue);
-                                merged.push(innerValue);
-                            }
-                        });
-                    }
+                    (<ng.IAngularStatic>angular).forEach(value,(innerValue) => {
+                        var rawValue = this.sce.getTrustedHtml(innerValue);
+                        if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
+                            rawHtml.push(rawValue);
+                            merged.push(innerValue);
+                        }
+                    });
                 });
                 scope.validationSummary = merged;
                 if (scope.submitted) {

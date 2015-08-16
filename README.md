@@ -11,6 +11,18 @@ Version 2 of unobtrusive-angular-validation is built using Angular's existing va
 
 To use the validation attributes provided, add `val="true"` to your element with `ng-model` and then add the `val-*` attributes you want. For a complete list and documentation, [see our rule unit tests](ResponsivePath.Validation.Scripts/Assets/TestScripts/Validators).
 
+This also adds a `val-submit` directive that can be placed on an `input type="submit"` or a `button type="submit"` to prevent the form from submitting if the form is invalid.
+
+#####Throttled errors
+
+We've added error throttling to have an `$errors`-like object for various timings.  For example, the `blurErrors` property is populated when you lose focus, and the `submitErrors` property is populated when the form is submitted via the val-submit directive.
+
+There is also an `activeErrors` property that indicates what errors should be active based on your business rules; these can be adjusted at config time by the `validationProvider`.
+
+    validationProvider.setValidationMessagingTiming(ResponsivePath.Validation.Unobtrusive.ValidationTiming.DotNet);
+
+The DotNet timing has a form's active errors update only on submit, but models update on blur, just like you'd expect for the validation summary and direcYou can also configure your own timing rules if you have something other than the defaults.
+
 #####Adding rules
 You can also add your own rules!  At config time, use the `validationProvider` and call the `addValidator` method. For examples, see the [internal configuration file](ResponsivePath.Validation.Scripts/Assets/Scripts/zConfiguration.ts).
 

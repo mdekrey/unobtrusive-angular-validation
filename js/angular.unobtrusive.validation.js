@@ -254,15 +254,13 @@ var ResponsivePath;
                             var merged = [];
                             var obj = _this.validation.activeMessageArray(controller);
                             angular.forEach(obj, function (value, key) {
-                                if (obj.hasOwnProperty(key)) {
-                                    angular.forEach(value, function (innerValue) {
-                                        var rawValue = _this.sce.getTrustedHtml(innerValue);
-                                        if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
-                                            rawHtml.push(rawValue);
-                                            merged.push(innerValue);
-                                        }
-                                    });
-                                }
+                                angular.forEach(value, function (innerValue) {
+                                    var rawValue = _this.sce.getTrustedHtml(innerValue);
+                                    if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
+                                        rawHtml.push(rawValue);
+                                        merged.push(innerValue);
+                                    }
+                                });
                             });
                             scope.validationSummary = merged;
                             if (scope.submitted) {
