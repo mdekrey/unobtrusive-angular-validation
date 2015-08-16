@@ -54,5 +54,5 @@
         }
     }
 
-    mod.directive('val', constructorAsInjectable(ValDirective));
+    modBase.directive('val', constructorAsInjectable(ValDirective));
 }

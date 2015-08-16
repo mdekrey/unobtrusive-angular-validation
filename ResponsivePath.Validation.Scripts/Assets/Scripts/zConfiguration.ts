@@ -228,5 +228,5 @@
 
     configureValidationProvider.$inject = ['validationProvider'];
 
-    mod.config(configureValidationProvider);
+    modBase.config(configureValidationProvider);
 }

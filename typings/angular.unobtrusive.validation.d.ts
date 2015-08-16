@@ -6,6 +6,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
     };
 }
 declare module ResponsivePath.Validation.Unobtrusive {
+    var modBase: ng.IModule;
     var mod: ng.IModule;
 }
 declare module ResponsivePath.Validation.Unobtrusive {

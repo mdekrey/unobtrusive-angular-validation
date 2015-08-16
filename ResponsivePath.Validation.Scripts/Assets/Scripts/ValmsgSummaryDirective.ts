@@ -1,7 +1,7 @@
 ﻿module ResponsivePath.Validation.Unobtrusive {
 
     interface SummaryScope extends ng.IScope {
-        validationSummary: ITrustedHtml[];
+        validationSummary: ResponsivePath.Validation.Unobtrusive.ITrustedHtml[];
         submitted: boolean;
     }
 
@@ -19,14 +19,14 @@
         link = (scope: SummaryScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controller: IValidatedFormController): void => {
             scope.validationSummary = [];
             scope.submitted = false;
-			var parentScope = scope.$parent;
+            var parentScope = scope.$parent;
             var update = () => {
                 var rawHtml: string[] = [];
                 var merged: ITrustedHtml[] = [];
                 // flatten the nested arrays into "merged"
                 var obj = this.validation.activeMessageArray(controller);
-                (<ng.IAngularStatic>angular).forEach(obj,(value, key) => {
-                    (<ng.IAngularStatic>angular).forEach(value,(innerValue) => {
+                (<ng.IAngularStatic>angular).forEach(obj, (value, key) => {
+                    (<ng.IAngularStatic>angular).forEach(value, (innerValue) => {
                         var rawValue = this.sce.getTrustedHtml(innerValue);
                         if (innerValue && rawValue && rawHtml.indexOf(rawValue) == -1) {
                             rawHtml.push(rawValue);
@@ -49,15 +49,15 @@
             // Here we don't need to dispose our watch because we have an isolated scope that goes away when the element does.
             var watches = [
                 scope.$watch(() => controller.$error, update, true),
-                scope.$watch(() => this.validation.ensureValidation(controller).activeErrors, (newValue: IModelsByError) => {
+                scope.$watch(() => controller.$$validationState.activeErrors, (newValue: IModelsByError) => {
                     scope.submitted = !!newValue;
                     update();
                 }, true),
-			];
+            ];
 
-            element.on('$destroy',() => angular.forEach(watches, (watch) => watch()));
+            element.on('$destroy', () => angular.forEach(watches, (watch) => watch()));
         }
     }
 
-    mod.directive('valmsgSummary', constructorAsInjectable(ValmsgSummaryDirective));
+    angular.module('unobtrusive.validation.valmsgSummary', [modBase.name]).directive('valmsgSummary', constructorAsInjectable(ValmsgSummaryDirective));
 }

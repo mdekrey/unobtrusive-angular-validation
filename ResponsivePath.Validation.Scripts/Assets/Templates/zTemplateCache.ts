@@ -7,5 +7,5 @@
     }
     defaultTemplates.$inject = ['$templateCache'];
 
-    mod.run(defaultTemplates);
+    angular.module('unobtrusive.validation.templates', [modBase.name]).run(defaultTemplates);
 }

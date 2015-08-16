@@ -46,5 +46,5 @@
         
     }
 
-    mod.directive('valmsgFor', constructorAsInjectable(ValmsgForDirective));
+    angular.module('unobtrusive.validation.valmsgFor', [modBase.name]).directive('valmsgFor', constructorAsInjectable(ValmsgForDirective));
 } 

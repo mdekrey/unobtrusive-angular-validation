@@ -39,5 +39,5 @@
         }
     }
 
-    mod.directive('valSubmit', constructorAsInjectable(ValSubmitDirective));
+    modBase.directive('valSubmit', constructorAsInjectable(ValSubmitDirective));
 }

@@ -52,5 +52,5 @@
         }
     }
 
-    mod.directive('ngModel', constructorAsInjectable(NgModelDirective));
+    modBase.directive('ngModel', constructorAsInjectable(NgModelDirective));
 }

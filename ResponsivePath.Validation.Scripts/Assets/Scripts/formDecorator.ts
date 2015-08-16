@@ -41,5 +41,5 @@
         }
     }
 
-    mod.directive('form', constructorAsInjectable(FormDirective));
+    modBase.directive('form', constructorAsInjectable(FormDirective));
 }

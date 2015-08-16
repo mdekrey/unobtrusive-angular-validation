@@ -107,5 +107,5 @@
         }
     }
 
-    mod.provider('validation', constructorAsInjectable(ValidationProvider));
+    modBase.provider('validation', constructorAsInjectable(ValidationProvider));
 }

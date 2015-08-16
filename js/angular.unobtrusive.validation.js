@@ -27,7 +27,13 @@ var ResponsivePath;
     (function (Validation) {
         var Unobtrusive;
         (function (Unobtrusive) {
-            Unobtrusive.mod = angular.module('unobtrusive.validation', []);
+            Unobtrusive.modBase = angular.module('unobtrusive.validation.only', []);
+            Unobtrusive.mod = angular.module('unobtrusive.validation', [
+                'unobtrusive.validation.only',
+                'unobtrusive.validation.valmsgFor',
+                'unobtrusive.validation.valmsgSummary',
+                'unobtrusive.validation.templates',
+            ]);
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -73,7 +79,7 @@ var ResponsivePath;
                 ValSubmitDirective.$inject = ['validation'];
                 return ValSubmitDirective;
             })();
-            Unobtrusive.mod.directive('valSubmit', Unobtrusive.constructorAsInjectable(ValSubmitDirective));
+            Unobtrusive.modBase.directive('valSubmit', Unobtrusive.constructorAsInjectable(ValSubmitDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -225,7 +231,7 @@ var ResponsivePath;
                 ValmsgForDirective.$inject = ['validation'];
                 return ValmsgForDirective;
             })();
-            Unobtrusive.mod.directive('valmsgFor', Unobtrusive.constructorAsInjectable(ValmsgForDirective));
+            angular.module('unobtrusive.validation.valmsgFor', [Unobtrusive.modBase.name]).directive('valmsgFor', Unobtrusive.constructorAsInjectable(ValmsgForDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -276,7 +282,7 @@ var ResponsivePath;
                         };
                         var watches = [
                             scope.$watch(function () { return controller.$error; }, update, true),
-                            scope.$watch(function () { return _this.validation.ensureValidation(controller).activeErrors; }, function (newValue) {
+                            scope.$watch(function () { return controller.$$validationState.activeErrors; }, function (newValue) {
                                 scope.submitted = !!newValue;
                                 update();
                             }, true),
@@ -287,7 +293,7 @@ var ResponsivePath;
                 ValmsgSummaryDirective.$inject = ['validation', '$sce'];
                 return ValmsgSummaryDirective;
             })();
-            Unobtrusive.mod.directive('valmsgSummary', Unobtrusive.constructorAsInjectable(ValmsgSummaryDirective));
+            angular.module('unobtrusive.validation.valmsgSummary', [Unobtrusive.modBase.name]).directive('valmsgSummary', Unobtrusive.constructorAsInjectable(ValmsgSummaryDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -332,7 +338,7 @@ var ResponsivePath;
                 FormDirective.$inject = ['validation'];
                 return FormDirective;
             })();
-            Unobtrusive.mod.directive('form', Unobtrusive.constructorAsInjectable(FormDirective));
+            Unobtrusive.modBase.directive('form', Unobtrusive.constructorAsInjectable(FormDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -396,7 +402,7 @@ var ResponsivePath;
                 NgModelDirective.$inject = ['validation'];
                 return NgModelDirective;
             })();
-            Unobtrusive.mod.directive('ngModel', Unobtrusive.constructorAsInjectable(NgModelDirective));
+            Unobtrusive.modBase.directive('ngModel', Unobtrusive.constructorAsInjectable(NgModelDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -453,7 +459,7 @@ var ResponsivePath;
                 ValDirective.$inject = ['validation', '$parse'];
                 return ValDirective;
             })();
-            Unobtrusive.mod.directive('val', Unobtrusive.constructorAsInjectable(ValDirective));
+            Unobtrusive.modBase.directive('val', Unobtrusive.constructorAsInjectable(ValDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -543,7 +549,7 @@ var ResponsivePath;
                 return ValidationProvider;
             })();
             Unobtrusive.ValidationProvider = ValidationProvider;
-            Unobtrusive.mod.provider('validation', Unobtrusive.constructorAsInjectable(ValidationProvider));
+            Unobtrusive.modBase.provider('validation', Unobtrusive.constructorAsInjectable(ValidationProvider));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
@@ -812,7 +818,7 @@ var ResponsivePath;
                 }, ['validation', '$http', '$q']);
             }
             configureValidationProvider.$inject = ['validationProvider'];
-            Unobtrusive.mod.config(configureValidationProvider);
+            Unobtrusive.modBase.config(configureValidationProvider);
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
