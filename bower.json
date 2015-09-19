@@ -26,5 +26,8 @@
     "validator",
     "client-side"
   ],
-  "license": "MS-PL"
+  "license": "MS-PL",
+  "typescript": {
+    "definition": "typings/angular.unobtrusive.validation.d.ts"
+  }
 }
