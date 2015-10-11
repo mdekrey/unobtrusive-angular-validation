@@ -27,6 +27,7 @@ declare module ResponsivePath.Validation.Unobtrusive {
         constructor(attrs: ng.IAttributes, ngModelController: IValidatedModelController, svc: ValidationService, formController: IValidatedFormController, $injector: ng.auto.IInjectorService, $sce: IMySCEService, getValidationType: (keyName: string) => ValidationType);
         enable(): void;
         disable(): void;
+        actualValidators: ng.IModelValidators;
         runValidations: (newValue: any) => any;
         fail: (key: string, message?: string) => void;
         pass: (key: string) => void;

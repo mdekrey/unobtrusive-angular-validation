@@ -43,8 +43,9 @@
 
             var validators = this.validation.buildValidation(form, element, attrs, ngModelController);
 
-            ngModelController.$parsers.unshift(validators.runValidations);
-            ngModelController.$formatters.unshift(validators.runValidations);
+            angular.forEach(validators.actualValidators, (value: (...args: any[]) => boolean, key: string) => {
+                ngModelController.$validators[key] = value;
+            });
 
             // Make sure we dispose all our 
             element.on('$destroy', () => {

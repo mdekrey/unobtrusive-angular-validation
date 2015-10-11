@@ -28,6 +28,15 @@
             ngModelController.overrideValidationMessages = {};
 
             this.validators = this.buildValidatorsFromAttributes();
+            angular.forEach(this.validators, (validator: Validator, key: string) => {
+                this.actualValidators[key] = (newValue) => {
+                    if (this.validationEnabled) {
+                        return validator.validate(newValue, validator);
+                    } else {
+                        return true;
+                    }
+                };
+            });
         }
 
         enable(): void {
@@ -40,6 +49,7 @@
                 this.pass(key);
             })
         }
+        actualValidators: ng.IModelValidators = {};
         runValidations = (newValue: any) => {
             if (this.validationEnabled) {
                 // Run validations for all of our client-side validation and store in a local array.

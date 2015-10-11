@@ -109,6 +109,7 @@ var ResponsivePath;
                     this.getValidationType = getValidationType;
                     this.showValidationSummary = false;
                     this.validationEnabled = true;
+                    this.actualValidators = {};
                     this.runValidations = function (newValue) {
                         if (_this.validationEnabled) {
                             angular.forEach(_this.validators, function (value, key) {
@@ -138,6 +139,16 @@ var ResponsivePath;
                     ngModelController.allValidationMessages = {};
                     ngModelController.overrideValidationMessages = {};
                     this.validators = this.buildValidatorsFromAttributes();
+                    angular.forEach(this.validators, function (validator, key) {
+                        _this.actualValidators[key] = function (newValue) {
+                            if (_this.validationEnabled) {
+                                return validator.validate(newValue, validator);
+                            }
+                            else {
+                                return true;
+                            }
+                        };
+                    });
                 }
                 ValidationTools.prototype.enable = function () {
                     this.validationEnabled = true;
@@ -448,8 +459,9 @@ var ResponsivePath;
                             }));
                         }
                         var validators = _this.validation.buildValidation(form, element, attrs, ngModelController);
-                        ngModelController.$parsers.unshift(validators.runValidations);
-                        ngModelController.$formatters.unshift(validators.runValidations);
+                        angular.forEach(validators.actualValidators, function (value, key) {
+                            ngModelController.$validators[key] = value;
+                        });
                         element.on('$destroy', function () {
                             for (var key in watches)
                                 watches[key]();
