@@ -87,6 +87,7 @@
                 valSubmit.triggerHandler('click');
                 expect(formController.$$validationState.submittedErrors['err']).to.contain(modelController);
                 expect(formController.$$validationState.activeErrors['err']).to.contain(modelController);
+                expect(modelController.activeErrors).not.to.be.empty();
             }));
         });
 

@@ -325,15 +325,14 @@ var ResponsivePath;
                             blurErrors: null,
                             submittedErrors: null,
                             activeErrors: {},
-                            activeErrorsByModel: {},
                             blurred: function () {
                                 form.$$validationState.blurErrors = FormDirective.copyErrors(form.$error);
                             },
                             submitted: function () {
                                 angular.forEach(Unobtrusive.ValidationService.getModelNames(form), function (modelName) {
-                                    form[modelName].submittedErrors = angular.copy(form[modelName].$error);
+                                    form[modelName].submittedErrors = form[modelName].blurErrors = angular.copy(form[modelName].$error);
                                 });
-                                form.$$validationState.submittedErrors = FormDirective.copyErrors(form.$error);
+                                form.$$validationState.submittedErrors = form.$$validationState.blurErrors = FormDirective.copyErrors(form.$error);
                             }
                         };
                         _this.validation.getValidationTiming().registerForm(scope, element, form);

@@ -16,16 +16,15 @@
                 blurErrors: null,
                 submittedErrors: null,
                 activeErrors: {},
-                activeErrorsByModel: {},
                 blurred: () => {
                     form.$$validationState.blurErrors = FormDirective.copyErrors(form.$error);
                 },
                 submitted: () => {
                     angular.forEach(ValidationService.getModelNames(form), (modelName) => {
-                        (<IValidatedModelController>form[modelName]).submittedErrors = angular.copy((<IValidatedModelController>form[modelName]).$error);
+                        (<IValidatedModelController>form[modelName]).submittedErrors = (<IValidatedModelController>form[modelName]).blurErrors = angular.copy((<IValidatedModelController>form[modelName]).$error);
                     });
 
-                    form.$$validationState.submittedErrors = FormDirective.copyErrors(form.$error);
+                    form.$$validationState.submittedErrors = form.$$validationState.blurErrors = FormDirective.copyErrors(form.$error);
                 }
             };
 
