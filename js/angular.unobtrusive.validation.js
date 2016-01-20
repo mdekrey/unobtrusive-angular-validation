@@ -707,7 +707,7 @@ var ResponsivePath;
             }
             function configureValidationProvider(validationProvider) {
                 validationProvider.addValidator('required', function (val) {
-                    return !!val;
+                    return !!val && val !== 0;
                 });
                 validationProvider.addValidator('regex', function (val, options) {
                     return !val || !!new RegExp(options.parameters.pattern).exec(val);
@@ -750,9 +750,11 @@ var ResponsivePath;
                     return /^\d+$/.test(val);
                 });
                 validationProvider.addValidator("number", function (val) {
+                    if (typeof (val) === 'number')
+                        return true;
                     if (!val)
                         return true;
-                    return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(val);
+                    return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(val.toString());
                 });
                 validationProvider.addValidator("url", function (val) {
                     if (!val)
