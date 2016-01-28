@@ -77,7 +77,7 @@
 
     function configureValidationProvider(validationProvider: ValidationProvider): void {
         // angular's type="number" and type="date" do not return strings, so the value needs to be of type `any`
-        validationProvider.addValidator('required', (val: any) => { return !!val && val !== 0; });
+        validationProvider.addValidator('required', (val: any) => { return !!val || val === 0; });
         validationProvider.addValidator('regex',(val: string, options: OptionsP<RegexParameters>) => {
             return !val || !!new RegExp(options.parameters.pattern).exec(val);
         });
