@@ -707,7 +707,7 @@ var ResponsivePath;
             }
             function configureValidationProvider(validationProvider) {
                 validationProvider.addValidator('required', function (val) {
-                    return !!val && val !== 0;
+                    return !!val || val === 0;
                 });
                 validationProvider.addValidator('regex', function (val, options) {
                     return !val || !!new RegExp(options.parameters.pattern).exec(val);
