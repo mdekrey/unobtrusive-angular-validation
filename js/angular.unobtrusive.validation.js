@@ -308,6 +308,12 @@ var ResponsivePath;
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var ResponsivePath;
 (function (ResponsivePath) {
     var Validation;
@@ -348,7 +354,15 @@ var ResponsivePath;
                 FormDirective.$inject = ['validation'];
                 return FormDirective;
             })();
-            Unobtrusive.modBase.directive('form', Unobtrusive.constructorAsInjectable(FormDirective));
+            var NgFormDirective = (function (_super) {
+                __extends(NgFormDirective, _super);
+                function NgFormDirective() {
+                    _super.apply(this, arguments);
+                    this.restrict = 'EAC';
+                }
+                return NgFormDirective;
+            })(FormDirective);
+            Unobtrusive.modBase.directive('form', Unobtrusive.constructorAsInjectable(FormDirective)).directive('ngForm', Unobtrusive.constructorAsInjectable(NgFormDirective));
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));

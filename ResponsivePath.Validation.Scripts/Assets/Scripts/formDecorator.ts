@@ -40,5 +40,10 @@
         }
     }
 
-    modBase.directive('form', constructorAsInjectable(FormDirective));
+    class NgFormDirective extends FormDirective {
+        restrict: string = 'EAC';
+    }
+
+    modBase.directive('form', constructorAsInjectable(FormDirective))
+        .directive('ngForm', constructorAsInjectable(NgFormDirective));
 }
