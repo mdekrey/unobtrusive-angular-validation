@@ -42,7 +42,7 @@
         regex: string;
     }
     interface NamedAttributes extends ng.IAttributes {
-        // stores the DotNetName
+        // stores the model name
         name: string
     }
     interface EqualToParameters extends ValidationParameters {
@@ -76,7 +76,8 @@
     }
 
     function configureValidationProvider(validationProvider: ValidationProvider): void {
-        validationProvider.addValidator('required', (val: string) => { return !!val; });
+        // angular's type="number" and type="date" do not return strings, so the value needs to be of type `any`
+        validationProvider.addValidator('required', (val: any) => { return !!val || val === 0; });
         validationProvider.addValidator('regex',(val: string, options: OptionsP<RegexParameters>) => {
             return !val || !!new RegExp(options.parameters.pattern).exec(val);
         });
@@ -134,10 +135,12 @@
                 return true;
             return /^\d+$/.test(val);
         });
-        validationProvider.addValidator("number", (val: string) => {
+        validationProvider.addValidator("number", (val: string | number) => {
+            if (typeof (val) === 'number')
+                return true;
             if (!val)
                 return true;
-            return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(val);
+            return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(val.toString());
         });
         validationProvider.addValidator("url", (val: string) => {
             if (!val)
@@ -184,7 +187,7 @@
             var prefix = getModelPrefix(options.attributes.name),
                 other = options.parameters.other,
                 fullOtherName = appendModelPrefix(other, prefix),
-                element = options.injected.validation.dataValue(options.scope, fullOtherName);
+                element = (<IValidatedModelController>options.formController[fullOtherName]).$modelValue;
 			
             return element == val;
         }, ['validation']);
@@ -205,7 +208,7 @@
             data[options.attributes.name] = val;
             (<ng.IAngularStatic>angular).forEach((options.parameters.additionalfields || '').split(','), (fieldName: string) => {
                 var dataName = appendModelPrefix(fieldName, prefix);
-                data[dataName] = options.injected.validation.dataValue(options.scope, dataName);
+                data[dataName] = (<IValidatedModelController>options.formController[dataName]).$modelValue;
             });
 
             var timeout = options.injected.$q.defer();
@@ -228,5 +231,5 @@
 
     configureValidationProvider.$inject = ['validationProvider'];
 
-    mod.config(configureValidationProvider);
+    modBase.config(configureValidationProvider);
 }

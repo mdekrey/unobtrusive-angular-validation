@@ -1,5 +1,5 @@
 ﻿module ResponsivePath.Validation.Unobtrusive.Tests {
-	describe('Unit: Directive val-maxlength', function () {
+	describe('Unit: Directive val-length', function () {
 		beforeEach(module('unobtrusive.validation', 'ngMock'));
 
 		var compile: angular.ICompileService;
@@ -14,56 +14,54 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
-			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-maxlength="Invalid" data-val-maxlength-max="3" />')(scope);
-			valScope.cancelSuppress = true;
+			element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-length="Invalid" data-val-length-min="4" data-val-length-max="8" /></form>')(scope);
+            element = element.find('input');
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('maxlength');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['maxlength'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
 		});
 
-		var failed = ["15.000.1", "4.57", "75137", "1,000", "1234567890123456789012345678901234567890", "words"];
+		var failed = ["a", "(", "-1", "1", "abc", "15.000.11", "1234567890123456789012345678901234567890"];
 		_.each(failed,(badValue) => {
-			it('fails "' + badValue+'"',() => {
-				scope.target = badValue;
+			it('fails "' + badValue + '"',() => {
+				scope['target'] = badValue;
 				scope.$digest();
 
 				isInvalid();
 			});
 		});
 
-		var passes = ["a", "(", "-1", "1", "abc"];
+		var passes = ["4.57", "75137", "1,000", "words"];
 		_.each(passes,(goodValue) => {
 			it('passes "' + goodValue + '"',() => {
-				scope.target = goodValue;
+				scope['target'] = goodValue;
 				scope.$digest();
 
 				isValid();

@@ -26,23 +26,40 @@
     }
 
     export interface ITrustedHtmlSet {
-        [dotNetName: string]: ITrustedHtmlByValidationKey;
+        [modelName: string]: ITrustedHtmlByValidationKey;
     }
     
-    export interface IDotNetModel {
-        [dotNetName: string]: any;
+    export interface ICompleteModel {
+        [modelName: string]: any;
     }
 
+    export interface IErrorSet {
+        [errorType: string]: boolean;
+    };
+
     export interface IValidatedModelController extends ng.INgModelController {
-        suppressValidationMessages: boolean;
-        validationMessages: ITrustedHtmlByValidationKey;
+        allValidationMessages: ITrustedHtmlByValidationKey;
+        overrideValidationMessages: ITrustedHtmlByValidationKey;
+        blurErrors: IErrorSet;
+        submittedErrors: IErrorSet;
+        activeErrors: IErrorSet;
+    }
+
+    export interface IValidatedFormController extends ng.IFormController {
+        $$validationState: ScopeValidationState;
+    }
+
+    export interface IModelsByError {
+        /* array of model controllers failing the error type */
+        [errorType: string]: IValidatedModelController[];
     }
 
     export interface ScopeValidationState {
-        cancelSuppress: boolean;
-        showValidationSummary: boolean;
-        messages: ITrustedHtmlSet;
-        data: IDotNetModel;
+        blurErrors: IModelsByError;
+        submittedErrors: IModelsByError;
+        activeErrors: IModelsByError;
+        blurred(): void;
+        submitted(): void;
     }
 
 }

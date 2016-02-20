@@ -41,7 +41,7 @@ var ResponsivePath;
                 $templateCache.put("templates/angular-unobtrusive-validation/valmsgFor.html", Unobtrusive.Templates.ValmsgFor.html);
             }
             defaultTemplates.$inject = ['$templateCache'];
-            angular.module('unobtrusive.validation.templates', [Unobtrusive.modBase.name]).run(defaultTemplates);
+            Unobtrusive.mod.run(defaultTemplates);
         })(Unobtrusive = Validation.Unobtrusive || (Validation.Unobtrusive = {}));
     })(Validation = ResponsivePath.Validation || (ResponsivePath.Validation = {}));
 })(ResponsivePath || (ResponsivePath = {}));

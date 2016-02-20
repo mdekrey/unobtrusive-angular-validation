@@ -7,24 +7,16 @@
     }
 
     export class Validator {
-        protected validationTools: ValidationTools;
 
         constructor(
-            keyName: string,
+            public name: string,
             validate: ValidationType,
-            message: any,
-            attributes: ng.IAttributes,
-            scope: ng.IScope,
-            ngModel: IValidatedModelController,
-            validationTools: ValidationTools,
+            public attributes: ng.IAttributes,
+            public formController: IValidatedFormController,
+            public ngModel: IValidatedModelController,
+            protected validationTools: ValidationTools,
             $injector: ng.auto.IInjectorService) {
-            this.name = keyName;
             this.validate = validate.validate;
-            this.message = message;
-            this.attributes = attributes;
-            this.scope = scope;
-            this.ngModel = ngModel;
-            this.validationTools = validationTools;
 
             if (validate.inject) {
                 (<ng.IAngularStatic>angular).forEach(validate.inject,(name) => {
@@ -33,15 +25,9 @@
             }
         }
 
-        name: string;
         validate: ValidateMethod;
-        // trust as HTML returns any, so we need to use it, too
-        message: any;
         parameters: ValidationParameters = {};
         injected: InjectedValidationValues = {};
-        attributes: ng.IAttributes;
-        scope: ng.IScope;
-        ngModel: IValidatedModelController;
         fail(message?: string): void {
             this.validationTools.fail(this.name, message);
         }

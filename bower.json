@@ -1,6 +1,6 @@
 {
   "name": "angular-validation-unobtrusive",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "main": [
     "js/angular.unobtrusive.validation.js",
     "js/angular.unobtrusive.validation.tpls.js"
@@ -26,5 +26,8 @@
     "validator",
     "client-side"
   ],
-  "license": "MS-PL"
+  "license": "MS-PL",
+  "typescript": {
+    "definition": "typings/angular.unobtrusive.validation.d.ts"
+  }
 }

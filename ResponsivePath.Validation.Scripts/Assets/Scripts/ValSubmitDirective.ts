@@ -3,20 +3,23 @@
     class ValSubmitDirective {
         restrict: string = 'A';
         require: string = '^?form';
-        private validation: ValidationService;
 
-        constructor(validation: ValidationService) {
+        private static $inject = ['validation'];
+        constructor(private validation: ValidationService) {
             this.validation = validation;
         }
 
         link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl: ng.IFormController): void => {
             element.on('click', ($event) => {
-                // Cancels the suppression of validation messages, which reveals error classes, validation summaries, etc.
-                this.validation.cancelSuppress(scope);
-                this.validation.validationSummaryVisible(scope, true);
+                this.validation.ensureValidation(ctrl).submitted();
                 scope.$digest();
                 if (ctrl.$invalid) {
                     $event.preventDefault();
+
+                    if (this.validation.getShouldSetFormSubmitted()) {
+                        ctrl.$setSubmitted();
+                        scope.$digest();
+                    }
                 }
             });
 
@@ -34,17 +37,7 @@
                     watches[key]();
             });
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValSubmitDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
 
-    mod.directive('valSubmit', ValSubmitDirective.Factory);
+    modBase.directive('valSubmit', constructorAsInjectable(ValSubmitDirective));
 }

@@ -1,5 +1,5 @@
 ﻿module ResponsivePath.Validation.Unobtrusive.Tests {
-	describe('Unit: Directive val-number', function () {
+	describe('Unit: Directive val-date', function () {
 		beforeEach(module('unobtrusive.validation', 'ngMock'));
 
 		var compile: angular.ICompileService;
@@ -14,56 +14,56 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
-			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-number="Invalid" />')(scope);
-			valScope.cancelSuppress = true;
+			element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-date="Invalid" /></form>')(scope);
+            element = element.find('input');
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('number');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['number'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
 		});
 
-		var failed = ["a", "(", "15.000.1"];
+		// the date validation really isn't very good, but we're basing it on the jquery unobtrusive validation logic. You should probably add a regex to it...
+
+		var failed = ["--", "never"];
 		_.each(failed,(badValue) => {
 			it('fails "' + badValue+'"',() => {
-				scope.target = badValue;
+				scope['target'] = badValue;
 				scope.$digest();
 
 				isInvalid();
 			});
 		});
 
-		var passes = ["-1", "4.57", "1", "75137", "1,000", "1234567890123456789012345678901234567890", 15724.2];
+		var passes = ["2011-01-01", "01/01/1980"];
 		_.each(passes,(goodValue) => {
 			it('passes "' + goodValue + '"',() => {
-				scope.target = goodValue;
+				scope['target'] = goodValue;
 				scope.$digest();
 
 				isValid();

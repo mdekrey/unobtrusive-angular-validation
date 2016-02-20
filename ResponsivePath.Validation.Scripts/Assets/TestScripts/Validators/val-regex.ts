@@ -14,51 +14,49 @@
 			sce = $sce;
 		}));
 
-		var scope: any;
-		var valScope: ScopeValidationState;
+        var scope: ng.IScope;
 		var fieldName: string = 'Target';
 		var message: string = 'Invalid';
 		var element: angular.IAugmentedJQuery;
 
 		beforeEach(() => {
 			scope = rootScope.$new();
-			valScope = validation.ensureValidation(scope);
 
-			element = compile('<input type="text" data-val="true" name="Target" ng-model="target" data-val-regex="Invalid" data-val-regex-pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" />')(scope);
-			valScope.cancelSuppress = true;
+			element = compile('<form><input type="text" data-val="true" name="Target" ng-model="target" data-val-regex="Invalid" data-val-regex-pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" /></form>')(scope);
+            element = element.find('input');
 		});
 
-		function isValid() {
-			expect(valScope.messages[fieldName]).not.to.have.key('regex');
-		}
+        function isValid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(false);
+        }
 
-		function isInvalid() {
-			expect(sce.getTrustedHtml(valScope.messages[fieldName]['regex'])).to.equal(message);
-		}
+        function isInvalid() {
+            expect((<ng.INgModelController>element.controller('ngModel')).$invalid).to.be(true);
+        }
 
 		it('passes a null value',() => {
-			scope.target = null;
+			scope['target'] = null;
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('passes an empty value',() => {
-			scope.target = '';
+			scope['target'] = '';
 			scope.$digest();
 
 			isValid();
 		});
 
 		it('fails an incorrect value',() => {
-			scope.target = '0';
+			scope['target'] = '0';
 			scope.$digest();
 
 			isInvalid();
 		});
 
 		it('passes a correct value',() => {
-			scope.target = '00000000-0000-0000-0000-000000000000';
+			scope['target'] = '00000000-0000-0000-0000-000000000000';
 			scope.$digest();
 
 			isValid();

@@ -2,83 +2,58 @@
 
     class ValDirective {
         restrict: string = 'A';
-        require: string = 'ngModel';
-        private validation: ValidationService;
+        require = ['ngModel', '^form'];
 		
-        constructor(validation: ValidationService) {
-            this.validation = validation;
+        private static $inject = ['validation', '$parse'];
+        constructor(private validation: ValidationService, private parse: ng.IParseService) {
         }
 
-        link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: IValidatedModelController): void => {
-            if (attrs['val'] != 'true')
-                return;
-
-            var validationFor = attrs['name'];
-
-            // If suppress is true, don't actually display any validation messages.
-            var validators = this.validation.buildValidation(scope, element, attrs, ngModelController);
-
-            ngModelController.$parsers.unshift(validators.runValidations);
-            ngModelController.$formatters.unshift(validators.runValidations);
-
+        link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, controllers: any[]): void => {
+            var ngModelController: IValidatedModelController = controllers[0];
+            var form: IValidatedFormController = controllers[1];
+            var isEnabledParse = this.parse(attrs['val']);
+            var isEnabled = isEnabledParse(scope);
+            var additionalIfEnabled = true;
+            
+            ngModelController.overrideValidationMessages = {};
+            
+            function updateEnabled() {
+                if (isEnabled && additionalIfEnabled) {
+                    validators.enable();
+                }
+                else {
+                    validators.disable();
+                }
+            }
+            
             var watches = [
-                // Watch to see if the hasCancelledSuppress is set to true and, if it is, cancel our own suppression.
-                scope.$watch(this.validation.hasCancelledSuppress, (newValue) => {
-                    if (newValue)
-                        validators.cancelSuppress();
-                })
+                scope.$watch(() => isEnabledParse(scope), (newValue) => {
+                    isEnabled = newValue;
+                    updateEnabled();
+                }),
             ];
 
             if (attrs['valIf']) {
-                // watch our "valIf" expression and, if it becomse falsy, turn off all of our validations.
-                watches.push(scope.$watch(attrs['valIf'], (newValue, oldValue) => {
-                    if (newValue)
-                        validators.enable();
-                    else
-                        validators.disable();
+                var additionalIfEnabledParse = this.parse(attrs['valIf']);
+                watches.push(scope.$watch(() => additionalIfEnabledParse(scope), (newValue) => {
+                    additionalIfEnabled = newValue;
+                    updateEnabled();
                 }));
             }
-            else {
-                validators.enable();
-            }
+
+            var validators = this.validation.buildValidation(form, element, attrs, ngModelController);
+
+            angular.forEach(validators.actualValidators, (value: (...args: any[]) => boolean, key: string) => {
+                ngModelController.$validators[key] = value;
+            });
 
             // Make sure we dispose all our 
-            element.on('$destroy',() => {
-                delete this.validation.clearDotNetName(scope, validationFor);
-
+            element.on('$destroy', () => {
                 for (var key in watches)
                     watches[key]();
             });
-
-            // Cancel suppression of error messages for this element on blur
-            element.on('blur',() => {
-                validators.cancelSuppress();
-                scope.$digest();
-            });
-
-            if (!attrs.hasOwnProperty('valRealtime')) {
-                element.on('focus', () => {
-                    validators.enableSuppress();
-                });
-            }
-            else {
-                element.on('focus', () => {
-                    validators.cancelSuppress();
-                    scope.$digest();
-                });
-            }
         }
-
-        static Factory: ng.IDirectiveFactory = (() => {
-            var result = (validation: ValidationService) => {
-                return new ValDirective(validation);
-            };
-
-            result.$inject = ['validation'];
-
-            return result;
-        })();
     }
-    
-    mod.directive('val', ValDirective.Factory);
+
+    modBase.directive('val', constructorAsInjectable(ValDirective));
 }
