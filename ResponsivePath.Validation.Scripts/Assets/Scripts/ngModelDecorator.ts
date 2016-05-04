@@ -30,7 +30,15 @@
             this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
             
             var validationFor = attrs['name'];
-            
+
+            function onUpdateComplete() {
+                ngModelController.blurErrors = angular.copy(ngModelController.$error);
+                if (form) {
+                    form.$$validationState.blurred();
+                }
+                scope.$digest();
+            }
+
             // Make sure we dispose all our 
             element.on('$destroy', () => {
                 // a removed element shouldn't continue to be invalid
@@ -43,12 +51,14 @@
             });
 
             element.on('blur', () => {
-                ngModelController.blurErrors = angular.copy(ngModelController.$error);
-                if (form) {
-                    form.$$validationState.blurred();
-                }
-                scope.$digest();
+                onUpdateComplete();
             });
+
+            if (attrs['updateCompleteEvent']) {
+                scope.$on(attrs['updateCompleteEvent'], () => {
+                    onUpdateComplete();
+                });
+            }
         }
     }
 

@@ -407,6 +407,13 @@ var ResponsivePath;
                         ];
                         _this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
                         var validationFor = attrs['name'];
+                        function onUpdateComplete() {
+                            ngModelController.blurErrors = angular.copy(ngModelController.$error);
+                            if (form) {
+                                form.$$validationState.blurred();
+                            }
+                            scope.$digest();
+                        }
                         element.on('$destroy', function () {
                             angular.forEach(ngModelController.$error, function (val, key) {
                                 ngModelController.$setValidity(key, true);
@@ -415,12 +422,13 @@ var ResponsivePath;
                                 watches[key]();
                         });
                         element.on('blur', function () {
-                            ngModelController.blurErrors = angular.copy(ngModelController.$error);
-                            if (form) {
-                                form.$$validationState.blurred();
-                            }
-                            scope.$digest();
+                            onUpdateComplete();
                         });
+                        if (attrs['updateCompleteEvent']) {
+                            scope.$on(attrs['updateCompleteEvent'], function () {
+                                onUpdateComplete();
+                            });
+                        }
                     };
                 }
                 NgModelDirective.$inject = ['validation'];
