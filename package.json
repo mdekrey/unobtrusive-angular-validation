@@ -14,5 +14,8 @@
     "validator",
     "client-side"
   ],
-  "license": "MS-PL"
+  "license": "MS-PL",
+  "dependencies": {
+    "angular": "^1.2.29"
+  }
 }
