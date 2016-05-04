@@ -34,7 +34,7 @@
             // Make sure we dispose all our 
             element.on('$destroy', () => {
                 // a removed element shouldn't continue to be invalid
-                _.each(ngModelController.$error, (val, key) => {
+                angular.forEach(ngModelController.$error, (val, key) => {
                     ngModelController.$setValidity(key, true);
                 });
 

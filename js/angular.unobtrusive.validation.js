@@ -408,7 +408,7 @@ var ResponsivePath;
                         _this.validation.getValidationTiming().registerModel(scope, element, ngModelController, form);
                         var validationFor = attrs['name'];
                         element.on('$destroy', function () {
-                            _.each(ngModelController.$error, function (val, key) {
+                            angular.forEach(ngModelController.$error, function (val, key) {
                                 ngModelController.$setValidity(key, true);
                             });
                             for (var key in watches)
