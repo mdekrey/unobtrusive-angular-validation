@@ -1,19 +1,21 @@
+**Notice**: I am no longer intending to maintain this project. AngularJS was a great framework, and I was quite successful with this library, but I since have moved on to other frameworks. Feel free to use it, fork it, etc.
+
 unobtrusive-angular-validation
 ==============================
 
 This library is ultimately two portions that can be used independently; an AngularJS implementation of Microsoft's unobtrusive validation library for jQuery, and a small library of C# add-ons for MVC 5's validations.
 
-###Unobtrusive Validation for AngularJS
+### Unobtrusive Validation for AngularJS
 
 Version 2 of unobtrusive-angular-validation is built using Angular's existing validation framework through `ngModel`, while extending it for validation message tracking and allowing configuration for timing of messages.
 
-####Use
+#### Use
 
 To use the validation attributes provided, add `val="true"` to your element with `ng-model` and then add the `val-*` attributes you want. For a complete list and documentation, [see our rule unit tests](ResponsivePath.Validation.Scripts/Assets/TestScripts/Validators).
 
 This also adds a `val-submit` directive that can be placed on an `input type="submit"` or a `button type="submit"` to prevent the form from submitting if the form is invalid.
 
-#####Throttled errors
+##### Throttled errors
 
 We've added error throttling to have an `$errors`-like object for various timings.  For example, the `blurErrors` property is populated when you lose focus, and the `submitErrors` property is populated when the form is submitted via the val-submit directive.
 
@@ -23,7 +25,7 @@ There is also an `activeErrors` property that indicates what errors should be ac
 
 The DotNet timing has a form's active errors update only on submit, but models update on blur, just like you'd expect for the validation summary and direcYou can also configure your own timing rules if you have something other than the defaults.
 
-#####Adding rules
+##### Adding rules
 You can also add your own rules!  At config time, use the `validationProvider` and call the `addValidator` method. For examples, see the [internal configuration file](ResponsivePath.Validation.Scripts/Assets/Scripts/zConfiguration.ts).
 
 For example, the regex rule is implemented as follows:
@@ -34,7 +36,7 @@ For example, the regex rule is implemented as follows:
 
 Note that customized rules should not fail if the value is falsy; the required rule should be used if the value is required.
 
-####JavaScript Download
+#### JavaScript Download
 
 If you want to integrate directly with the javascript and aren't using NuGet (or are on a non-C# project), you can download the files from our repository directly:
 
@@ -44,13 +46,13 @@ If you want to integrate directly with the javascript and aren't using NuGet (or
 [Minified](js/angular.unobtrusive.validation.min.js)
 ([templates](js/angular.unobtrusive.validation.tpls.min.js))
 
-####Bower Installation
+#### Bower Installation
 ```
 bower install angular-validation-unobtrusive
 ```
 
 
-###Adding Unobtrusive Client Validation from the Microsoft .NET MVC Framework to AngularJS!
+### Adding Unobtrusive Client Validation from the Microsoft .NET MVC Framework to AngularJS!
 
 The primary focus of this package is to expose the .NET Framework's data validation syntax to AngularJS without relying on jQuery.
 
@@ -64,7 +66,7 @@ In this repository, we've provided our validation.js along with a few tests to v
 
 In addition, we are adding a few other utilities for integrating the `HtmlHelper`; we hope you get some use out of them!
 
-####NuGet Installation
+#### NuGet Installation
 
 You can install our NuGet packages (C# only) here:
 
@@ -72,7 +74,7 @@ You can install our NuGet packages (C# only) here:
 PM> Install-Package ResponsivePath.Validation
 ```
 
-####Unobtrusive Validation web.config
+#### Unobtrusive Validation web.config
 
 ```xml
     <configuration>
